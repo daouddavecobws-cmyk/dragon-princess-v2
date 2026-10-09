@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess: 500+ Universe</title>
+  <title>Dragon & Princess: Clear Flight Edition</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1a0933">
+  <meta name="theme-color" content="#0c0414">
 
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
@@ -14,32 +14,42 @@
     
     #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
     
-    nav { height: 55px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; }
-    nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 10px; border-radius: 15px; font-weight: bold; font-size: 11px; cursor: pointer; }
+    nav { height: 55px; background: rgba(0,0,0,0.85); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; }
+    nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; cursor: pointer; }
     nav button.active { background: #ffd700; color: #1a0933; }
 
-    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 10px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 12px; z-index: 15; display: flex; gap: 8px; }
+    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 12px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 13px; z-index: 15; display: flex; gap: 8px; }
 
     .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow-y: auto; padding-bottom: 20px; }
     .screen.active { display: flex; }
 
     /* CARE SCREEN */
-    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; }
-    .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px solid #9333ea; margin-top: 8px; }
+    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; padding-bottom: 35px; }
+    .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px solid #9333ea; margin-top: 8px; z-index: 2; }
     .bar-row { margin-bottom: 4px; }
     .bar-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; font-weight: bold; }
     .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 220px; }
-    .dragon-render { font-size: 90px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.2s; }
-    .princess-render { font-size: 40px; position: absolute; bottom: 15px; right: 20%; filter: drop-shadow(0 0 10px #fff); transition: transform 0.3s, right 0.3s; }
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 240px; overflow: visible; }
+    .dragon-render { font-size: 100px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; }
+    .princess-render { font-size: 45px; position: absolute; bottom: 30px; right: 15%; filter: drop-shadow(0 0 10px #fff); transition: all 0.4s ease-in-out; z-index: 3; }
 
-    .floating-text { position: absolute; font-size: 30px; animation: floatUp 1s forwards ease-out; pointer-events: none; z-index: 8; }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-70px) scale(1.3); } }
+    /* Action Animations */
+    .princess-render.interact { right: 42%; transform: scale(1.1); }
+    .princess-render.hugging { right: 48%; transform: scale(1.2) rotate(-10deg); }
 
-    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 92%; max-width: 400px; margin-bottom: 12px; }
-    .act-btn { background: #3b1566; border: 1px solid #a855f7; color: white; padding: 8px 2px; border-radius: 10px; font-size: 10px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+    .action-tool { position: absolute; font-size: 35px; z-index: 4; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
+    @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.2) translateY(-5px); } }
+
+    .floating-text { position: absolute; font-size: 32px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-80px) scale(1.4); } }
+
+    /* LIFTED CARE BUTTONS */
+    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 92%; max-width: 420px; margin-bottom: 25px; z-index: 5; }
+    .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 2px solid #a855f7; color: white; padding: 12px 4px; border-radius: 16px; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); active: scale(0.95); }
+    .act-btn span { color: #ffd700; text-shadow: 0 1px 2px #000; }
 
     /* CASTLE & 500+ SHOP SCREEN */
     #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; }
@@ -61,14 +71,18 @@
     .pagination { display: flex; justify-content: space-between; align-items: center; width: 92%; max-width: 400px; margin: 10px 0; font-size: 11px; }
     .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
 
-    /* FLIGHT SCREEN */
+    /* HIGH-VISIBILITY FLIGHT CONTROLS */
     #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
     canvas { display: block; width: 100%; height: 100%; }
-    .fly-controls { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 16px; box-sizing: border-box; z-index: 20; }
-    .d-pad { display: flex; gap: 8px; }
-    .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-    .fire-btn { width: 65px; height: 65px; border-radius: 50%; background: radial-gradient(circle, #ef4444, #7f1d1d); border: 2px solid #ffd700; color: white; font-weight: bold; font-size: 12px; }
-    .hud-score { position: absolute; top: 10px; left: 12px; font-size: 14px; font-weight: bold; color: #ffd700; z-index: 20; text-shadow: 0 0 5px #000; }
+    .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; z-index: 20; pointer-events: none; }
+    .d-pad { display: flex; gap: 14px; pointer-events: auto; }
+    .ctrl-btn { width: 68px; height: 68px; border-radius: 50%; background: rgba(59, 130, 246, 0.4); border: 3px solid #60a5fa; color: #ffffff; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); box-shadow: 0 0 15px rgba(59,130,246,0.6); pointer-events: auto; }
+    .ctrl-btn:active { background: rgba(59, 130, 246, 0.8); transform: scale(0.92); }
+    
+    .fire-btn { width: 85px; height: 85px; border-radius: 50%; background: radial-gradient(circle, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%); border: 3px solid #fef08a; color: #ffffff; font-weight: 900; font-size: 15px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), inset 0 0 10px #fef08a; display: flex; align-items: center; justify-content: center; pointer-events: auto; }
+    .fire-btn:active { transform: scale(0.92); background: radial-gradient(circle, #f87171 0%, #dc2626 100%); }
+
+    .hud-score { position: absolute; top: 12px; left: 16px; font-size: 16px; font-weight: bold; color: #ffd700; z-index: 20; text-shadow: 0 0 6px #000; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 10px; border: 1px solid #ffd700; }
   </style>
 </head>
 <body>
@@ -108,13 +122,14 @@
     <div class="viewport" id="viewport">
       <div id="dragon-node" class="dragon-render">🐉</div>
       <div id="princess-node" class="princess-render">👑👸</div>
+      <div id="action-tool" class="action-tool">🍎</div>
     </div>
 
     <div class="action-grid">
-      <button class="act-btn" onclick="doCare('feed')">🍎<span>Feed</span></button>
-      <button class="act-btn" onclick="doCare('wash')">🧼<span>Wash</span></button>
-      <button class="act-btn" onclick="doCare('pet')">🖐️<span>Pet</span></button>
-      <button class="act-btn" onclick="doCare('hug')">🤗<span>Hug</span></button>
+      <button class="act-btn" onclick="doCare('feed')"><span style="font-size:22px;">🍎</span><span>Feed</span></button>
+      <button class="act-btn" onclick="doCare('wash')"><span style="font-size:22px;">🧼</span><span>Wash</span></button>
+      <button class="act-btn" onclick="doCare('pet')"><span style="font-size:22px;">🖐️</span><span>Pet</span></button>
+      <button class="act-btn" onclick="doCare('hug')"><span style="font-size:22px;">🤗</span><span>Hug</span></button>
     </div>
   </div>
 
@@ -163,63 +178,30 @@
 </div>
 
 <script>
-  /* --------------------------------------------------
-     1. PROCEDURAL GENERATOR (500 ITEMS EACH CATEGORY)
-  -------------------------------------------------- */
+  /* 1. PROCEDURAL CATALOG GENERATOR */
   const ELEMENTS = ["Crimson", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
   const DRAGON_BASES = ["🐉", "🐲", "🦖", "🐍", "🐊"];
   const OUTFIT_BASES = ["👑👸", "👗✨", "🦸‍♀️", "👸🏼", "👸🏻", "👸🏽", "👸🏿", "💃", "👘", "🥻"];
 
-  // Generate 500 Unique Items dynamically
   function generateCatalog(type) {
     let items = [];
     for (let i = 1; i <= 500; i++) {
       let elem = ELEMENTS[i % ELEMENTS.length];
-      let hue = (i * 137.5) % 360; // Golden ratio color distribution
+      let hue = (i * 137.5) % 360;
 
       if (type === 'dragons') {
         let base = DRAGON_BASES[i % DRAGON_BASES.length];
-        items.push({
-          id: `dragon_${i}`,
-          name: `#${i} ${elem} Dragon`,
-          icon: base,
-          glow: `hsl(${hue}, 80%, 50%)`,
-          cost: i * 15,
-          scale: 1 + (i % 5) * 0.1
-        });
+        items.push({ id: `dragon_${i}`, name: `#${i} ${elem} Dragon`, icon: base, glow: `hsl(${hue}, 80%, 50%)`, cost: i * 15 });
       } else if (type === 'outfits') {
         let base = OUTFIT_BASES[i % OUTFIT_BASES.length];
-        items.push({
-          id: `outfit_${i}`,
-          name: `#${i} ${elem} Dress`,
-          icon: base,
-          hue: hue,
-          cost: i * 10
-        });
+        items.push({ id: `outfit_${i}`, name: `#${i} ${elem} Dress`, icon: base, hue: hue, cost: i * 10 });
       } else if (type === 'fire') {
-        items.push({
-          id: `fire_${i}`,
-          name: `#${i} ${elem} Beam`,
-          c1: `hsl(${hue}, 100%, 50%)`,
-          c2: `hsl(${(hue + 60) % 360}, 100%, 50%)`,
-          cost: i * 12
-        });
+        items.push({ id: `fire_${i}`, name: `#${i} ${elem} Beam`, c1: `hsl(${hue}, 100%, 50%)`, c2: `hsl(${(hue + 60) % 360}, 100%, 50%)`, cost: i * 12 });
       } else if (type === 'worlds') {
-        items.push({
-          id: `world_${i}`,
-          name: `#${i} ${elem} Sky`,
-          bg: `hsl(${hue}, 40%, 10%)`,
-          stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`,
-          cost: i * 20
-        });
+        items.push({ id: `world_${i}`, name: `#${i} ${elem} Sky`, bg: `hsl(${hue}, 40%, 10%)`, stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`, cost: i * 20 });
       } else if (type === 'sizes') {
         let sizeMult = (1 + (i * 0.1)).toFixed(1);
-        items.push({
-          id: `size_${i}`,
-          name: `Level ${i} Size (${sizeMult}x)`,
-          mult: parseFloat(sizeMult),
-          cost: i * 25
-        });
+        items.push({ id: `size_${i}`, name: `Level ${i} Size (${sizeMult}x)`, mult: parseFloat(sizeMult), cost: i * 25 });
       }
     }
     return items;
@@ -233,9 +215,7 @@
     sizes: generateCatalog('sizes')
   };
 
-  /* --------------------------------------------------
-     2. GAME STATE & SAVING
-  -------------------------------------------------- */
+  /* 2. GAME STATE */
   let state = {
     coins: 100,
     hunger: 60,
@@ -262,7 +242,6 @@
       state.love = parsed.love || 60;
       state.unlockedIds = parsed.unlockedIds || state.unlockedIds;
       
-      // Match objects back to catalog
       ['dragons','outfits','fire','worlds','sizes'].forEach(cat => {
         let key = cat.slice(0, -1);
         if (parsed.equipped && parsed.equipped[key]) {
@@ -299,39 +278,63 @@
 
     p.innerText = state.equipped.outfit.icon;
     p.style.filter = `hue-rotate(${state.equipped.outfit.hue}deg) drop-shadow(0 0 10px #fff)`;
-    p.style.transform = `scale(${state.equipped.size.mult})`;
-
+    
     saveState();
   }
 
+  /* VISIBLE CARE ACTION ANIMATIONS */
+  let isAnimatingCare = false;
   function doCare(type) {
-    let icon = '';
-    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); icon = '🍎🍏'; }
-    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); icon = '🧼🫧'; }
-    if (type === 'pet') { state.love = Math.min(100, state.love + 15); icon = '✨🖐️'; }
-    if (type === 'hug') { state.love = Math.min(100, state.love + 30); icon = '💖🤗'; }
+    if (isAnimatingCare) return;
+    isAnimatingCare = true;
+
+    let floatIcons = '';
+    let toolIcon = '';
+
+    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); floatIcons = '🍎🍏✨'; toolIcon = '🍎'; }
+    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); floatIcons = '🧼🫧✨'; toolIcon = '🧽'; }
+    if (type === 'pet') { state.love = Math.min(100, state.love + 15); floatIcons = '✨🖐️💖'; toolIcon = '🖐️'; }
+    if (type === 'hug') { state.love = Math.min(100, state.love + 30); floatIcons = '💖🤗🥰'; toolIcon = '💖'; }
     
     state.coins += 2;
 
-    const vp = document.getElementById('viewport');
-    const floatEl = document.createElement('div');
-    floatEl.className = 'floating-text';
-    floatEl.innerText = icon;
-    floatEl.style.left = (Math.random() * 40 + 30) + '%';
-    floatEl.style.bottom = '40%';
-    vp.appendChild(floatEl);
-    setTimeout(() => floatEl.remove(), 1000);
-
     const p = document.getElementById('princess-node');
-    p.style.right = '40%';
-    setTimeout(() => p.style.right = '20%', 350);
+    const tool = document.getElementById('action-tool');
+    const vp = document.getElementById('viewport');
+
+    if (type === 'hug') {
+      p.className = 'princess-render hugging';
+    } else {
+      p.className = 'princess-render interact';
+    }
+
+    tool.innerText = toolIcon;
+    tool.style.left = '48%';
+    tool.style.top = '45%';
+    tool.classList.add('active');
+
+    setTimeout(() => {
+      const floatEl = document.createElement('div');
+      floatEl.className = 'floating-text';
+      floatEl.innerText = floatIcons;
+      floatEl.style.left = '40%';
+      floatEl.style.top = '25%';
+      vp.appendChild(floatEl);
+
+      setTimeout(() => floatEl.remove(), 1200);
+    }, 300);
+
+    setTimeout(() => {
+      p.className = 'princess-render';
+      tool.classList.remove('active');
+      isAnimatingCare = false;
+      updateUI();
+    }, 1200);
 
     updateUI();
   }
 
-  /* --------------------------------------------------
-     3. 500+ SHOP & PAGINATION LOGIC
-  -------------------------------------------------- */
+  /* 3. SHOP LOGIC */
   let currentCategory = 'dragons';
   let currentPage = 1;
   const ITEMS_PER_PAGE = 10;
@@ -439,9 +442,7 @@
     else stopFlyGame();
   }
 
-  /* --------------------------------------------------
-     4. FLIGHT GAME ENGINE
-  -------------------------------------------------- */
+  /* 4. FLIGHT GAME ENGINE (HIGH CLARITY EDITION) */
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   let gameLoopId = null;
@@ -492,82 +493,95 @@
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Dynamic World Sky Background
+    // World Background
     ctx.fillStyle = state.equipped.world.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Procedural Stars
+    // Stars
     ctx.fillStyle = state.equipped.world.stars;
     for(let i=0; i<15; i++) {
-      ctx.fillRect((i*60 + score*2)%canvas.width, (i*37)%canvas.height, 2, 2);
+      ctx.fillRect((i*60 + score*2)%canvas.width, (i*37)%canvas.height, 3, 3);
     }
 
     if (moveUp) dragonY -= 6;
     if (moveDown) dragonY += 6;
-    dragonY = Math.max(30, Math.min(canvas.height - 80, dragonY));
+    dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
 
-    // Render Equipped Dragon & Princess
-    ctx.save();
-    ctx.shadowColor = state.equipped.dragon.glow;
-    ctx.shadowBlur = 15;
-    ctx.font = '40px serif';
-    ctx.fillText(state.equipped.dragon.icon, 50, dragonY);
-    ctx.restore();
-
-    ctx.save();
-    ctx.font = (18 * state.equipped.size.mult) + 'px serif';
-    ctx.fillText(state.equipped.outfit.icon, 55, dragonY - 18);
-    ctx.restore();
-
-    // Custom Beam Fire Breath
+    // Custom Beam Fire Breath (Drawn under character)
     if (isFiring) {
       ctx.save();
-      let grad = ctx.createLinearGradient(90, dragonY, canvas.width, dragonY);
+      let grad = ctx.createLinearGradient(95, dragonY, canvas.width, dragonY);
       grad.addColorStop(0, '#ffffff');
       grad.addColorStop(0.4, state.equipped.fire.c1);
       grad.addColorStop(1, state.equipped.fire.c2);
       
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.moveTo(85, dragonY - 10);
-      ctx.lineTo(canvas.width, dragonY - 30);
-      ctx.lineTo(canvas.width, dragonY + 20);
-      ctx.lineTo(85, dragonY + 5);
+      ctx.moveTo(95, dragonY - 10);
+      ctx.lineTo(canvas.width, dragonY - 35);
+      ctx.lineTo(canvas.width, dragonY + 25);
+      ctx.lineTo(95, dragonY + 5);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
     }
 
+    /* DRAGON & PRINCESS HIGH-VISIBILITY RENDER */
+    ctx.save();
+    // Strong white outline glow to ensure max visibility on dark/light worlds
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 18;
+    ctx.font = '52px serif';
+    ctx.fillText(state.equipped.dragon.icon, 45, dragonY);
+    ctx.restore();
+
+    // RENDER PRINCESS ON DRAGON (ULTRA-CLEAR)
+    ctx.save();
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 12;
+    let pSize = Math.max(22, 22 * state.equipped.size.mult);
+    ctx.font = `${pSize}px serif`;
+    ctx.fillText(state.equipped.outfit.icon, 52, dragonY - 24);
+    ctx.restore();
+
     // Spawn Obstacles & Coins
     if (Math.random() < 0.03) {
-      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, size: 35, speed: 3 + Math.random() * 3 });
+      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, size: 38, speed: 3 + Math.random() * 3 });
     }
     if (Math.random() < 0.02) {
-      coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 3 });
+      coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
     }
 
-    // Process Coins
+    // Render Coins with glow
     for (let i = coinPickups.length - 1; i >= 0; i--) {
       let c = coinPickups[i];
       c.x -= c.speed;
-      ctx.font = '22px serif';
+      ctx.save();
+      ctx.shadowColor = '#ffd700';
+      ctx.shadowBlur = 10;
+      ctx.font = '26px serif';
       ctx.fillText('🪙', c.x, c.y);
+      ctx.restore();
 
-      if (Math.abs(c.x - 60) < 35 && Math.abs(c.y - dragonY) < 35) {
+      if (Math.abs(c.x - 60) < 40 && Math.abs(c.y - dragonY) < 40) {
         coinPickups.splice(i, 1);
         state.coins += 5;
         updateUI();
       }
     }
 
-    // Process Obstacles
+    // Render Obstacles
     for (let i = obstacles.length - 1; i >= 0; i--) {
       let obs = obstacles[i];
       obs.x -= obs.speed;
+      ctx.save();
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 8;
       ctx.font = obs.size + 'px serif';
       ctx.fillText('🪨', obs.x, obs.y);
+      ctx.restore();
 
-      if (isFiring && obs.y > dragonY - 40 && obs.y < dragonY + 40 && obs.x > 80) {
+      if (isFiring && obs.y > dragonY - 45 && obs.y < dragonY + 45 && obs.x > 80) {
         obstacles.splice(i, 1);
         score += 10;
         state.coins += 1;
@@ -575,7 +589,7 @@
         continue;
       }
 
-      if (Math.abs(obs.x - 60) < 30 && Math.abs(obs.y - dragonY) < 30) {
+      if (Math.abs(obs.x - 60) < 35 && Math.abs(obs.y - dragonY) < 35) {
         obstacles.splice(i, 1);
         score = Math.max(0, score - 15);
       }
