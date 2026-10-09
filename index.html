@@ -3,125 +3,132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7046b8">
 <title>Princess Masa and the Dragon of Crown Jewel</title>
-
 <style>
+:root{--purple:#7548b8;--pink:#ffb8d8;--gold:#ffe59b;--ink:#432c5b}
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{font-family:system-ui,-apple-system,sans-serif;background:#9de6ff;color:#392450;touch-action:manipulation}
-button{font:inherit;font-weight:800;border:2px solid #fff;border-radius:15px;padding:11px 13px;background:#fff;color:#492c68;box-shadow:0 3px 0 #55356a20;cursor:pointer;touch-action:manipulation}
+body{font-family:system-ui,-apple-system,sans-serif;background:#a8eaff;color:var(--ink);touch-action:manipulation}
+button{font:inherit;font-weight:800;border:2px solid white;border-radius:14px;padding:10px 12px;background:white;color:var(--ink);box-shadow:0 3px 0 #38204b1c;cursor:pointer;touch-action:manipulation}
 button:active{transform:scale(.96)}
 button:disabled{opacity:.45}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block}
-#top{position:fixed;z-index:2;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px;pointer-events:none}
-.card{background:#ffffffed;border:2px solid #fff;border-radius:16px;padding:8px 11px;box-shadow:0 3px 12px #39245020}
-#stats{font-size:12px;font-weight:900;line-height:1.7}
-#brand{font-size:clamp(12px,3vw,20px);font-weight:1000;color:#7548b8}
-#worldLabel{font-size:12px;font-weight:900;text-align:right}
-#status{position:fixed;z-index:3;top:76px;left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;text-align:center;padding:9px 13px;background:#fff9e9;border:2px solid #fff;border-radius:16px;font-size:12px;font-weight:850;box-shadow:0 3px 12px #39245020;pointer-events:none}
-#nav{position:fixed;z-index:5;left:0;right:0;bottom:0;padding:9px 7px calc(9px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:6px;flex-wrap:wrap;background:linear-gradient(transparent,#30204338)}
-#nav button{font-size:12px;padding:10px 11px;border-radius:13px}
-.purple{background:#7548b8;color:white}
-.pink{background:#ffbfda}
-.gold{background:#ffe5a0}
-#careButtons{position:fixed;z-index:4;left:7px;right:7px;bottom:calc(80px + env(safe-area-inset-bottom,0px));display:none;justify-content:center;gap:6px;flex-wrap:wrap}
-#careButtons button{font-size:12px;padding:10px}
-#flightButtons{position:fixed;z-index:4;left:10px;right:10px;bottom:calc(82px + env(safe-area-inset-bottom,0px));display:none;justify-content:space-between;align-items:center;pointer-events:none}
-#flightButtons button{pointer-events:auto;width:60px;height:57px;font-size:22px;padding:4px;background:#ffffffed;border-radius:19px;touch-action:none}
-#flightButtons .cluster{display:flex;gap:8px}
-#tip{position:fixed;z-index:2;left:50%;bottom:calc(145px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ffffffdb;border-radius:12px;padding:6px 10px;font-size:11px;font-weight:850;white-space:nowrap;pointer-events:none}
-#dialog{position:fixed;z-index:10;inset:0;background:#251539a8;display:none;align-items:center;justify-content:center;padding:16px}
+#top{position:fixed;z-index:3;top:env(safe-area-inset-top,0px);left:0;right:0;padding:7px;display:flex;justify-content:space-between;gap:7px;pointer-events:none}
+.card{background:#ffffffed;border:2px solid white;border-radius:14px;padding:7px 10px;box-shadow:0 3px 12px #39245020}
+#brand{font-size:clamp(12px,3vw,19px);font-weight:1000;color:var(--purple)}
+#stats{font-size:11px;font-weight:900;line-height:1.7}
+#worldLabel{font-size:clamp(10px,2.8vw,14px);font-weight:900;text-align:right}
+#modeLabel{font-size:10px;text-align:right;font-weight:800}
+#status{position:fixed;z-index:3;top:72px;left:50%;transform:translateX(-50%);width:max-content;max-width:94vw;text-align:center;padding:8px 12px;background:#fff9e9;border:2px solid white;border-radius:14px;font-size:12px;font-weight:850;box-shadow:0 3px 12px #39245020;pointer-events:none}
+#nav{position:fixed;z-index:6;left:0;right:0;bottom:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:5px;flex-wrap:wrap;background:linear-gradient(transparent,#3020433d)}
+#nav button{font-size:11px;padding:9px 10px;border-radius:12px}
+.purple{background:var(--purple);color:white}
+.pink{background:#ffcae1}
+.gold{background:var(--gold)}
+#careButtons,#activityButtons{position:fixed;z-index:5;left:5px;right:5px;bottom:calc(80px + env(safe-area-inset-bottom,0px));display:none;justify-content:center;gap:5px;flex-wrap:wrap}
+#careButtons button,#activityButtons button{font-size:11px;padding:9px 10px}
+#flightButtons{position:fixed;z-index:5;left:7px;right:7px;bottom:calc(80px + env(safe-area-inset-bottom,0px));display:none;justify-content:space-between;align-items:center;pointer-events:none}
+#flightButtons button{pointer-events:auto;width:53px;height:53px;padding:2px;font-size:21px;border-radius:17px;background:#ffffffed;touch-action:none}
+#flightButtons .cluster{display:flex;gap:6px}
+#tip{position:fixed;z-index:3;left:50%;bottom:calc(142px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ffffffdf;border-radius:12px;padding:6px 10px;font-size:10px;font-weight:850;white-space:nowrap;pointer-events:none;max-width:96vw}
+#dialog{position:fixed;z-index:10;inset:0;background:#251539aa;display:none;align-items:center;justify-content:center;padding:14px}
 #dialog.open{display:flex}
-#dialogBox{width:min(560px,100%);max-height:80dvh;overflow-y:auto;background:#fff8f0;border:4px solid white;border-radius:24px;padding:18px;box-shadow:0 12px 50px #150b25aa}
-#dialogBox h2{margin:0 0 8px;font-size:22px;color:#7548b8}
-#dialogBox p{font-size:14px;line-height:1.45}
-#options{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:14px 0}
-.option{background:#fff;border:2px solid #eadcfb;border-radius:15px;padding:11px;text-align:center}
-.option strong{display:block;font-size:14px}
-.option p{font-size:12px;margin:6px 0 10px}
-.option button{font-size:12px;padding:9px}
-#dialogFooter{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-#toast{position:fixed;z-index:20;left:50%;bottom:calc(145px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;max-width:90vw;background:#392450;color:white;border-radius:14px;padding:11px 15px;font-weight:900;font-size:13px;text-align:center}
-@media(max-width:420px){
+#dialogBox{width:min(600px,100%);max-height:82dvh;overflow-y:auto;background:#fff8f0;border:4px solid white;border-radius:22px;padding:16px;box-shadow:0 12px 50px #150b25aa}
+#dialogBox h2{margin:0 0 7px;font-size:22px;color:var(--purple)}
+#dialogDescription{font-size:13px;line-height:1.45}
+#options{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
+.option{background:white;border:2px solid #eadcfb;border-radius:14px;padding:10px;text-align:center}
+.option strong{display:block;font-size:13px}
+.option p{font-size:11px;margin:6px 0 9px}
+.option button{font-size:11px;padding:8px}
+#dialogFooter{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+#toast{position:fixed;z-index:20;left:50%;bottom:calc(145px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;max-width:90vw;background:#392450;color:white;border-radius:14px;padding:10px 14px;font-weight:900;font-size:12px;text-align:center}
+@media(max-width:400px){
  #nav{gap:4px}
- #nav button{font-size:11px;padding:9px 8px}
- #status{top:68px;font-size:11px}
- #careButtons{bottom:calc(100px + env(safe-area-inset-bottom,0px))}
- #careButtons button{padding:9px 10px;font-size:11px}
- #flightButtons{bottom:calc(95px + env(safe-area-inset-bottom,0px))}
+ #nav button{font-size:10px;padding:8px 7px}
+ #status{top:67px;font-size:10px}
+ #careButtons,#activityButtons{bottom:calc(102px + env(safe-area-inset-bottom,0px))}
+ #flightButtons{bottom:calc(97px + env(safe-area-inset-bottom,0px))}
+ #flightButtons button{width:47px;height:48px}
 }
 </style>
 </head>
-
 <body>
-<canvas id="game"></canvas>
+<canvas id="game" aria-label="Princess Masa fantasy adventure game"></canvas>
 
 <div id="top">
-  <div class="card">
-    <div id="brand">👑 CROWN JEWEL</div>
-    <div id="stats">🪙 0 · ❤️ 7/7</div>
-  </div>
-  <div class="card">
-    <div id="worldLabel">🏰 Castle Gardens</div>
-    <div id="modeLabel" style="font-size:11px;text-align:right;font-weight:800">Dragon Care</div>
-  </div>
+ <div class="card">
+  <div id="brand">👑 CROWN JEWEL</div>
+  <div id="stats">🪙 0 · ❤️ 7/7</div>
+ </div>
+ <div class="card">
+  <div id="worldLabel">🏰 Castle Gardens</div>
+  <div id="modeLabel">Royal Castle</div>
+ </div>
 </div>
 
-<div id="status">Welcome, Princess Masa! Your dragon is waiting! 💖</div>
-<div id="tip">Explore your castle and care for your dragon!</div>
+<div id="status" role="status">Elu: Welcome home, Princess Masa!</div>
+<div id="tip">Explore the castle with Elu!</div>
 
 <div id="careButtons">
-  <button class="pink" id="feed">🥕 Feed</button>
-  <button class="pink" id="wash">🫧 Wash</button>
-  <button class="pink" id="pet">💗 Pet</button>
-  <button class="pink" id="hug">🤗 Hug</button>
-  <button class="gold" id="heal">💚 Heal</button>
+ <button class="pink" id="feed">🥕 Feed</button>
+ <button class="pink" id="wash">🫧 Wash</button>
+ <button class="pink" id="pet">💗 Pet</button>
+ <button class="pink" id="hug">🤗 Hug</button>
+ <button class="gold" id="heal">💚 Heal</button>
+</div>
+
+<div id="activityButtons">
+ <button class="pink" id="tea">🫖 Tea party</button>
+ <button class="pink" id="dance">💃 Dance party</button>
+ <button class="pink" id="garden">🌱 Garden</button>
+ <button class="gold" id="harvest">🧺 Harvest</button>
 </div>
 
 <div id="flightButtons">
+ <div class="cluster">
+  <button id="backward" aria-label="Fly backward">⬅️</button>
   <button id="up" aria-label="Fly up">⬆️</button>
-  <div class="cluster">
-    <button id="down" aria-label="Fly down">⬇️</button>
-    <button id="boost" aria-label="Speed boost">⚡</button>
-  </div>
+  <button id="down" aria-label="Fly down">⬇️</button>
+ </div>
+ <div class="cluster">
+  <button id="boost" aria-label="Fly faster">⚡</button>
+  <button id="forward" aria-label="Fly forward">➡️</button>
+ </div>
 </div>
 
 <div id="nav">
-  <button id="careTab" class="purple">🏰 Castle</button>
-  <button id="flyTab">🐉 Fly</button>
-  <button id="worldTab">🌎 Worlds</button>
-  <button id="styleTab">👗 Style</button>
-  <button id="missionTab">⭐ Missions</button>
-  <button id="eluTab">💬 Elu</button>
+ <button id="castleTab" class="purple">🏰 Castle</button>
+ <button id="flyTab">🐉 Fly</button>
+ <button id="worldTab">🌎 Worlds</button>
+ <button id="styleTab">👗 Style</button>
+ <button id="gardenTab">🌷 Garden</button>
+ <button id="missionTab">⭐ Missions</button>
+ <button id="eluTab">💬 Elu</button>
 </div>
 
 <div id="dialog">
-  <div id="dialogBox">
-    <h2 id="dialogTitle">Welcome!</h2>
-    <p id="dialogDescription"></p>
-    <div id="options"></div>
-    <div id="dialogFooter"></div>
-  </div>
+ <div id="dialogBox">
+  <h2 id="dialogTitle">Welcome!</h2>
+  <p id="dialogDescription"></p>
+  <div id="options"></div>
+  <div id="dialogFooter"></div>
+ </div>
 </div>
 <div id="toast" role="status"></div>
 
 <script>
 "use strict";
-
 (function(){
-const $ = id => document.getElementById(id);
-const canvas = $("game");
-const ctx = canvas.getContext("2d");
+const $=id=>document.getElementById(id);
+const canvas=$("game");
+const ctx=canvas.getContext("2d");
+if(!ctx){$("status").textContent="Please open this game in Safari or another modern browser.";return;}
 
-if(!ctx){
-  $("status").textContent = "Please open this game in Safari or another modern browser.";
-  return;
-}
-
-const worlds = [
- {name:"Castle Gardens",emoji:"🏰",cost:0,sky:"#8ee2ff",far:"#c8f1ff",ground:"#8cdb91",hazard:"🌳"},
+const worlds=[
+ {name:"Castle Gardens",emoji:"🏰",cost:0,sky:"#91e4ff",far:"#d7f5ff",ground:"#8bd99a",hazard:"🌳"},
  {name:"Candy Cloud Kingdom",emoji:"🍬",cost:100,sky:"#ffb9e5",far:"#e8d4ff",ground:"#ffb4df",hazard:"🍭"},
  {name:"Crystal Ice Mountains",emoji:"❄️",cost:220,sky:"#a3eeff",far:"#9bc5f4",ground:"#b9edfa",hazard:"💎"},
  {name:"Enchanted Forest",emoji:"🌲",cost:350,sky:"#a4e7bb",far:"#c4f1c6",ground:"#63c67c",hazard:"🌲"},
@@ -129,756 +136,498 @@ const worlds = [
  {name:"Rainbow Sky Palace",emoji:"🌈",cost:750,sky:"#ffd4a7",far:"#f0d5ff",ground:"#a2e7d5",hazard:"🌈"}
 ];
 
-const base = {
- coins:0,
- lives:7,
- world:0,
- unlocked:[0],
- dragon:"#a16ee8",
- wings:"#ff9dce",
- princess:"#ff83b9",
- accessory:0,
- outfit:0,
+const defaultState={
+ coins:0,lives:7,world:0,unlocked:[0],
+ dragon:"#a16ee8",wings:"#ff9dce",princess:"#ff83b9",
+ accessory:0,outfit:0,
  care:{hunger:65,clean:80,happy:80,health:100},
- totalCoins:0,
- best:0,
- completed:[]
+ totalCoins:0,best:0,completed:[],
+ garden:{plots:[null,null,null,null,null,null],harvests:0,plants:0}
 };
-
 let old={};
 try{old=JSON.parse(localStorage.getItem("crownJewelSave")||"{}")||{};}catch(e){}
-
-const state={
- ...base,...old,
- care:{...base.care,...(old.care||{})},
- unlocked:Array.isArray(old.unlocked)?old.unlocked:[0],
- completed:Array.isArray(old.completed)?old.completed:[]
-};
-
+const state={...defaultState,...old};
+state.care={...defaultState.care,...(old.care||{})};
+state.garden={...defaultState.garden,...(old.garden||{})};
+state.garden.plots=Array.isArray(state.garden.plots)?state.garden.plots.slice(0,6):defaultState.garden.plots.slice();
+while(state.garden.plots.length<6)state.garden.plots.push(null);
+state.unlocked=Array.isArray(state.unlocked)?[...new Set([0,...state.unlocked])].filter(i=>Number.isInteger(i)&&i>=0&&i<worlds.length):[0];
+state.completed=Array.isArray(state.completed)?state.completed:[];
 state.coins=Math.max(0,Number(state.coins)||0);
 state.lives=Math.max(0,Math.min(7,Number(state.lives??7)));
-state.unlocked=[...new Set([0,...state.unlocked])].filter(i=>Number.isInteger(i)&&i>=0&&i<worlds.length);
 state.world=state.unlocked.includes(state.world)?state.world:0;
 
-let W=innerWidth,H=innerHeight,DPR=1;
-let mode="care",last=0,elapsed=0,frame=0;
-let princess={x:0,y:0,walk:0};
-let dragon={x:0,y:0,wing:0};
-let action=null;
-let obstacles=[],coins=[],particles=[];
-let distance=0,spawn=0,boostTime=0,invulnerable=0;
-let vy=0;
-let mission={type:"coins",target:8,progress:0};
-let toastTime=0,saveTime=0;
+const plants=[
+ {name:"Sunflower",emoji:"🌻",seed:5,grow:30,harvest:12,food:5},
+ {name:"Strawberry",emoji:"🍓",seed:8,grow:40,harvest:18,food:12},
+ {name:"Carrot",emoji:"🥕",seed:4,grow:25,harvest:10,food:18},
+ {name:"Rose",emoji:"🌹",seed:10,grow:45,harvest:22,food:0},
+ {name:"Bluebell",emoji:"🪻",seed:7,grow:35,harvest:15,food:0},
+ {name:"Pumpkin",emoji:"🎃",seed:12,grow:60,harvest:30,food:10}
+];
 
-function save(){
- try{
-  localStorage.setItem("crownJewelSave",JSON.stringify(state));
- }catch(e){}
-}
-function say(t){$("status").textContent=t;}
-function toast(t){
- $("toast").textContent=t;
- $("toast").style.display="block";
- toastTime=2.5;
-}
+let W=innerWidth,H=innerHeight,DPR=1;
+let mode="castle",last=0,frame=0,saveClock=0;
+let action=null,princess={walk:0},dragon={wing:0};
+let obstacles=[],coins=[],particles=[];
+let flight={x:.22,y:.48,worldX:0,speed:0,boost:0,invulnerable:0,spawn:1};
+let mission={type:"coins",target:8,progress:0};
+let toastTime=0,partyTime=0,partyType="";
+let gardenSelection=0;
+
+function save(){try{localStorage.setItem("crownJewelSave",JSON.stringify(state));}catch(e){}}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function rand(a,b){return a+Math.random()*(b-a);}
-
+function say(t){$("status").textContent=t;}
+function toast(t){$("toast").textContent=t;$("toast").style.display="block";toastTime=2.5;}
 function resize(){
- W=innerWidth;H=innerHeight;
- DPR=Math.min(window.devicePixelRatio||1,2);
- canvas.width=Math.max(1,Math.round(W*DPR));
- canvas.height=Math.max(1,Math.round(H*DPR));
- canvas.style.width=W+"px";
- canvas.style.height=H+"px";
+ W=innerWidth;H=innerHeight;DPR=Math.min(devicePixelRatio||1,2);
+ canvas.width=Math.max(1,Math.round(W*DPR));canvas.height=Math.max(1,Math.round(H*DPR));
+ canvas.style.width=W+"px";canvas.style.height=H+"px";
  ctx.setTransform(DPR,0,0,DPR,0,0);
 }
-window.addEventListener("resize",resize);
-resize();
+window.addEventListener("resize",resize);resize();
 
-function rounded(x,y,w,h,r,color){
- ctx.fillStyle=color;
- ctx.beginPath();
- ctx.moveTo(x+r,y);
- ctx.lineTo(x+w-r,y);
- ctx.quadraticCurveTo(x+w,y,x+w,y+r);
- ctx.lineTo(x+w,y+h-r);
- ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
- ctx.lineTo(x+r,y+h);
- ctx.quadraticCurveTo(x,y+h,x,y+h-r);
- ctx.lineTo(x,y+r);
- ctx.quadraticCurveTo(x,y,x+r,y);
- ctx.closePath();
- ctx.fill();
-}
 function oval(x,y,rx,ry,color){
- ctx.fillStyle=color;
- ctx.beginPath();
- ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),0,0,Math.PI*2);
- ctx.fill();
+ ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),0,0,Math.PI*2);ctx.fill();
+}
+function rounded(x,y,w,h,r,color){
+ ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+ ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+ ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+ ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+ ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
 }
 function path(points,color,width){
- ctx.strokeStyle=color;
- ctx.lineWidth=width||3;
- ctx.lineCap="round";
- ctx.lineJoin="round";
- ctx.beginPath();
- points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
- ctx.stroke();
+ ctx.strokeStyle=color;ctx.lineWidth=width||3;ctx.lineCap="round";ctx.lineJoin="round";
+ ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();
 }
 function label(t,x,y,size,color){
- ctx.font="900 "+size+"px system-ui,sans-serif";
- ctx.textAlign="center";
- ctx.textBaseline="middle";
- ctx.lineWidth=2;
- ctx.strokeStyle="#563a6c66";
- ctx.strokeText(t,x,y);
- ctx.fillStyle=color||"#fff";
- ctx.fillText(t,x,y);
-}
-function lighten(hex){
- let n=parseInt(hex.slice(1),16);
- if(!Number.isFinite(n))return "#e6d4ff";
- let r=Math.min(255,((n>>16)&255)+38);
- let g=Math.min(255,((n>>8)&255)+38);
- let b=Math.min(255,(n&255)+38);
- return "rgb("+r+","+g+","+b+")";
-}
-function heart(x,y,s,color){
- ctx.save();
- ctx.translate(x,y);
- ctx.scale(s,s);
- ctx.fillStyle=color||"#ff6fa7";
- ctx.beginPath();
- ctx.moveTo(0,10);
- ctx.bezierCurveTo(-25,-5,-14,-20,0,-9);
- ctx.bezierCurveTo(14,-20,25,-5,0,10);
- ctx.fill();
- ctx.restore();
+ ctx.font="900 "+size+"px system-ui,sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+ ctx.lineWidth=2;ctx.strokeStyle="#563a6c55";ctx.strokeText(t,x,y);
+ ctx.fillStyle=color||"#fff";ctx.fillText(t,x,y);
 }
 function star(x,y,r,color){
- ctx.fillStyle=color;
- ctx.beginPath();
- for(let i=0;i<10;i++){
-  const a=-Math.PI/2+i*Math.PI/5;
-  const rr=i%2?r*.43:r;
-  if(i===0)ctx.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);
-  else ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);
- }
- ctx.closePath();
- ctx.fill();
+ ctx.fillStyle=color;ctx.beginPath();
+ for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.43:r;
+ if(i===0)ctx.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);else ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}
+ ctx.closePath();ctx.fill();
+}
+function heart(x,y,s,color){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=color||"#ff6fa7";
+ ctx.beginPath();ctx.moveTo(0,10);ctx.bezierCurveTo(-25,-5,-14,-20,0,-9);ctx.bezierCurveTo(14,-20,25,-5,0,10);ctx.fill();ctx.restore();
 }
 function cloud(x,y,s){
- ctx.fillStyle="#ffffffd9";
- ctx.beginPath();
- ctx.ellipse(x,y,35*s,14*s,0,0,Math.PI*2);
- ctx.ellipse(x-18*s,y-7*s,19*s,17*s,0,0,Math.PI*2);
- ctx.ellipse(x+3*s,y-13*s,22*s,21*s,0,0,Math.PI*2);
- ctx.ellipse(x+25*s,y-4*s,18*s,14*s,0,0,Math.PI*2);
- ctx.fill();
+ ctx.fillStyle="#ffffffdf";ctx.beginPath();
+ ctx.ellipse(x,y,35*s,14*s,0,0,Math.PI*2);ctx.ellipse(x-18*s,y-7*s,19*s,17*s,0,0,Math.PI*2);
+ ctx.ellipse(x+3*s,y-13*s,22*s,21*s,0,0,Math.PI*2);ctx.ellipse(x+25*s,y-4*s,18*s,14*s,0,0,Math.PI*2);ctx.fill();
+}
+function lighten(hex){
+ const n=parseInt(hex.slice(1),16);if(!Number.isFinite(n))return "#e6d4ff";
+ return "rgb("+Math.min(255,((n>>16)&255)+38)+","+Math.min(255,((n>>8)&255)+38)+","+Math.min(255,(n&255)+38)+")";
 }
 
 function drawCastle(x,y,s){
- ctx.save();
- ctx.translate(x,y);
- ctx.scale(s,s);
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
  oval(110,180,125,12,"#467e7240");
-
- // castle walls
  rounded(15,60,190,110,5,"#fff0dd");
- // brick courses
- for(let yy=82;yy<164;yy+=21){
-  path([[18,yy],[202,yy]],"#e9bca8",1.5);
- }
- // towers
+ for(let yy=82;yy<164;yy+=21)path([[18,yy],[202,yy]],"#e9bca8",1.5);
  for(const tx of [0,157]){
-  rounded(tx,15,48,155,4,"#ffe0cf");
-  rounded(tx-5,5,58,16,3,"#aa83db");
-  ctx.fillStyle="#8863bd";
-  ctx.beginPath();
-  ctx.moveTo(tx-5,5);
-  ctx.lineTo(tx+24,-24);
-  ctx.lineTo(tx+53,5);
-  ctx.closePath();
-  ctx.fill();
-  rounded(tx+13,32,21,29,10,"#77d7ff");
-  path([[tx+23,33],[tx+23,59]],"#fff",2);
+  rounded(tx,15,48,155,4,"#ffe0cf");rounded(tx-5,5,58,16,3,"#aa83db");
+  ctx.fillStyle="#8863bd";ctx.beginPath();ctx.moveTo(tx-5,5);ctx.lineTo(tx+24,-24);ctx.lineTo(tx+53,5);ctx.closePath();ctx.fill();
+  rounded(tx+13,32,21,29,10,"#77d7ff");path([[tx+23,33],[tx+23,59]],"#fff",2);
  }
- // main roof
- ctx.fillStyle="#ad83df";
- ctx.beginPath();
- ctx.moveTo(64,60);ctx.lineTo(110,12);ctx.lineTo(156,60);ctx.closePath();ctx.fill();
- // door
+ ctx.fillStyle="#ad83df";ctx.beginPath();ctx.moveTo(64,60);ctx.lineTo(110,12);ctx.lineTo(156,60);ctx.closePath();ctx.fill();
  rounded(85,112,48,58,23,"#8455a0");
- oval(109,112,24,9,"#8455a0");
- // windows
  for(const wx of [42,154]){
-  rounded(wx,91,23,33,11,"#70d4ff");
-  path([[wx+11,93],[wx+11,122]],"#fff",2);
-  path([[wx+2,107],[wx+21,107]],"#fff",2);
+  rounded(wx,91,23,33,11,"#70d4ff");path([[wx+11,93],[wx+11,122]],"#fff",2);path([[wx+2,107],[wx+21,107]],"#fff",2);
  }
- label("CROWN JEWEL",110,197,13,"#fff");
- ctx.restore();
+ label("CROWN JEWEL",110,197,13,"#fff");ctx.restore();
 }
 
-function drawDragon(x,y,s,actionKind){
- ctx.save();
- ctx.translate(x,y);
- ctx.scale(s,s);
- const c=state.dragon,w=state.wings;
- const flap=Math.sin(dragon.wing)*.45;
-
- // tail
- path([[28,5],[53,14],[73,4]],c,12);
- oval(74,4,7,6,c);
- // legs and little toes
+function drawDragon(x,y,s,pose){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ const c=state.dragon,w=state.wings,flap=Math.sin(dragon.wing)*.45;
+ path([[28,5],[53,14],[73,4]],c,12);oval(74,4,7,6,c);
  for(const lx of [-20,20]){
   rounded(lx-7,13,14,24,6,c);
   for(let i=0;i<3;i++)oval(lx-8+i*6,36,3,3,"#ffe5a0");
  }
- // far wing
- ctx.save();
- ctx.translate(-7,-7);
- ctx.rotate(-.35+flap);
- ctx.fillStyle=w;
- ctx.beginPath();
- ctx.moveTo(0,0);ctx.lineTo(-8,-49);ctx.lineTo(-42,-64);
- ctx.lineTo(-38,-34);ctx.lineTo(-59,-42);ctx.lineTo(-35,7);
- ctx.closePath();ctx.fill();
- ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();
- ctx.restore();
-
- // body
- oval(0,0,39,27,c);
- oval(10,8,23,16,lighten(c));
- // neck
- path([[19,-7],[30,-21]],c,19);
- // head
- oval(35,-25,23,21,c);
- oval(49,-18,17,11,lighten(c));
- // horns
- ctx.fillStyle="#ffe5a0";
- ctx.beginPath();ctx.moveTo(23,-39);ctx.lineTo(20,-54);ctx.lineTo(35,-42);ctx.fill();
+ ctx.save();ctx.translate(-7,-7);ctx.rotate(-.35+flap);ctx.fillStyle=w;
+ ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-8,-49);ctx.lineTo(-42,-64);ctx.lineTo(-38,-34);ctx.lineTo(-59,-42);ctx.lineTo(-35,7);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();ctx.restore();
+ oval(0,0,39,27,c);oval(10,8,23,16,lighten(c));path([[19,-7],[30,-21]],c,19);
+ oval(35,-25,23,21,c);oval(49,-18,17,11,lighten(c));
+ ctx.fillStyle="#ffe5a0";ctx.beginPath();ctx.moveTo(23,-39);ctx.lineTo(20,-54);ctx.lineTo(35,-42);ctx.fill();
  ctx.beginPath();ctx.moveTo(39,-41);ctx.lineTo(47,-54);ctx.lineTo(49,-37);ctx.fill();
- // eyes
- oval(39,-29,7,8,"#fff");
- oval(41,-28,3.5,5,"#35234d");
- oval(42,-30,1.4,1.5,"#fff");
- // nostrils
- oval(51,-21,1.8,2,"#4a315e");
- oval(59,-21,1.8,2,"#4a315e");
- // cheeks and smile
- oval(48,-11,6,3,"#ff9dbb");
- path([[45,-9],[50,-6],[55,-9]],"#543250",1.8);
- // near wing
- ctx.save();
- ctx.translate(-5,-5);
- ctx.rotate(.15-flap);
- ctx.fillStyle=w;
- ctx.beginPath();
- ctx.moveTo(0,0);ctx.lineTo(-5,-35);ctx.lineTo(18,-26);
- ctx.lineTo(34,-40);ctx.lineTo(34,0);ctx.closePath();
- ctx.fill();ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();
- ctx.restore();
- // belly scales
+ oval(39,-29,7,8,"#fff");oval(41,-28,3.5,5,"#35234d");oval(42,-30,1.4,1.5,"#fff");
+ oval(51,-21,1.8,2,"#4a315e");oval(59,-21,1.8,2,"#4a315e");
+ oval(48,-11,6,3,"#ff9dbb");path([[45,-9],[50,-6],[55,-9]],"#543250",1.8);
+ ctx.save();ctx.translate(-5,-5);ctx.rotate(.15-flap);ctx.fillStyle=w;
+ ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-5,-35);ctx.lineTo(18,-26);ctx.lineTo(34,-40);ctx.lineTo(34,0);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();ctx.restore();
  for(let i=0;i<3;i++)oval(-2+i*9,9+i*2,3,2,"#fff8");
- // accessories
  if(state.accessory===1){oval(35,-48,12,6,"#ffd66b");star(35,-51,7,"#fff4b0");}
  if(state.accessory===2){path([[23,-42],[36,-51],[49,-42]],"#ffe49a",4);star(36,-50,5,"#fff");}
  if(state.accessory===3){oval(31,-49,6,6,"#ff9bc2");oval(42,-49,6,6,"#ff9bc2");oval(36,-49,4,4,"#ffdeef");}
- if(actionKind==="hug"){heart(0,-58,.8);}
+ if(pose==="hug")heart(0,-58,.8);
  ctx.restore();
 }
 
 function drawPrincess(x,y,s,walking){
- ctx.save();
- ctx.translate(x,y);
- ctx.scale(s,s);
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
  const swing=walking?Math.sin(princess.walk*10)*.6:0;
- // shadow
  oval(0,37,20,5,"#34234b25");
- // hair behind face
- oval(0,-25,16,19,"#653a53");
- oval(-13,-12,5,17,"#653a53");
- // dress
- ctx.fillStyle=state.princess;
- ctx.beginPath();
- ctx.moveTo(-9,-11);ctx.lineTo(-17,23);ctx.lineTo(17,23);ctx.lineTo(9,-11);ctx.closePath();ctx.fill();
- ctx.fillStyle="#fff0f7";
- ctx.beginPath();ctx.moveTo(-7,-8);ctx.lineTo(0,5);ctx.lineTo(7,-8);ctx.closePath();ctx.fill();
- // arms
- path([[-8,-5],[-16+swing*5,7]],"#f5c5a5",6);
- path([[8,-5],[16-swing*5,7]],"#f5c5a5",6);
- // legs and shoes
- path([[-6,21],[-8+swing*4,34]],"#f5c5a5",6);
- path([[6,21],[8-swing*4,34]],"#f5c5a5",6);
+ oval(0,-25,16,19,"#653a53");oval(-13,-12,5,17,"#653a53");
+ ctx.fillStyle=state.princess;ctx.beginPath();ctx.moveTo(-9,-11);ctx.lineTo(-17,23);ctx.lineTo(17,23);ctx.lineTo(9,-11);ctx.closePath();ctx.fill();
+ ctx.fillStyle="#fff0f7";ctx.beginPath();ctx.moveTo(-7,-8);ctx.lineTo(0,5);ctx.lineTo(7,-8);ctx.closePath();ctx.fill();
+ /* Princess's name is physically written on the front of her dress. */
+ ctx.save();ctx.rotate(-.02);ctx.font="900 7px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
+ ctx.lineWidth=1.5;ctx.strokeStyle="#ffffff";ctx.strokeText("Masa",0,10);ctx.fillStyle="#713f89";ctx.fillText("Masa",0,10);ctx.restore();
+ path([[-8,-5],[-16+swing*5,7]],"#f5c5a5",6);path([[8,-5],[16-swing*5,7]],"#f5c5a5",6);
+ path([[-6,21],[-8+swing*4,34]],"#f5c5a5",6);path([[6,21],[8-swing*4,34]],"#f5c5a5",6);
  oval(-10,36,6,3,"#8b60bd");oval(10,36,6,3,"#8b60bd");
- // face
- oval(0,-17,12,14,"#ffdabe");
- // hair fringe
- ctx.fillStyle="#653a53";
- ctx.beginPath();ctx.arc(0,-23,12,Math.PI,Math.PI*2);
- ctx.lineTo(10,-17);ctx.quadraticCurveTo(4,-24,-2,-18);
- ctx.lineTo(-10,-16);ctx.closePath();ctx.fill();
- // eyes
- oval(-4,-17,1.7,2.8,"#3b284c");
- oval(4,-17,1.7,2.8,"#3b284c");
- // smile
- path([[-3,-10],[0,-8],[3,-10]],"#b35c75",1.5);
- // crown
- ctx.fillStyle="#ffd66b";
- ctx.beginPath();ctx.moveTo(-10,-29);ctx.lineTo(-8,-39);ctx.lineTo(-2,-33);
- ctx.lineTo(3,-41);ctx.lineTo(7,-32);ctx.lineTo(11,-36);
- ctx.lineTo(9,-28);ctx.closePath();ctx.fill();
- if(state.outfit===1){oval(12,-23,5,5,"#ff8db8");}
- if(state.outfit===2){path([[-12,-28],[0,-34],[12,-28]],"#85dfff",3);}
- if(state.outfit===3){oval(0,-32,5,4,"#9b78ed");}
+ oval(0,-17,12,14,"#ffdabe");ctx.fillStyle="#653a53";ctx.beginPath();ctx.arc(0,-23,12,Math.PI,Math.PI*2);ctx.lineTo(10,-17);ctx.quadraticCurveTo(4,-24,-2,-18);ctx.lineTo(-10,-16);ctx.closePath();ctx.fill();
+ oval(-4,-17,1.7,2.8,"#3b284c");oval(4,-17,1.7,2.8,"#3b284c");path([[-3,-10],[0,-8],[3,-10]],"#b35c75",1.5);
+ ctx.fillStyle="#ffd66b";ctx.beginPath();ctx.moveTo(-10,-29);ctx.lineTo(-8,-39);ctx.lineTo(-2,-33);ctx.lineTo(3,-41);ctx.lineTo(7,-32);ctx.lineTo(11,-36);ctx.lineTo(9,-28);ctx.closePath();ctx.fill();
+ if(state.outfit===1)oval(12,-23,5,5,"#ff8db8");
+ if(state.outfit===2)path([[-12,-28],[0,-34],[12,-28]],"#85dfff",3);
+ if(state.outfit===3)oval(0,-32,5,4,"#9b78ed");
  ctx.restore();
 }
 
-function drawBackground(){
- const world=worlds[state.world];
- const g=ctx.createLinearGradient(0,0,0,H);
- g.addColorStop(0,world.sky);g.addColorStop(1,world.far);
- ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+/* Elu is an animated, visible character, not just a menu. */
+function drawElu(x,y,s){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ const bob=Math.sin(frame*.06)*2;
+ oval(0,34,17,4,"#34234b25");
+ rounded(-10,-3,20,35,7,"#4c9ac8");
+ ctx.fillStyle="#fff0d8";ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(0,10);ctx.lineTo(10,0);ctx.closePath();ctx.fill();
+ path([[-9,2],[-17,13]],"#f0c49e",5);path([[9,2],[17,13]],"#f0c49e",5);
+ path([[-5,29],[-7,35]],"#553c72",5);path([[5,29],[7,35]],"#553c72",5);
+ oval(0,-15+bob,12,13,"#f5cda9");oval(0,-26+bob,12,7,"#49314e");
+ oval(-4,-15+bob,1.5,2.3,"#3b284c");oval(4,-15+bob,1.5,2.3,"#3b284c");
+ path([[-2,-9+bob],[0,-8+bob],[3,-9+bob]],"#a65b6c",1.5);
+ ctx.fillStyle="#ffd76d";ctx.beginPath();ctx.moveTo(-9,-21+bob);ctx.lineTo(0,-29+bob);ctx.lineTo(9,-21+bob);ctx.closePath();ctx.fill();
+ label("ELU",0,47,10,"#fff");ctx.restore();
+}
 
- if(state.world===4){
-  for(let i=0;i<45;i++){
-   star((i*137+33)%W,(i*79+20)%(H*.8),2+(i%3),"#fff1b7");
-  }
- }else{
-  for(let i=0;i<5;i++){
-   cloud(((i*211+frame*.12)%(W+130))-55,H*(.14+(i%3)*.13),.65+(i%3)*.15);
-  }
- }
- ctx.fillStyle=world.ground;
- ctx.beginPath();ctx.moveTo(0,H*.78);
- for(let x=0;x<=W+20;x+=20){
-  ctx.lineTo(x,H*(.76+Math.sin(x*.009+frame*.001)*.025));
- }
+function drawBackground(){
+ const world=worlds[state.world],g=ctx.createLinearGradient(0,0,0,H);
+ g.addColorStop(0,world.sky);g.addColorStop(1,world.far);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ if(state.world===4){for(let i=0;i<35;i++)star((i*137+33)%W,(i*79+20)%(H*.8),2+(i%3),"#fff1b7");}
+ else for(let i=0;i<5;i++)cloud(((i*211+frame*.12)%(W+130))-55,H*(.14+(i%3)*.13),.65+(i%3)*.15);
+ ctx.fillStyle=world.ground;ctx.beginPath();ctx.moveTo(0,H*.78);
+ for(let x=0;x<=W+20;x+=20)ctx.lineTo(x,H*(.76+Math.sin(x*.009+frame*.001)*.025));
  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
 }
 
+function drawStats(){
+ const x=W*.025,y=H*.245,bw=Math.min(W*.29,145);
+ [
+  ["🍎 HUNGER",100-state.care.hunger,"#ffad7b"],
+  ["🫧 CLEAN",state.care.clean,"#6fd8f8"],
+  ["💖 HAPPY",state.care.happy,"#ff80b5"],
+  ["💚 HEALTH",state.care.health,"#71d794"]
+ ].forEach((b,i)=>{
+  const yy=y+i*34;rounded(x,yy,bw,29,9,"#ffffffdf");
+  ctx.font="800 9px system-ui";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle="#65457f";ctx.fillText(b[0],x+6,yy+9);
+  rounded(x+6,yy+17,bw-12,6,3,"#eadcf4");rounded(x+6,yy+17,(bw-12)*clamp(b[1]/100,0,1),6,3,b[2]);
+ });
+}
+
+function drawGarden(){
+ const groundY=H*.72;
+ rounded(W*.12,groundY-28,W*.76,100,16,"#9d663c");
+ rounded(W*.12+6,groundY-22,W*.76-12,88,13,"#704329");
+ const gap=W*.76/6;
+ state.garden.plots.forEach((p,i)=>{
+  const x=W*.12+gap*(i+.5),y=groundY+14;
+  rounded(x-gap*.38,y-25,gap*.76,48,8,"#b77b4b");
+  oval(x,y+10,13,4,"#563a2c");
+  if(!p){label("➕",x,y-5,20,"#fff");return;}
+  const plant=plants[p.type]||plants[0];
+  const progress=clamp(p.age/plant.grow,0,1);
+  const height=10+progress*25;
+  path([[x,y+8],[x,y+8-height]],"#32854e",3);
+  oval(x-6,y-height*.6,8,4,"#58bb6b");
+  oval(x+7,y-height*.4,8,4,"#58bb6b");
+  if(progress>=1)label(plant.emoji,x,y-height-3,24);
+  else{
+   oval(x,y-height,6+progress*4,6+progress*4,"#80cf86");
+   label(Math.floor(progress*100)+"%",x,y+27,9,"#fff");
+  }
+ });
+ label("🌷 ROYAL GARDEN",W*.5,groundY-48,clamp(W*.04,15,24),"#fff");
+}
+
 function drawCare(){
- const scale=clamp(Math.min(W,H)/520,.70,1.5);
- // castle is deliberately on screen on phones and tablets
- drawCastle(W*.16,H*.39,clamp(Math.min(W,H)/650,.68,1.05));
- // garden flowers
- for(let i=0;i<12;i++){
+ const scale=clamp(Math.min(W,H)/520,.7,1.35);
+ drawCastle(W*.16,H*.39,clamp(Math.min(W,H)/650,.68,1.0));
+ for(let i=0;i<10;i++){
   const x=(i*83+25)%W,y=H*.83+(i%3)*8;
   path([[x,y+8],[x,y-2]],"#278b59",2);
-  for(let j=0;j<5;j++){
-   const a=j*Math.PI*2/5;
-   oval(x+Math.cos(a)*4,y-4+Math.sin(a)*4,3,3,
-    ["#ff8fb9","#ffe77d","#fff","#bba0ff"][i%4]);
-  }
+  for(let j=0;j<5;j++){const a=j*Math.PI*2/5;oval(x+Math.cos(a)*4,y-4+Math.sin(a)*4,3,3,["#ff8fb9","#ffe77d","#fff","#bba0ff"][i%4]);}
  }
- // care platform
  rounded(W*.39,H*.76,W*.55,H*.15,17,"#fff0d9");
  label("✨ DRAGON CARE STATION ✨",W*.665,H*.785,clamp(W*.023,10,17),"#8757ac");
  rounded(W*.52,H*.85,W*.22,H*.05,12,"#7edbfa");
- oval(W*.63,H*.85,W*.11,H*.022,"#c5f5ff");
-
- const ds=scale*.88;
- const dx=W*.68,dy=H*.65;
- dragon.x=dx/W;dragon.y=dy/H;
-
- // Princess walks to the dragon during care
- const px=action?(action.phase==="act"?dx-ds*70:W*princess.x):W*.30;
+ const dx=W*.68,dy=H*.65,ds=scale*.88;
+ const px=action?(action.phase==="act"?dx-ds*70:W*.30):W*.30;
  const py=action?dy+ds*12:H*.67;
- princess.x=px/W;princess.y=py/H;
  drawDragon(dx,dy,ds,action&&action.kind==="hug"?"hug":null);
  drawPrincess(px,py,scale*.78,!!action);
-
+ drawStats();
  if(action){
   const fx=dx,fy=dy-ds*65;
-  if(action.kind==="wash"){
-   for(let i=0;i<9;i++){
-    oval(fx+Math.sin(frame*.12+i)*27,fy+Math.cos(frame*.09+i)*19,3+(i%3),4,"#a5eaff");
-   }
-   label("🫧",fx+30,fy-18,21);
-  }else if(action.kind==="feed"){
-   label("🥕",fx-37,fy+10,23);heart(fx+27,fy-20,.6);
-  }else if(action.kind==="pet"){
-   heart(fx+25,fy-40,.7);star(fx-25,fy-30,7,"#ffe879");
-  }else if(action.kind==="hug"){
-   heart(fx,fy-57,1);heart(fx-30,fy-35,.5);heart(fx+30,fy-35,.5);
-  }else if(action.kind==="heal"){
-   heart(fx,fy-52,.8,"#71d991");star(fx-30,fy-35,8,"#fff1a0");
-  }
+  if(action.kind==="wash"){for(let i=0;i<9;i++)oval(fx+Math.sin(frame*.12+i)*27,fy+Math.cos(frame*.09+i)*19,3+i%3,4,"#a5eaff");label("🫧",fx+30,fy-18,21);}
+  if(action.kind==="feed"){label("🥕",fx-37,fy+10,23);heart(fx+27,fy-20,.6);}
+  if(action.kind==="pet"){heart(fx+25,fy-40,.7);star(fx-25,fy-30,7,"#ffe879");}
+  if(action.kind==="hug"){heart(fx,fy-57,1);heart(fx-30,fy-35,.5);heart(fx+30,fy-35,.5);}
+  if(action.kind==="heal"){heart(fx,fy-52,.8,"#71d991");star(fx-30,fy-35,8,"#fff1a0");}
  }
- drawCareStats();
 }
-function drawCareStats(){
- const x=W*.025,y=H*.25;
- const bw=Math.min(W*.30,150);
- const bars=[
-  ["🍎 HUNGER",100-state.care.hunger,"#ffad7b"],
-  ["🫧 CLEAN",state.care.clean,"#6fd8f8"],
-  ["💖 HAPPINESS",state.care.happy,"#ff80b5"],
-  ["💚 HEALTH",state.care.health,"#71d794"]
- ];
- bars.forEach((b,i)=>{
-  const yy=y+i*37;
-  rounded(x,yy,bw,31,10,"#ffffffdf");
-  ctx.font="800 10px system-ui";
-  ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle="#65457f";
-  ctx.fillText(b[0],x+7,yy+9);
-  rounded(x+7,yy+18,bw-14,6,3,"#eadcf4");
-  rounded(x+7,yy+18,(bw-14)*clamp(b[1]/100,0,1),6,3,b[2]);
- });
+
+function drawCastleRoom(){
+ const scale=clamp(Math.min(W,H)/520,.7,1.2);
+ // castle interior
+ ctx.fillStyle="#fff0df";ctx.fillRect(0,H*.20,W,H*.58);
+ for(let x=0;x<W;x+=55)path([[x,H*.20],[x,H*.78]],"#e5bfa9",1);
+ path([[0,H*.78],[W,H*.78]],"#bd8b9a",4);
+ for(let i=0;i<Math.ceil(W/75);i++){
+  const x=i*75+30;
+  rounded(x-17,H*.27,34,65,16,"#b7eaff");
+  path([[x,H*.29],[x,H*.32+45]],"#fff",2);
+  path([[x-13,H*.50],[x+13,H*.50]],"#fff",2);
+ }
+ // royal rug
+ rounded(W*.22,H*.65,W*.56,H*.12,12,"#d58ab8");
+ rounded(W*.25,H*.67,W*.50,H*.08,8,"#f5c5df");
+ if(mode==="tea"){
+  // table and tea service
+  oval(W*.52,H*.66,W*.19,13,"#9b603e");
+  rounded(W*.35,H*.64,W*.34,12,6,"#c78d5f");
+  path([[W*.40,H*.67],[W*.39,H*.77]],"#8c573b",5);
+  path([[W*.64,H*.67],[W*.65,H*.77]],"#8c573b",5);
+  rounded(W*.48,H*.57,34,22,6,"#9f72d0");
+  oval(W*.50,H*.57,17,5,"#d9c1f5");
+  path([[W*.51,H*.58],[W*.54,H*.62]],"#fff",2);
+  oval(W*.42,H*.61,9,6,"#fff");path([[W*.43,H*.61],[W*.43,H*.66]],"#fff",2);
+  oval(W*.61,H*.61,9,6,"#fff");path([[W*.62,H*.61],[W*.62,H*.66]],"#fff",2);
+  label("🍪",W*.57,H*.60,17);
+  label("TEA PARTY!",W*.50,H*.31,clamp(W*.05,17,28),"#9b5b9f");
+ }else if(mode==="dance"){
+  rounded(W*.33,H*.57,W*.34,13,6,"#a86fbd");
+  for(let i=0;i<7;i++)star(W*(.12+i*.12),H*(.31+Math.sin(frame*.06+i)*.06),7,["#fff0a2","#ff9cdb","#fff","#a9ecff"][i%4]);
+  label("💃 DANCE PARTY! 🕺",W*.5,H*.32,clamp(W*.045,15,25),"#9b5b9f");
+ }else{
+  label("WELCOME TO CROWN JEWEL",W*.5,H*.31,clamp(W*.04,15,25),"#9b5b9f");
+ }
+ const py=H*.60,dx=W*.65,dy=H*.60;
+ drawPrincess(W*.36,py,scale*.78,mode==="dance");
+ drawDragon(dx,dy,scale*.77);
+ // Elu always appears in the royal castle room
+ drawElu(W*.85,H*.60,scale*.83);
+ label(mode==="tea"?"☕":"✨",W*.85,H*.47,20);
+}
+
+function drawGardenScene(){
+ drawGarden();
+ drawPrincess(W*.22,H*.68,clamp(Math.min(W,H)/650,.65,1),false);
+ drawDragon(W*.82,H*.64,clamp(Math.min(W,H)/650,.65,1));
+ drawElu(W*.49,H*.59,clamp(Math.min(W,H)/700,.6,.9));
+ label("ELU CAN HELP YOU GROW ANYTHING!",W*.5,H*.30,clamp(W*.03,11,19),"#fff");
 }
 
 function drawFlight(){
  const world=worlds[state.world];
- ctx.fillStyle=world.ground;
- ctx.beginPath();ctx.moveTo(0,H);
- for(let x=0;x<=W+25;x+=25){
-  ctx.lineTo(x,H*.94+Math.sin((x+distance*.35)*.018)*H*.035);
- }
+ // Side-scrolling scenery only; there is deliberately NO flight trail.
+ ctx.fillStyle=world.ground;ctx.beginPath();ctx.moveTo(0,H);
+ for(let x=0;x<=W+25;x+=25)ctx.lineTo(x,H*.94+Math.sin((x+flight.worldX*.2)*.018)*H*.035);
  ctx.lineTo(W,H);ctx.closePath();ctx.fill();
-
  for(let i=0;i<6;i++){
-  const x=((i*185-distance*.6)%(W+200)+W+200)%(W+200)-70;
-  const y=H*(.19+(i%4)*.14);
-  if(state.world===0){
-   drawCastle(x,y,.30);
-  }else if(state.world===1){
-   cloud(x,y,.8);label("🍭",x,y+14,29);
-  }else if(state.world===2)label("💎",x,y,43);
+  const x=((i*185-flight.worldX*.35)%(W+200)+W+200)%(W+200)-70,y=H*(.19+(i%4)*.14);
+  if(state.world===0)label("🏰",x,y,38);
+  else if(state.world===1){cloud(x,y,.8);label("🍭",x,y+14,29);}
+  else if(state.world===2)label("💎",x,y,43);
   else if(state.world===3)label("🌲",x,y,46);
   else if(state.world===4)star(x,y,16,"#fff1a4");
   else label("🌈",x,y,45);
  }
- for(const c of coins)label(c.kind==="star"?"⭐":"🪙",c.x,c.y,26);
+ for(const c of coins)label(c.kind==="star"?"⭐":"🪙",c.x,c.y,25);
  for(const o of obstacles)label(o.emoji,o.x,o.y,o.size);
-
  const scale=clamp(Math.min(W,H)/520,.7,1.35);
- drawDragon(flightX(),flightY(),scale);
- drawPrincess(flightX()-24*scale,flightY()+23*scale,scale*.78,false);
+ drawDragon(W*flight.x,H*flight.y,scale);
+ drawPrincess(W*flight.x-24*scale,H*flight.y+23*scale,scale*.78,false);
+ rounded(W*.27,Math.max(104,H*.14),W*.46,32,12,"#ffffffdf");
+ label("⭐ "+missionName()+": "+mission.progress+"/"+mission.target,W*.5,Math.max(120,H*.14+16),clamp(W*.023,10,14),"#6946a3");
+}
+function missionName(){return mission.type==="coins"?"Collect treasure":mission.type==="dodge"?"Dodge obstacles":"Fly distance";}
 
- rounded(W*.30,Math.max(100,H*.14),W*.40,34,12,"#ffffffdf");
- label("⭐ "+missionName()+": "+mission.progress+"/"+mission.target,W*.5,Math.max(117,H*.14+17),clamp(W*.023,10,14),"#6946a3");
-}
-function flightX(){return W*.24;}
-function flightY(){return H*flightYRatio;}
-let flightYRatio=.48;
-
-function spawnFlightObject(){
- const y=rand(H*.20,H*.76);
- if(Math.random()<.58){
-  obstacles.push({x:W+60,y,emoji:worlds[state.world].hazard,size:rand(36,56),passed:false});
- }else{
-  coins.push({x:W+45,y:clamp(y+rand(-50,50),H*.15,H*.82),kind:Math.random()<.12?"star":"coin"});
- }
-}
-function missionName(){
- return mission.type==="coins"?"Collect treasure":
- mission.type==="dodge"?"Dodge obstacles":"Fly distance";
-}
 function addParticles(x,y,color,n){
- for(let i=0;i<n;i++){
-  particles.push({x,y,vx:rand(-90,90),vy:rand(-130,20),life:rand(.4,.9),color,size:rand(2,5)});
- }
+ for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-90,90),vy:rand(-130,20),life:rand(.4,.9),color,size:rand(2,5)});
 }
 function drawParticles(dt){
  for(let i=particles.length-1;i>=0;i--){
-  const p=particles[i];
-  p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=100*dt;p.life-=dt;
+  const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=100*dt;p.life-=dt;
   if(p.life<=0){particles.splice(i,1);continue;}
-  ctx.globalAlpha=clamp(p.life,0,1);
-  oval(p.x,p.y,p.size,p.size,p.color);
-  ctx.globalAlpha=1;
+  ctx.globalAlpha=clamp(p.life,0,1);oval(p.x,p.y,p.size,p.size,p.color);ctx.globalAlpha=1;
  }
 }
 
 function updateHUD(){
  $("stats").textContent="🪙 "+state.coins+" · ❤️ "+state.lives+"/7 · 💚 "+Math.round(state.care.health)+"%";
  $("worldLabel").textContent=worlds[state.world].emoji+" "+worlds[state.world].name;
- $("modeLabel").textContent=mode==="care"?"Dragon Care":"Flying Adventure";
+ $("modeLabel").textContent=({castle:"Royal Castle",care:"Dragon Care",tea:"Royal Tea Party",dance:"Royal Dance Party",garden:"Royal Garden",flight:"Flying Adventure"})[mode]||"Royal Adventure";
  $("careButtons").style.display=mode==="care"?"flex":"none";
+ $("activityButtons").style.display=["castle","tea","dance","garden"].includes(mode)?"flex":"none";
  $("flightButtons").style.display=mode==="flight"?"flex":"none";
- $("careTab").classList.toggle("purple",mode==="care");
+ $("castleTab").classList.toggle("purple",["castle","tea","dance","garden","care"].includes(mode));
  $("flyTab").classList.toggle("purple",mode==="flight");
- $("tip").textContent=mode==="care"?"Masa walks to her dragon for every care activity!":"Steer with arrows or tap the sky. Avoid obstacles!";
+ $("tip").textContent=mode==="flight"?"⬅️ Back · ➡️ Forward · ⬆️ Up · ⬇️ Down · ⚡ Boost":"Visit Elu for help with everything!";
 }
+
 function setMode(next){
- if(next==="flight"&&state.lives<=0){
-  say("Elu: Your dragon needs healing at the Care Station before flying again! 💚");
-  toast("Heal your dragon to restore all seven lives.");
-  mode="care";updateHUD();return;
+ if(next==="flight"&&(state.lives<=0||state.care.health<=0)){
+  mode="care";updateHUD();say("Elu: Your dragon needs healing before another flight. I'll help you! 💚");toast("Heal your dragon to restore all seven lives.");return;
  }
  mode=next;action=null;
  if(mode==="flight"){
-  obstacles=[];coins=[];distance=0;spawn=.5;boostTime=0;vy=0;
-  flightYRatio=.48;invulnerable=1.5;
-  mission={
-   type:["coins","dodge","distance"][state.completed.length%3],
-   target:state.completed.length%3===2?8:10,
-   progress:0
-  };
-  say("Elu: Ready, Princess Masa? Collect treasures and dodge the obstacles!");
- }else{
-  say("Elu: Welcome home! Let's make sure your dragon is happy and healthy.");
+  obstacles=[];coins=[];flight.worldX=0;flight.speed=0;flight.boost=0;flight.spawn=.5;flight.invulnerable=1.5;
+  flight.x=.23;flight.y=.48;
+  mission={type:["coins","dodge","distance"][state.completed.length%3],target:10,progress:0};
+  say("Elu: Adventure time, Princess Masa! Fly in every direction, collect coins, and dodge hazards!");
+ }else if(mode==="castle"){
+  say("Elu: Welcome home! I'm here to help with the castle, garden, parties, dragon care, and every adventure.");
+ }else if(mode==="care"){
+  say("Elu: Let's take good care of your dragon together.");
+ }else if(mode==="tea"){
+  partyTime=0;say("Elu: Tea is served! Enjoy a royal tea party with your dragon.");
+ }else if(mode==="dance"){
+  partyTime=0;say("Elu: Let's dance! The whole castle is celebrating!");
+ }else if(mode==="garden"){
+  say("Elu: Welcome to your garden. Plant seeds, water them, and choose neighbors that make you happy!");
  }
  updateHUD();
 }
 
 function beginCare(kind){
- if(mode!=="care")setMode("care");
- if(action){toast("Masa is already caring for the dragon!");return;}
+ if(!["care","castle"].includes(mode))setMode("care");
+ if(action){toast("Masa is already helping her dragon!");return;}
  if(kind!=="heal"&&state.care.health<=0){toast("Your dragon needs healing first!");return;}
- if(kind==="heal"&&state.care.health>=100&&state.lives===7){toast("Your dragon is already fully healthy!");return;}
- action={kind,phase:"walk",time:0};
- princess.walk=0;
- const messages={
-  feed:"Masa is bringing a delicious snack! 🥕",
-  wash:"Masa is preparing a bubbly bath! 🫧",
-  pet:"Masa is walking over to gently pet her dragon! 💗",
-  hug:"Masa is going to give her dragon a big hug! 🤗",
-  heal:"Masa is nursing her dragon back to health! 💚"
- };
- say(messages[kind]);
+ if(kind==="heal"&&state.care.health>=100&&state.lives===7){toast("Your dragon is already healthy!");return;}
+ action={kind,phase:"walk",time:0};princess.walk=0;
+ say(({feed:"Masa is walking over with a tasty snack! 🥕",wash:"Masa is preparing a bubbly bath! 🫧",pet:"Masa is walking over to gently pet her dragon! 💗",hug:"Masa is going to give her dragon a big hug! 🤗",heal:"Masa is nursing her dragon back to health! 💚"})[kind]);
 }
 function finishCare(kind){
  const c=state.care;
- if(kind==="feed"){
-  c.hunger=clamp(c.hunger+40,0,100);
-  c.health=clamp(c.health+5,0,100);
- }else if(kind==="wash"){
-  c.clean=clamp(c.clean+50,0,100);
-  c.happy=clamp(c.happy+8,0,100);
- }else if(kind==="pet"){
-  c.happy=clamp(c.happy+25,0,100);
-  c.health=clamp(c.health+3,0,100);
- }else if(kind==="hug"){
-  c.happy=clamp(c.happy+30,0,100);
-  c.health=clamp(c.health+8,0,100);
- }else if(kind==="heal"){
-  c.health=100;c.hunger=Math.max(75,c.hunger);
-  c.clean=Math.max(75,c.clean);c.happy=Math.max(80,c.happy);
-  state.lives=7;
-  toast("💚 Fully healed! All seven flying lives restored!");
-  say("Elu: Wonderful! Your dragon is healthy and ready for another adventure!");
+ if(kind==="feed"){c.hunger=clamp(c.hunger+40,0,100);c.health=clamp(c.health+5,0,100);}
+ if(kind==="wash"){c.clean=clamp(c.clean+50,0,100);c.happy=clamp(c.happy+8,0,100);}
+ if(kind==="pet"){c.happy=clamp(c.happy+25,0,100);c.health=clamp(c.health+3,0,100);}
+ if(kind==="hug"){c.happy=clamp(c.happy+30,0,100);c.health=clamp(c.health+8,0,100);}
+ if(kind==="heal"){
+  c.health=100;c.hunger=Math.max(75,c.hunger);c.clean=Math.max(75,c.clean);c.happy=Math.max(80,c.happy);state.lives=7;
+  toast("💚 Fully healed! All seven lives restored!");say("Elu: Perfect! Your dragon is healthy again. I'll be here if you need anything.");
   action=null;save();updateHUD();return;
  }
- state.coins+=5;state.totalCoins+=5;
- addParticles(W*.68,H*.60,kind==="wash"?"#8de6ff":"#ffaad3",15);
- toast("Care complete! +5 coins! 💖");
- say("Elu: Your dragon feels loved! You earned five coins.");
+ state.coins+=5;state.totalCoins+=5;addParticles(W*.68,H*.60,kind==="wash"?"#8de6ff":"#ffaad3",15);
+ toast("Care complete! +5 coins! 💖");say("Elu: Wonderful care, Princess Masa! Five coins for you.");
  action=null;save();updateHUD();
 }
-function updateCare(dt){
- const c=state.care;
- if(!action){
-  c.hunger=Math.max(0,c.hunger-dt*.10);
-  c.clean=Math.max(0,c.clean-dt*.055);
-  c.happy=Math.max(0,c.happy-dt*.025);
-  if(c.hunger<8)c.health=Math.max(0,c.health-dt*.08);
-  if(c.clean<5)c.health=Math.max(0,c.health-dt*.04);
-  princess.walk=0;
+
+function plantSeed(index,type){
+ const plot=state.garden.plots[index],p=plants[type];
+ if(plot){toast("Harvest or clear that plot before planting again.");return;}
+ if(state.coins<p.seed){toast("You need "+p.seed+" coins for those seeds.");return;}
+ state.coins-=p.seed;state.garden.plots[index]={type,age:0,water:0};
+ state.garden.plants++;save();closeDialog();setMode("garden");
+ toast(p.emoji+" planted! Elu will help it grow.");updateHUD();
+}
+function openPlanting(index){
+ const p=state.garden.plots[index];
+ if(p){
+  const plant=plants[p.type],progress=clamp(p.age/plant.grow,0,1);
+  openDialog("🌱 Garden Plot "+(index+1),plant.emoji+" "+plant.name+" is growing. Progress: "+Math.floor(progress*100)+"%. Water it to help it grow.",[
+   {title:"💧 Water plant",desc:"Watering helps the plant grow faster.",button:"Water",run:()=>{
+    p.age=Math.min(plant.grow,p.age+12);p.water++;save();closeDialog();toast("Watered with love! 💧");
+   }},
+   {title:"🌿 Garden advice",desc:"Plants in neighboring plots grow together in your royal garden. Try different combinations!",button:"Ask Elu",run:()=>{closeDialog();eluHelp();}}
+  ]);
   return;
  }
- action.time+=dt;princess.walk+=dt;
- if(action.phase==="walk"){
-  if(action.time>=1.1)action.phase="act";
- }else if(action.phase==="act"&&action.time>=3){
-  finishCare(action.kind);
- }
+ openDialog("🌱 Choose seeds","Elu says: Pick anything you like! Try planting different flowers, fruit, and vegetables next to each other.",plants.map((p,i)=>({
+  title:p.emoji+" "+p.name,desc:"Seed cost: "+p.seed+" coins · Grows in "+p.grow+" garden seconds · Harvest reward: "+p.harvest+" coins.",
+  button:"Plant seeds",disabled:state.coins<p.seed,run:()=>plantSeed(index,i)
+ })));
 }
-
-function loseLife(){
- if(invulnerable>0)return;
- state.lives=Math.max(0,state.lives-1);
- state.care.health=Math.max(0,state.care.health-12);
- invulnerable=1.5;
- addParticles(flightX(),flightY(),"#ff94b7",12);
- toast("Ouch! "+state.lives+" flying lives remaining!");
- if(state.lives===0){
-  say("Elu: Back to Crown Jewel! Your dragon needs care before flying again.");
-  setMode("care");
-  save();
- }
-}
-function completeMission(){
- const key=state.world+":"+mission.type+":"+mission.target;
- if(state.completed.includes(key))return;
- state.completed.push(key);
- state.coins+=25;state.totalCoins+=25;
- state.best=Math.max(state.best,Math.floor(distance));
- toast("⭐ Mission complete! +25 coins!");
- say("Elu: Magnificent flying, Princess Masa!");
- save();updateHUD();
-}
-function updateFlight(dt){
- distance+=dt*(boostTime>0?200:130);
- boostTime=Math.max(0,boostTime-dt);
- invulnerable=Math.max(0,invulnerable-dt);
- flightYRatio=clamp(flightYRatio+vy*dt,.12,.84);
- vy*=Math.max(0,1-dt*3);
- spawn-=dt;
- if(spawn<=0){
-  spawnFlightObject();
-  spawn=rand(.7,1.15)/(1+Math.min(distance/2500,.6));
- }
- const speed=boostTime>0?1.45:1;
- for(let i=obstacles.length-1;i>=0;i--){
-  const o=obstacles[i];o.x-=dt*(230+distance*.01)*speed;
-  if(o.x<-100){obstacles.splice(i,1);continue;}
-  const dx=o.x-flightX(),dy=o.y-flightY();
-  const scale=clamp(Math.min(W,H)/520,.7,1.35);
-  if(Math.hypot(dx,dy)<o.size*.40+24*scale){
-   if(!o.passed){
-    o.passed=true;loseLife();
-    if(mode!=="flight")return;
-   }
-  }else if(!o.passed&&o.x<flightX()){
-   o.passed=true;
-   if(mission.type==="dodge"){
-    mission.progress++;
-    if(mission.progress>=mission.target)completeMission();
-   }
+function harvestGarden(){
+ let count=0,reward=0,food=0;
+ state.garden.plots.forEach((p,i)=>{
+  if(!p)return;
+  const plant=plants[p.type];
+  if(p.age>=plant.grow){
+   count++;reward+=plant.harvest;food+=plant.food;state.garden.plots[i]=null;
   }
- }
- for(let i=coins.length-1;i>=0;i--){
-  const c=coins[i];c.x-=dt*(230+distance*.01)*speed;
-  if(c.x<-50){coins.splice(i,1);continue;}
-  if(Math.hypot(c.x-flightX(),c.y-flightY())<34){
-   const reward=c.kind==="star"?10:2;
-   state.coins+=reward;state.totalCoins+=reward;
-   addParticles(c.x,c.y,"#ffe477",8);
-   coins.splice(i,1);
-   if(mission.type==="coins"){
-    mission.progress++;
-    if(mission.progress>=mission.target)completeMission();
-   }
-   updateHUD();
-  }
- }
- if(mission.type==="distance"){
-  mission.progress=Math.min(mission.target,Math.floor(distance/100));
-  if(mission.progress>=mission.target)completeMission();
- }
+ });
+ if(!count){toast("Not ready yet! Water your plants and let them grow.");return;}
+ state.coins+=reward;state.totalCoins+=reward;state.garden.harvests+=count;
+ state.care.hunger=clamp(state.care.hunger+food,0,100);
+ save();updateHUD();toast("Harvested "+count+" plants! Earned "+reward+" coins!");
+ say("Elu: A beautiful harvest! I saved your produce for the dragon and the royal kitchen.");
+}
+function openGarden(){
+ setMode("garden");
+ openDialog("🌷 Elu's Royal Garden","Tap an empty plot to choose seeds. Tap growing plants to water them. Put different plants next to one another and discover your favorite garden combinations.",[
+  {title:"🌱 Plant something",desc:"Sunflowers, strawberries, carrots, roses, bluebells, and pumpkins.",button:"Choose seeds",run:()=>{closeDialog();openPlanting(state.garden.plots.findIndex(p=>!p));if(state.garden.plots.every(Boolean))toast("Your garden is full! Harvest some plants first.");}},
+  {title:"💧 Water everything",desc:"Give every growing plant a boost.",button:"Water garden",run:()=>{
+   state.garden.plots.forEach(p=>{if(p)p.age=Math.min(plants[p.type].grow,p.age+10);});
+   save();closeDialog();toast("Your garden is refreshed! 💧");
+  }},
+  {title:"🧺 Harvest",desc:"Collect ripe plants for coins and dragon snacks.",button:"Harvest",run:()=>{closeDialog();harvestGarden();}}
+ ]);
 }
 
-function update(dt){
- frame+=dt*60;elapsed+=dt;
- dragon.wing+=dt*8;
- if(toastTime>0){
-  toastTime-=dt;
-  if(toastTime<=0)$("toast").style.display="none";
- }
- if(mode==="care")updateCare(dt);
- if(mode==="flight")updateFlight(dt);
- saveTime+=dt;
- if(saveTime>5){save();saveTime=0;}
-}
-
-function draw(){
- ctx.clearRect(0,0,W,H);
- drawBackground();
- if(mode==="care")drawCare();
- else drawFlight();
- drawParticles(0);
-}
-function loop(now){
- const dt=last?Math.min(.04,(now-last)/1000):0;
- last=now;
- update(dt);
- draw();
- requestAnimationFrame(loop);
-}
-
-// Safe modal creation: no HTML strings from player data.
+/* Modal helpers create text nodes, never inject player text as HTML. */
 function openDialog(title,description,items){
- $("dialogTitle").textContent=title;
- $("dialogDescription").textContent=description;
- const area=$("options");
- const footer=$("dialogFooter");
- area.replaceChildren();footer.replaceChildren();
+ $("dialogTitle").textContent=title;$("dialogDescription").textContent=description;
+ const area=$("options"),footer=$("dialogFooter");area.replaceChildren();footer.replaceChildren();
  items.forEach(item=>{
   const box=document.createElement("div");box.className="option";
-  const titleEl=document.createElement("strong");titleEl.textContent=item.title;box.appendChild(titleEl);
+  const h=document.createElement("strong");h.textContent=item.title;box.appendChild(h);
   const p=document.createElement("p");p.textContent=item.desc;box.appendChild(p);
-  const b=document.createElement("button");b.textContent=item.button||"Choose";
-  b.disabled=!!item.disabled;
-  b.addEventListener("click",item.run);
-  box.appendChild(b);area.appendChild(box);
+  const b=document.createElement("button");b.textContent=item.button||"Choose";b.disabled=!!item.disabled;
+  b.addEventListener("click",item.run);box.appendChild(b);area.appendChild(box);
  });
- const close=document.createElement("button");
- close.textContent="Close";close.addEventListener("click",closeDialog);
- footer.appendChild(close);
+ const close=document.createElement("button");close.textContent="Close";close.addEventListener("click",closeDialog);footer.appendChild(close);
  $("dialog").classList.add("open");
 }
 function closeDialog(){$("dialog").classList.remove("open");}
 $("dialog").addEventListener("click",e=>{if(e.target===$("dialog"))closeDialog();});
 
-$("careTab").addEventListener("click",()=>setMode("care"));
-$("flyTab").addEventListener("click",()=>{
- if(state.care.health<=0){beginCare("heal");return;}
- setMode("flight");
-});
-
-$("worldTab").addEventListener("click",()=>{
- openDialog("🌎 Magical Worlds","Spend your collected coins to unlock new adventures.",
- worlds.map((w,i)=>({
-  title:w.emoji+" "+w.name,
-  desc:state.unlocked.includes(i)?"Unlocked! "+(i===state.world?"You are here.":"Ready to visit!"):"Unlock for "+w.cost+" coins.",
-  button:state.unlocked.includes(i)?"Visit world":"Unlock",
-  disabled:!state.unlocked.includes(i)&&state.coins<w.cost,
-  run:()=>{
-   if(!state.unlocked.includes(i)){
-    if(state.coins<w.cost)return;
-    state.coins-=w.cost;state.unlocked.push(i);
-    toast("🌟 New world unlocked!");
-   }
-   state.world=i;closeDialog();setMode("care");save();updateHUD();
-   say("Elu: Welcome to "+w.name+"!");
-  }
- })));
-});
-
-$("styleTab").addEventListener("click",()=>{
- const dragonColors=["#a16ee8","#67c6e8","#ff8eb4","#8bdc9a","#ffb54f","#6c7cff","#f5f1ff"];
- const wingColors=["#ff9dce","#83e4ff","#ffdf83","#b6f7c5","#c7b4ff","#ffad83"];
- const dressColors=["#ff83b9","#8a7cff","#67c9e8","#f5a65c","#7acb96"];
- const accessories=["No accessory","Golden star crown","Royal tiara","Pink bow"];
- const outfits=["Royal pink","Flower princess","Ice princess","Lavender royal"];
- openDialog("👗 Royal Style Studio","Customize your princess and dragon. Your choices are saved on this device.",[
-  {title:"🐉 Dragon",desc:"Current color: "+state.dragon,button:"Change color",run:()=>{
-   state.dragon=dragonColors[(dragonColors.indexOf(state.dragon)+1)%dragonColors.length];save();closeDialog();$("styleTab").click();
-  }},
-  {title:"🪽 Wings",desc:"Current color: "+state.wings,button:"Change wings",run:()=>{
-   state.wings=wingColors[(wingColors.indexOf(state.wings)+1)%wingColors.length];save();closeDialog();$("styleTab").click();
-  }},
-  {title:"👸 Princess dress",desc:outfits[state.outfit],button:"Change dress",run:()=>{
-   state.outfit=(state.outfit+1)%outfits.length;state.princess=dressColors[state.outfit%dressColors.length];save();closeDialog();$("styleTab").click();
-  }},
-  {title:"👑 Accessory",desc:accessories[state.accessory],button:"Change accessory",run:()=>{
-   state.accessory=(state.accessory+1)%accessories.length;save();closeDialog();$("styleTab").click();
-  }}
+function eluHelp(){
+ openDialog("💬 Elu — Your Royal Concierge","Hello, Princess Masa! I'm Elu. I can help you with absolutely everything in Crown Jewel.",[
+  {title:"🏰 Castle life",desc:"Host a tea party, dance party, or explore the castle.",button:"Visit castle",run:()=>{closeDialog();setMode("castle");}},
+  {title:"🐉 Dragon care",desc:"Masa walks over to feed, wash, pet, hug, or heal her dragon.",button:"Care for dragon",run:()=>{closeDialog();setMode("care");}},
+  {title:"🌷 Royal garden",desc:"Choose seeds, water plants, harvest produce, and earn coins.",button:"Visit garden",run:()=>{closeDialog();openGarden();}},
+  {title:"✈️ Flight school",desc:"Fly forward, backward, up, and down. Dodge obstacles and collect coins.",button:"Start flying",run:()=>{closeDialog();setMode("flight");}},
+  {title:"👗 Style studio",desc:"Change the dragon, wings, princess dress, and accessories.",button:"Customize",run:()=>{closeDialog();$("styleTab").click();}},
+  {title:"🌎 World travel",desc:"Spend coins to unlock new lands with unique hazards.",button:"Travel",run:()=>{closeDialog();$("worldTab").click();}}
  ]);
-});
-
-$("missionTab").addEventListener("click",()=>{
- openDialog("⭐ Royal Mission Board","Earn coins, complete missions, and unlock the kingdom.",
- [
-  {title:"🪙 Treasure hunter",desc:"Collect treasures during flight. Coins unlock new worlds.",button:"Fly!",run:()=>{closeDialog();setMode("flight");}},
-  {title:"🪽 Sky explorer",desc:"Fly far enough to complete a distance mission.",button:"Explore",run:()=>{closeDialog();setMode("flight");}},
-  {title:"💖 Dragon care",desc:"Feed, wash, pet, and hug your dragon for five coins per activity.",button:"Care",run:()=>{closeDialog();setMode("care");}},
-  {title:"🏆 Your adventure",desc:"Total coins collected: "+state.totalCoins+". Best distance: "+state.best+".",button:"Wonderful!",run:closeDialog}
+}
+function openParties(){
+ openDialog("🏰 Royal Castle Activities","Elu has everything ready for you! What should Princess Masa do?",[
+  {title:"🫖 Tea party",desc:"A royal table, teacups, treats, and friends.",button:"Start tea party",run:()=>{closeDialog();setMode("tea");}},
+  {title:"💃 Dance party",desc:"Animated dancing, sparkling decorations, and a celebration.",button:"Start dancing",run:()=>{closeDialog();setMode("dance");}},
+  {title:"🌷 Garden",desc:"Plant and grow flowers, fruit, and vegetables.",button:"Visit garden",run:()=>{closeDialog();openGarden();}},
+  {title:"🐉 Dragon care",desc:"Feed, wash, pet, hug, and heal your dragon.",button:"Care station",run:()=>{closeDialog();setMode("care");}}
  ]);
-});
+}
 
-$("eluTab").addEventListener("click",()=>{
- openDialog("💬 Elu — Royal Concierge","Hello, Princess Masa! I'm Elu. I'll help you care for your dragon and explore every world.",[
-  {title:"🐉 Dragon care",desc:"Masa walks over to her dragon. Choose Feed, Wash, Pet, or Hug.",button:"Visit care station",run:()=>{closeDialog();setMode("care");}},
-  {title:"✈️ Flight controls",desc:"Use up/down, arrow keys, or tap the sky. Avoid obstacles and collect coins.",button:"Let's fly",run:()=>{closeDialog();setMode("flight");}},
-  {title:"❤️ Seven lives",desc:"When your seven flying lives run out, heal your dragon at the castle to restore all seven.",button:"Understood",run:closeDialog},
-  {title:"🌎 World travel",desc:"Unlock new worlds with coins. Each world has its own hazards.",button:"Worlds",run:()=>{closeDialog();$("worldTab").click();}}
- ]);
-});
+$("castleTab").addEventListener("click",()=>{setMode("castle");openParties();});
+$("flyTab").addEventListener("click",()=>setMode("flight"));
+$("gardenTab").addEventListener("click",openGarden);
+$("tea").addEventListener("click",()=>setMode("tea"));
+$("dance").addEventListener("click",()=>setMode("dance"));
+$("garden").addEventListener("click",openGarden);
+$("harvest").addEventListener("click",harvestGarden);
 
 $("feed").addEventListener("click",()=>beginCare("feed"));
 $("wash").addEventListener("click",()=>beginCare("wash"));
@@ -886,55 +635,193 @@ $("pet").addEventListener("click",()=>beginCare("pet"));
 $("hug").addEventListener("click",()=>beginCare("hug"));
 $("heal").addEventListener("click",()=>beginCare("heal"));
 
-function bindControl(id,fn,release){
+$("worldTab").addEventListener("click",()=>openDialog("🌎 Magical Worlds","Spend coins to unlock new adventures. Every world has different obstacles.",worlds.map((w,i)=>({
+ title:w.emoji+" "+w.name,
+ desc:state.unlocked.includes(i)?"Unlocked!"+(i===state.world?" You are here.":" Ready to visit!"):"Unlock for "+w.cost+" coins.",
+ button:state.unlocked.includes(i)?"Visit world":"Unlock",
+ disabled:!state.unlocked.includes(i)&&state.coins<w.cost,
+ run:()=>{
+  if(!state.unlocked.includes(i)){
+   if(state.coins<w.cost)return;
+   state.coins-=w.cost;state.unlocked.push(i);toast("🌟 New world unlocked!");
+  }
+  state.world=i;closeDialog();setMode("castle");save();updateHUD();say("Elu: Welcome to "+w.name+"! I'll show you around.");
+ }
+}))));
+
+$("styleTab").addEventListener("click",()=>{
+ const dc=["#a16ee8","#67c6e8","#ff8eb4","#8bdc9a","#ffb54f","#6c7cff","#f5f1ff"];
+ const wc=["#ff9dce","#83e4ff","#ffdf83","#b6f7c5","#c7b4ff","#ffad83"];
+ const pc=["#ff83b9","#8a7cff","#67c9e8","#f5a65c","#7acb96"];
+ const outfits=["Masa's Royal Pink","Flower Princess","Ice Princess","Golden Autumn","Garden Princess"];
+ const acc=["No accessory","Golden star crown","Royal tiara","Pink bow"];
+ openDialog("👗 Royal Style Studio","Every look is saved on this device. Princess Masa's dress always displays her name.",[
+  {title:"🐉 Dragon color",desc:"Current: "+state.dragon,button:"Change color",run:()=>{state.dragon=dc[(dc.indexOf(state.dragon)+1)%dc.length];save();closeDialog();$("styleTab").click();}},
+  {title:"🪽 Wing color",desc:"Current: "+state.wings,button:"Change wings",run:()=>{state.wings=wc[(wc.indexOf(state.wings)+1)%wc.length];save();closeDialog();$("styleTab").click();}},
+  {title:"👸 Princess dress",desc:outfits[state.outfit]||outfits[0],button:"Change dress",run:()=>{state.outfit=(state.outfit+1)%outfits.length;state.princess=pc[state.outfit%pc.length];save();closeDialog();$("styleTab").click();}},
+  {title:"👑 Accessories",desc:acc[state.accessory],button:"Change accessory",run:()=>{state.accessory=(state.accessory+1)%acc.length;save();closeDialog();$("styleTab").click();}}
+ ]);
+});
+
+$("missionTab").addEventListener("click",()=>openDialog("⭐ Royal Mission Board","Complete missions and earn rewards.",[
+ {title:"🪙 Treasure hunter",desc:"Collect coins while flying.",button:"Fly",run:()=>{closeDialog();setMode("flight");}},
+ {title:"🌷 Garden keeper",desc:"Grow and harvest plants.",button:"Garden",run:()=>{closeDialog();openGarden();}},
+ {title:"💖 Dragon care",desc:"Perform care activities for five coins each.",button:"Care",run:()=>{closeDialog();setMode("care");}},
+ {title:"🏆 Adventure record",desc:"Total coins earned: "+state.totalCoins+". Best flight distance: "+state.best+". Plants grown: "+state.garden.plants+". Harvests: "+state.garden.harvests+".",button:"Wonderful!",run:closeDialog}
+]));
+$("eluTab").addEventListener("click",eluHelp);
+
+function setMotion(direction){
+ if(mode!=="flight")return;
+ if(direction==="forward")flight.speed=1;
+ if(direction==="backward")flight.speed=-1;
+ if(direction==="up")flight.vy=-1;
+ if(direction==="down")flight.vy=1;
+ if(direction==="boost")flight.boost=1.5;
+}
+flight.vy=0;
+function bindHold(id,direction){
  const el=$(id);
  el.addEventListener("pointerdown",e=>{
-  e.preventDefault();
-  try{el.setPointerCapture(e.pointerId);}catch(err){}
-  fn();
+  e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(err){}
+  setMotion(direction);
  });
- el.addEventListener("pointerup",()=>{if(release)release();});
- el.addEventListener("pointercancel",()=>{if(release)release();});
- el.addEventListener("lostpointercapture",()=>{if(release)release();});
+ const stop=()=>{
+  if(direction==="up"||direction==="down")flight.vy=0;
+  if(direction==="forward"||direction==="backward")flight.speed=0;
+ };
+ el.addEventListener("pointerup",stop);
+ el.addEventListener("pointercancel",stop);
+ el.addEventListener("lostpointercapture",stop);
 }
-bindControl("up",()=>{if(mode==="flight")vy=-1.65;},()=>{vy=0;});
-bindControl("down",()=>{if(mode==="flight")vy=1.65;},()=>{vy=0;});
-bindControl("boost",()=>{if(mode==="flight")boostTime=1.2;});
+bindHold("forward","forward");bindHold("backward","backward");
+bindHold("up","up");bindHold("down","down");
+$("boost").addEventListener("pointerdown",e=>{e.preventDefault();setMotion("boost");});
 
 window.addEventListener("keydown",e=>{
- if(["ArrowUp","ArrowDown"," ","w","W","s","S"].includes(e.key))e.preventDefault();
- if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")vy=-1.65;
- if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")vy=1.65;
- if(e.key===" "||e.key==="Shift")boostTime=1.2;
+ if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," ","w","W","s","S","a","A","d","D"].includes(e.key))e.preventDefault();
+ if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")setMotion("up");
+ if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")setMotion("down");
+ if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")setMotion("backward");
+ if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")setMotion("forward");
+ if(e.key===" "||e.key==="Shift")setMotion("boost");
 });
 window.addEventListener("keyup",e=>{
- if(["ArrowUp","ArrowDown","w","W","s","S"].includes(e.key))vy=0;
+ if(["ArrowUp","ArrowDown","w","W","s","S"].includes(e.key))flight.vy=0;
+ if(["ArrowLeft","ArrowRight","a","A","d","D"].includes(e.key))flight.speed=0;
 });
 
-let touchActive=false;
 canvas.addEventListener("pointerdown",e=>{
- if(mode!=="flight")return;
- touchActive=true;
- setFlightHeight(e);
+ if(mode==="garden"){
+  const y=H*.72;
+  if(e.clientY>y-45&&e.clientY<y+65){
+   const i=Math.floor((e.clientX-W*.12)/(W*.76/6));
+   if(i>=0&&i<6)openPlanting(i);
+  }
+ }else if(mode==="flight"){
+  // Tap to steer vertically; left/right movement remains available on dedicated buttons.
+  flight.y=clamp(e.clientY/H,.12,.84);
+ }
 });
-canvas.addEventListener("pointermove",e=>{
- if(touchActive&&mode==="flight")setFlightHeight(e);
-});
-window.addEventListener("pointerup",()=>touchActive=false);
-window.addEventListener("pointercancel",()=>touchActive=false);
-function setFlightHeight(e){
- const r=canvas.getBoundingClientRect();
- flightYRatio=clamp((e.clientY-r.top)/r.height,.12,.84);
+
+function loseLife(){
+ if(flight.invulnerable>0)return;
+ state.lives=Math.max(0,state.lives-1);state.care.health=Math.max(0,state.care.health-12);
+ flight.invulnerable=1.5;addParticles(W*flight.x,H*flight.y,"#ff94b7",12);
+ toast("Ouch! "+state.lives+" flying lives remaining!");
+ if(state.lives===0){save();setMode("care");say("Elu: Back to the castle! Let's nurse your dragon to health.");}
+}
+function completeMission(){
+ const key=state.world+":"+mission.type+":"+mission.target;
+ if(state.completed.includes(key))return;
+ state.completed.push(key);state.coins+=25;state.totalCoins+=25;
+ state.best=Math.max(state.best,Math.floor(flight.worldX));
+ toast("⭐ Mission complete! +25 coins!");say("Elu: Magnificent flying, Princess Masa!");save();updateHUD();
+}
+function spawnObject(){
+ const y=rand(H*.18,H*.79);
+ if(Math.random()<.58)obstacles.push({x:W+55,y,emoji:worlds[state.world].hazard,size:rand(35,54),hit:false});
+ else coins.push({x:W+45,y,kind:Math.random()<.12?"star":"coin"});
+}
+function updateFlight(dt){
+ flight.invulnerable=Math.max(0,flight.invulnerable-dt);
+ flight.boost=Math.max(0,flight.boost-dt);
+ const dir=flight.speed;
+ const speed=(dir===0?115:dir*240)*(flight.boost>0?1.7:1);
+ flight.worldX+=speed*dt;
+ flight.y=clamp(flight.y+flight.vy*dt*.75,.12,.84);
+ const scroll=speed;
+ flight.spawn-=dt;
+ if(flight.spawn<=0){spawnObject();flight.spawn=rand(.7,1.1);}
+ for(let i=obstacles.length-1;i>=0;i--){
+  const o=obstacles[i];
+  o.x-=scroll*dt;
+  if(o.x<-90){obstacles.splice(i,1);continue;}
+  if(Math.hypot(o.x-W*flight.x,o.y-H*flight.y)<o.size*.42+22&&!o.hit){
+   o.hit=true;loseLife();if(mode!=="flight")return;
+  }else if(!o.hit&&o.x<W*flight.x){
+   o.hit=true;
+   if(mission.type==="dodge"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
+  }
+ }
+ for(let i=coins.length-1;i>=0;i--){
+  const c=coins[i];c.x-=scroll*dt;
+  if(c.x<-50){coins.splice(i,1);continue;}
+  if(Math.hypot(c.x-W*flight.x,c.y-H*flight.y)<32){
+   const reward=c.kind==="star"?10:2;state.coins+=reward;state.totalCoins+=reward;
+   addParticles(c.x,c.y,"#ffe477",8);coins.splice(i,1);
+   if(mission.type==="coins"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
+   updateHUD();
+  }
+ }
+ if(mission.type==="distance"){
+  mission.progress=Math.min(mission.target,Math.floor(Math.abs(flight.worldX)/350));
+  if(mission.progress>=mission.target)completeMission();
+ }
+}
+
+function update(dt){
+ frame+=dt*60;dragon.wing+=dt*8;saveClock+=dt;
+ if(toastTime>0){toastTime-=dt;if(toastTime<=0)$("toast").style.display="none";}
+ if(mode==="care"&&action){
+  action.time+=dt;princess.walk+=dt;
+  if(action.phase==="walk"&&action.time>=1.1)action.phase="act";
+  else if(action.phase==="act"&&action.time>=3)finishCare(action.kind);
+ }
+ if(mode==="care"&&!action){
+  state.care.hunger=Math.max(0,state.care.hunger-dt*.10);
+  state.care.clean=Math.max(0,state.care.clean-dt*.055);
+  state.care.happy=Math.max(0,state.care.happy-dt*.025);
+  if(state.care.hunger<8)state.care.health=Math.max(0,state.care.health-dt*.08);
+  if(state.care.clean<5)state.care.health=Math.max(0,state.care.health-dt*.04);
+ }
+ if(mode==="garden"){
+  state.garden.plots.forEach(p=>{if(p)p.age=Math.min(plants[p.type].grow,p.age+dt);});
+ }
+ if(mode==="tea"||mode==="dance")partyTime+=dt;
+ if(mode==="flight")updateFlight(dt);
+ if(saveClock>5){save();saveClock=0;}
+}
+
+function draw(){
+ ctx.clearRect(0,0,W,H);drawBackground();
+ if(mode==="care")drawCare();
+ else if(mode==="flight")drawFlight();
+ else if(mode==="garden")drawGardenScene();
+ else drawCastleRoom();
+ drawParticles(0);
+}
+function loop(now){
+ const dt=last?Math.min(.04,(now-last)/1000):0;last=now;
+ update(dt);draw();requestAnimationFrame(loop);
 }
 
 window.addEventListener("pagehide",save);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save();});
 
-// Start in the castle, with visible characters and active controls.
-princess.x=.30;princess.y=.67;
-dragon.x=.68;dragon.y=.65;
+setMode("castle");
 updateHUD();
-say("Elu: Welcome to Crown Jewel, Princess Masa! Your dragon is ready for an adventure!");
+say("Elu: Welcome to Crown Jewel, Princess Masa! I'm here to help with everything.");
 requestAnimationFrame(loop);
 })();
 </script>
