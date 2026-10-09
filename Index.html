@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dragon & Princess: 500+ Universe</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a0933">
+
+  <style>
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
+    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0c0414; color: #fff; }
+    
+    #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
+    
+    nav { height: 55px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; }
+    nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 10px; border-radius: 15px; font-weight: bold; font-size: 11px; cursor: pointer; }
+    nav button.active { background: #ffd700; color: #1a0933; }
+
+    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 10px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 12px; z-index: 15; display: flex; gap: 8px; }
+
+    .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow-y: auto; padding-bottom: 20px; }
+    .screen.active { display: flex; }
+
+    /* CARE SCREEN */
+    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; }
+    .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px solid #9333ea; margin-top: 8px; }
+    .bar-row { margin-bottom: 4px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; font-weight: bold; }
+    .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
+
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 220px; }
+    .dragon-render { font-size: 90px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.2s; }
+    .princess-render { font-size: 40px; position: absolute; bottom: 15px; right: 20%; filter: drop-shadow(0 0 10px #fff); transition: transform 0.3s, right 0.3s; }
+
+    .floating-text { position: absolute; font-size: 30px; animation: floatUp 1s forwards ease-out; pointer-events: none; z-index: 8; }
+    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-70px) scale(1.3); } }
+
+    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 92%; max-width: 400px; margin-bottom: 12px; }
+    .act-btn { background: #3b1566; border: 1px solid #a855f7; color: white; padding: 8px 2px; border-radius: 10px; font-size: 10px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+
+    /* CASTLE & 500+ SHOP SCREEN */
+    #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; }
+    .title { font-size: 18px; color: #ffd700; margin-top: 8px; text-shadow: 0 0 8px #ffd700; }
+    .elu-card { width: 92%; max-width: 400px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 12px; padding: 8px; margin: 8px 0; display: flex; gap: 8px; align-items: center; }
+    .elu-avatar { font-size: 30px; background: #26094d; padding: 6px; border-radius: 50%; border: 1px solid #ffd700; }
+    .elu-text { flex: 1; text-align: left; font-size: 11px; line-height: 1.3; color: #e9d5ff; }
+
+    .shop-tabs { display: flex; gap: 4px; width: 92%; max-width: 400px; margin-bottom: 8px; overflow-x: auto; }
+    .tab-btn { background: #26094d; border: 1px solid #a855f7; color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 10px; white-space: nowrap; cursor: pointer; }
+    .tab-btn.active { background: #a855f7; font-weight: bold; }
+
+    .gacha-btn { width: 92%; max-width: 400px; background: linear-gradient(90deg, #b91c1c, #d97706, #6d28d9); border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 8px; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+
+    .catalog-list { width: 92%; max-width: 400px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .item-card { background: rgba(0,0,0,0.4); border: 1px solid #6b21a8; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 2px; }
+    .item-card button { background: #d97706; border: none; color: white; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; width: 100%; margin-top: 2px; }
+
+    .pagination { display: flex; justify-content: space-between; align-items: center; width: 92%; max-width: 400px; margin: 10px 0; font-size: 11px; }
+    .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+
+    /* FLIGHT SCREEN */
+    #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .fly-controls { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 16px; box-sizing: border-box; z-index: 20; }
+    .d-pad { display: flex; gap: 8px; }
+    .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+    .fire-btn { width: 65px; height: 65px; border-radius: 50%; background: radial-gradient(circle, #ef4444, #7f1d1d); border: 2px solid #ffd700; color: white; font-weight: bold; font-size: 12px; }
+    .hud-score { position: absolute; top: 10px; left: 12px; font-size: 14px; font-weight: bold; color: #ffd700; z-index: 20; text-shadow: 0 0 5px #000; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="hud-header">
+    <span>🪙 <span id="coin-txt">100</span></span>
+  </div>
+
+  <nav>
+    <button id="nav-care" class="active" onclick="switchTab('care')">🐉 Care</button>
+    <button id="nav-castle" onclick="switchTab('castle')">🏰 500+ Vault</button>
+    <button id="nav-fly" onclick="switchTab('fly')">🚀 Flight</button>
+  </nav>
+
+  <!-- CARE SCREEN -->
+  <div id="care-screen" class="screen active">
+    <div class="status-box">
+      <div class="bar-row">
+        <div class="bar-label"><span>DRAGON VITALITY</span><span id="hp-val">0%</span></div>
+        <div class="bar-track"><div id="hp-fill" class="bar-fill" style="background:#ef4444;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>HUNGER</span><span id="f-val">0%</span></div>
+        <div class="bar-track"><div id="f-fill" class="bar-fill" style="background:#f59e0b;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>HYGIENE</span><span id="c-val">0%</span></div>
+        <div class="bar-track"><div id="c-fill" class="bar-fill" style="background:#3b82f6;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>AFFECTION</span><span id="l-val">0%</span></div>
+        <div class="bar-track"><div id="l-fill" class="bar-fill" style="background:#ec4899;"></div></div>
+      </div>
+    </div>
+
+    <div class="viewport" id="viewport">
+      <div id="dragon-node" class="dragon-render">🐉</div>
+      <div id="princess-node" class="princess-render">👑👸</div>
+    </div>
+
+    <div class="action-grid">
+      <button class="act-btn" onclick="doCare('feed')">🍎<span>Feed</span></button>
+      <button class="act-btn" onclick="doCare('wash')">🧼<span>Wash</span></button>
+      <button class="act-btn" onclick="doCare('pet')">🖐️<span>Pet</span></button>
+      <button class="act-btn" onclick="doCare('hug')">🤗<span>Hug</span></button>
+    </div>
+  </div>
+
+  <!-- CROWN JEWEL 500+ SHOP SCREEN -->
+  <div id="castle-screen" class="screen">
+    <h2 class="title">Crown Jewel Realm</h2>
+
+    <div class="elu-card">
+      <div class="elu-avatar">🎩</div>
+      <div class="elu-text" id="elu-msg">
+        <strong>Elu:</strong> "Greetings Princess! We have cataloged over 500 Dragons, Outfits, Fire Types, Worlds, and Princess Sizes!"
+      </div>
+    </div>
+
+    <button class="gacha-btn" onclick="rollGacha()">🎲 Mystery Spin (30 🪙)</button>
+
+    <div class="shop-tabs">
+      <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons (500)</button>
+      <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits (500)</button>
+      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Fire (500)</button>
+      <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds (500)</button>
+      <button class="tab-btn" id="tab-sizes" onclick="setCategory('sizes')">👸 Sizes (500)</button>
+    </div>
+
+    <div class="catalog-list" id="catalog-container"></div>
+
+    <div class="pagination">
+      <button class="page-btn" onclick="changePage(-1)">◀ Prev</button>
+      <span id="page-txt">Page 1 / 50</span>
+      <button class="page-btn" onclick="changePage(1)">Next ▶</button>
+    </div>
+  </div>
+
+  <!-- FLIGHT SCREEN -->
+  <div id="fly-screen" class="screen">
+    <div class="hud-score">Score: <span id="score-txt">0</span></div>
+    <canvas id="gameCanvas"></canvas>
+    <div class="fly-controls">
+      <div class="d-pad">
+        <div class="ctrl-btn" id="btn-up">▲</div>
+        <div class="ctrl-btn" id="btn-down">▼</div>
+      </div>
+      <button class="fire-btn" id="btn-fire">🔥 FIRE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* --------------------------------------------------
+     1. PROCEDURAL GENERATOR (500 ITEMS EACH CATEGORY)
+  -------------------------------------------------- */
+  const ELEMENTS = ["Crimson", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
+  const DRAGON_BASES = ["🐉", "🐲", "🦖", "🐍", "🐊"];
+  const OUTFIT_BASES = ["👑👸", "👗✨", "🦸‍♀️", "👸🏼", "👸🏻", "👸🏽", "👸🏿", "💃", "👘", "🥻"];
+
+  // Generate 500 Unique Items dynamically
+  function generateCatalog(type) {
+    let items = [];
+    for (let i = 1; i <= 500; i++) {
+      let elem = ELEMENTS[i % ELEMENTS.length];
+      let hue = (i * 137.5) % 360; // Golden ratio color distribution
+
+      if (type === 'dragons') {
+        let base = DRAGON_BASES[i % DRAGON_BASES.length];
+        items.push({
+          id: `dragon_${i}`,
+          name: `#${i} ${elem} Dragon`,
+          icon: base,
+          glow: `hsl(${hue}, 80%, 50%)`,
+          cost: i * 15,
+          scale: 1 + (i % 5) * 0.1
+        });
+      } else if (type === 'outfits') {
+        let base = OUTFIT_BASES[i % OUTFIT_BASES.length];
+        items.push({
+          id: `outfit_${i}`,
+          name: `#${i} ${elem} Dress`,
+          icon: base,
+          hue: hue,
+          cost: i * 10
+        });
+      } else if (type === 'fire') {
+        items.push({
+          id: `fire_${i}`,
+          name: `#${i} ${elem} Beam`,
+          c1: `hsl(${hue}, 100%, 50%)`,
+          c2: `hsl(${(hue + 60) % 360}, 100%, 50%)`,
+          cost: i * 12
+        });
+      } else if (type === 'worlds') {
+        items.push({
+          id: `world_${i}`,
+          name: `#${i} ${elem} Sky`,
+          bg: `hsl(${hue}, 40%, 10%)`,
+          stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`,
+          cost: i * 20
+        });
+      } else if (type === 'sizes') {
+        let sizeMult = (1 + (i * 0.1)).toFixed(1);
+        items.push({
+          id: `size_${i}`,
+          name: `Level ${i} Size (${sizeMult}x)`,
+          mult: parseFloat(sizeMult),
+          cost: i * 25
+        });
+      }
+    }
+    return items;
+  }
+
+  const CATALOGS = {
+    dragons: generateCatalog('dragons'),
+    outfits: generateCatalog('outfits'),
+    fire: generateCatalog('fire'),
+    worlds: generateCatalog('worlds'),
+    sizes: generateCatalog('sizes')
+  };
+
+  /* --------------------------------------------------
+     2. GAME STATE & SAVING
+  -------------------------------------------------- */
+  let state = {
+    coins: 100,
+    hunger: 60,
+    clean: 60,
+    love: 60,
+    health: 60,
+    equipped: {
+      dragon: CATALOGS.dragons[0],
+      outfit: CATALOGS.outfits[0],
+      fire: CATALOGS.fire[0],
+      world: CATALOGS.worlds[0],
+      size: CATALOGS.sizes[0]
+    },
+    unlockedIds: ['dragon_1', 'outfit_1', 'fire_1', 'world_1', 'size_1']
+  };
+
+  const saved = localStorage.getItem('dp_500_state');
+  if (saved) {
+    try {
+      let parsed = JSON.parse(saved);
+      state.coins = parsed.coins || 100;
+      state.hunger = parsed.hunger || 60;
+      state.clean = parsed.clean || 60;
+      state.love = parsed.love || 60;
+      state.unlockedIds = parsed.unlockedIds || state.unlockedIds;
+      
+      // Match objects back to catalog
+      ['dragons','outfits','fire','worlds','sizes'].forEach(cat => {
+        let key = cat.slice(0, -1);
+        if (parsed.equipped && parsed.equipped[key]) {
+          let found = CATALOGS[cat].find(x => x.id === parsed.equipped[key].id);
+          if (found) state.equipped[key] = found;
+        }
+      });
+    } catch(e){}
+  }
+
+  function saveState() {
+    localStorage.setItem('dp_500_state', JSON.stringify(state));
+  }
+
+  function updateUI() {
+    state.health = Math.round((state.hunger + state.clean + state.love) / 3);
+    
+    document.getElementById('coin-txt').innerText = state.coins;
+    document.getElementById('hp-val').innerText = state.health + '%';
+    document.getElementById('f-val').innerText = state.hunger + '%';
+    document.getElementById('c-val').innerText = state.clean + '%';
+    document.getElementById('l-val').innerText = state.love + '%';
+
+    document.getElementById('hp-fill').style.width = state.health + '%';
+    document.getElementById('f-fill').style.width = state.hunger + '%';
+    document.getElementById('c-fill').style.width = state.clean + '%';
+    document.getElementById('l-fill').style.width = state.love + '%';
+
+    const d = document.getElementById('dragon-node');
+    const p = document.getElementById('princess-node');
+
+    d.innerText = state.equipped.dragon.icon;
+    d.style.setProperty('--dragon-glow', state.equipped.dragon.glow);
+
+    p.innerText = state.equipped.outfit.icon;
+    p.style.filter = `hue-rotate(${state.equipped.outfit.hue}deg) drop-shadow(0 0 10px #fff)`;
+    p.style.transform = `scale(${state.equipped.size.mult})`;
+
+    saveState();
+  }
+
+  function doCare(type) {
+    let icon = '';
+    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); icon = '🍎🍏'; }
+    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); icon = '🧼🫧'; }
+    if (type === 'pet') { state.love = Math.min(100, state.love + 15); icon = '✨🖐️'; }
+    if (type === 'hug') { state.love = Math.min(100, state.love + 30); icon = '💖🤗'; }
+    
+    state.coins += 2;
+
+    const vp = document.getElementById('viewport');
+    const floatEl = document.createElement('div');
+    floatEl.className = 'floating-text';
+    floatEl.innerText = icon;
+    floatEl.style.left = (Math.random() * 40 + 30) + '%';
+    floatEl.style.bottom = '40%';
+    vp.appendChild(floatEl);
+    setTimeout(() => floatEl.remove(), 1000);
+
+    const p = document.getElementById('princess-node');
+    p.style.right = '40%';
+    setTimeout(() => p.style.right = '20%', 350);
+
+    updateUI();
+  }
+
+  /* --------------------------------------------------
+     3. 500+ SHOP & PAGINATION LOGIC
+  -------------------------------------------------- */
+  let currentCategory = 'dragons';
+  let currentPage = 1;
+  const ITEMS_PER_PAGE = 10;
+
+  function setCategory(cat) {
+    currentCategory = cat;
+    currentPage = 1;
+    document.querySelectorAll('.shop-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + cat).classList.add('active');
+    renderCatalog();
+  }
+
+  function changePage(delta) {
+    let maxPages = Math.ceil(CATALOGS[currentCategory].length / ITEMS_PER_PAGE);
+    currentPage = Math.max(1, Math.min(maxPages, currentPage + delta));
+    renderCatalog();
+  }
+
+  function renderCatalog() {
+    const container = document.getElementById('catalog-container');
+    container.innerHTML = '';
+
+    let list = CATALOGS[currentCategory];
+    let start = (currentPage - 1) * ITEMS_PER_PAGE;
+    let pageItems = list.slice(start, start + ITEMS_PER_PAGE);
+
+    let maxPages = Math.ceil(list.length / ITEMS_PER_PAGE);
+    document.getElementById('page-txt').innerText = `Page ${currentPage} / ${maxPages}`;
+
+    pageItems.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+
+      let isUnlocked = state.unlockedIds.includes(item.id);
+      let isEquipped = state.equipped[currentCategory.slice(0, -1)]?.id === item.id;
+
+      let preview = item.icon || '✨';
+      if (currentCategory === 'fire') preview = '🔥';
+      if (currentCategory === 'worlds') preview = '🌌';
+      if (currentCategory === 'sizes') preview = '📏';
+
+      card.innerHTML = `
+        <span style="font-size:18px;">${preview}</span>
+        <strong>${item.name}</strong>
+        <span>${isUnlocked ? 'Unlocked' : item.cost + ' 🪙'}</span>
+        <button onclick="handleItemAction('${currentCategory}', '${item.id}')">
+          ${isEquipped ? 'Equipped' : isUnlocked ? 'Equip' : 'Buy'}
+        </button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function handleItemAction(cat, itemId) {
+    let item = CATALOGS[cat].find(x => x.id === itemId);
+    let key = cat.slice(0, -1);
+
+    if (state.unlockedIds.includes(itemId)) {
+      state.equipped[key] = item;
+      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Equipped ${item.name}!"`;
+    } else if (state.coins >= item.cost) {
+      state.coins -= item.cost;
+      state.unlockedIds.push(itemId);
+      state.equipped[key] = item;
+      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Unlocked & Equipped ${item.name}!"`;
+    } else {
+      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "You need ${item.cost - state.coins} more coins!"`;
+    }
+
+    updateUI();
+    renderCatalog();
+  }
+
+  function rollGacha() {
+    if (state.coins < 30) {
+      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Mystery Spin costs 30 coins!"`;
+      return;
+    }
+
+    state.coins -= 30;
+    let categories = ['dragons', 'outfits', 'fire', 'worlds', 'sizes'];
+    let randomCat = categories[Math.floor(Math.random() * categories.length)];
+    let list = CATALOGS[randomCat];
+    let randomItem = list[Math.floor(Math.random() * list.length)];
+
+    if (!state.unlockedIds.includes(randomItem.id)) {
+      state.unlockedIds.push(randomItem.id);
+    }
+    state.equipped[randomCat.slice(0,-1)] = randomItem;
+
+    document.getElementById('elu-msg').innerHTML = `<strong>Elu (Gacha):</strong> "🎉 Jackpot! You won ${randomItem.name}!"`;
+    updateUI();
+    renderCatalog();
+  }
+
+  function switchTab(screenName) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+
+    document.getElementById(screenName + '-screen').classList.add('active');
+    document.getElementById('nav-' + screenName).classList.add('active');
+
+    if (screenName === 'castle') renderCatalog();
+    if (screenName === 'fly') startFlyGame();
+    else stopFlyGame();
+  }
+
+  /* --------------------------------------------------
+     4. FLIGHT GAME ENGINE
+  -------------------------------------------------- */
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  let gameLoopId = null;
+  let dragonY = 150;
+  let isFiring = false;
+  let obstacles = [];
+  let coinPickups = [];
+  let score = 0;
+  let moveUp = false;
+  let moveDown = false;
+
+  function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+  }
+
+  function startFlyGame() {
+    resizeCanvas();
+    dragonY = canvas.height / 2;
+    obstacles = [];
+    coinPickups = [];
+    score = 0;
+    if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
+  }
+
+  function stopFlyGame() {
+    if (gameLoopId) {
+      cancelAnimationFrame(gameLoopId);
+      gameLoopId = null;
+    }
+  }
+
+  const btnUp = document.getElementById('btn-up');
+  const btnDown = document.getElementById('btn-down');
+  const btnFire = document.getElementById('btn-fire');
+
+  const addTouch = (elem, startFn, endFn) => {
+    elem.addEventListener('touchstart', (e) => { e.preventDefault(); startFn(); });
+    elem.addEventListener('touchend', (e) => { e.preventDefault(); endFn(); });
+    elem.addEventListener('mousedown', startFn);
+    elem.addEventListener('mouseup', endFn);
+  };
+
+  addTouch(btnUp, () => moveUp = true, () => moveUp = false);
+  addTouch(btnDown, () => moveDown = true, () => moveDown = false);
+  addTouch(btnFire, () => isFiring = true, () => isFiring = false);
+
+  function updateFlyGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dynamic World Sky Background
+    ctx.fillStyle = state.equipped.world.bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Procedural Stars
+    ctx.fillStyle = state.equipped.world.stars;
+    for(let i=0; i<15; i++) {
+      ctx.fillRect((i*60 + score*2)%canvas.width, (i*37)%canvas.height, 2, 2);
+    }
+
+    if (moveUp) dragonY -= 6;
+    if (moveDown) dragonY += 6;
+    dragonY = Math.max(30, Math.min(canvas.height - 80, dragonY));
+
+    // Render Equipped Dragon & Princess
+    ctx.save();
+    ctx.shadowColor = state.equipped.dragon.glow;
+    ctx.shadowBlur = 15;
+    ctx.font = '40px serif';
+    ctx.fillText(state.equipped.dragon.icon, 50, dragonY);
+    ctx.restore();
+
+    ctx.save();
+    ctx.font = (18 * state.equipped.size.mult) + 'px serif';
+    ctx.fillText(state.equipped.outfit.icon, 55, dragonY - 18);
+    ctx.restore();
+
+    // Custom Beam Fire Breath
+    if (isFiring) {
+      ctx.save();
+      let grad = ctx.createLinearGradient(90, dragonY, canvas.width, dragonY);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.4, state.equipped.fire.c1);
+      grad.addColorStop(1, state.equipped.fire.c2);
+      
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(85, dragonY - 10);
+      ctx.lineTo(canvas.width, dragonY - 30);
+      ctx.lineTo(canvas.width, dragonY + 20);
+      ctx.lineTo(85, dragonY + 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Spawn Obstacles & Coins
+    if (Math.random() < 0.03) {
+      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, size: 35, speed: 3 + Math.random() * 3 });
+    }
+    if (Math.random() < 0.02) {
+      coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 3 });
+    }
+
+    // Process Coins
+    for (let i = coinPickups.length - 1; i >= 0; i--) {
+      let c = coinPickups[i];
+      c.x -= c.speed;
+      ctx.font = '22px serif';
+      ctx.fillText('🪙', c.x, c.y);
+
+      if (Math.abs(c.x - 60) < 35 && Math.abs(c.y - dragonY) < 35) {
+        coinPickups.splice(i, 1);
+        state.coins += 5;
+        updateUI();
+      }
+    }
+
+    // Process Obstacles
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      let obs = obstacles[i];
+      obs.x -= obs.speed;
+      ctx.font = obs.size + 'px serif';
+      ctx.fillText('🪨', obs.x, obs.y);
+
+      if (isFiring && obs.y > dragonY - 40 && obs.y < dragonY + 40 && obs.x > 80) {
+        obstacles.splice(i, 1);
+        score += 10;
+        state.coins += 1;
+        updateUI();
+        continue;
+      }
+
+      if (Math.abs(obs.x - 60) < 30 && Math.abs(obs.y - dragonY) < 30) {
+        obstacles.splice(i, 1);
+        score = Math.max(0, score - 15);
+      }
+    }
+
+    document.getElementById('score-txt').innerText = score;
+    gameLoopId = requestAnimationFrame(updateFlyGame);
+  }
+
+  updateUI();
+  window.addEventListener('resize', resizeCanvas);
+</script>
+</body>
+</html>
