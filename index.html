@@ -1,1062 +1,1684 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess Masa: Infinite Masterpiece Edition</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0c0414">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#170f36">
+<title>Dragon & Princess Masa — Infinite Masterpiece V2</title>
 
-  <style>
-    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
-    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0c0414; color: #fff; }
-    
-    #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
-    
-    nav { height: 48px; background: rgba(0,0,0,0.92); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; flex-shrink: 0; overflow-x: auto; }
-    nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 4px 8px; border-radius: 9px; font-weight: bold; font-size: 9px; cursor: pointer; white-space: nowrap; }
-    nav button.active { background: #ffd700; color: #1a0933; }
+<style>
+:root {
+  --night: #170f36;
+  --panel: #24184c;
+  --panel2: #352261;
+  --gold: #ffd66e;
+  --pink: #ff8fc9;
+  --mint: #8dffda;
+  --text: #fff7ff;
+  --muted: #c6bce9;
+  --line: #ffffff26;
+}
 
-    .hud-header { position: absolute; top: 5px; right: 10px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #ffd700; font-size: 11px; z-index: 15; display: flex; gap: 6px; }
+* { box-sizing: border-box; }
 
-    .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow: hidden; }
-    .screen.active { display: flex; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 50% -20%, #6a3e9c 0%, transparent 55%),
+    linear-gradient(160deg, #100b28, #21123f 55%, #10162e);
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
 
-    /* CARE SCREEN */
-    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; padding-bottom: 15px; overflow-y: auto; }
-    .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 9px; border: 1px solid #9333ea; margin-top: 5px; z-index: 2; }
-    .bar-row { margin-bottom: 2px; }
-    .bar-label { display: flex; justify-content: space-between; font-size: 8px; margin-bottom: 1px; font-weight: bold; }
-    .bar-track { width: 100%; height: 5px; background: #222; border-radius: 2.5px; overflow: hidden; }
-    .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
+button { font: inherit; cursor: pointer; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 160px; overflow: visible; }
-    
-    .dragon-render { width: 140px; height: 140px; filter: drop-shadow(0 0 18px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 14%; animation: dragonFloat 3s ease-in-out infinite alternate; }
-    @keyframes dragonFloat { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(-7px) rotate(2deg); } }
+button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
 
-    .princess-render { width: 90px; height: 110px; position: absolute; bottom: 12px; right: 8%; z-index: 5; transition: all 0.5s ease-in-out; }
-    .princess-render.interact { right: 36%; transform: translateY(-8px) scale(1.1); }
-    .princess-render.hugging { right: 38%; transform: translateY(-4px) scale(1.2) rotate(-8deg); }
+.app { max-width: 1450px; margin: auto; padding: 16px; }
 
-    .action-tool { position: absolute; font-size: 30px; z-index: 6; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-    .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
-    @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.3) translateY(-6px); } }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
 
-    .floating-text { position: absolute; font-size: 22px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-50px) scale(1.2); } }
+.brand {
+  font-size: clamp(19px, 3vw, 30px);
+  font-weight: 950;
+  letter-spacing: -.8px;
+}
 
-    .tricks-section { width: 92%; max-width: 400px; background: rgba(0,0,0,0.4); border: 1px solid #ffd700; border-radius: 9px; padding: 5px; margin-bottom: 6px; flex-shrink: 0; }
-    .tricks-header { font-size: 10px; color: #ffd700; font-weight: bold; display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
-    .tricks-scroll { max-height: 65px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; }
-    .trick-btn { background: #3b1566; border: 1px solid #a855f7; color: #fff; padding: 3px; border-radius: 5px; font-size: 8px; cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .trick-btn:hover { background: #ffd700; color: #1a0933; }
+.brand span { color: var(--gold); }
 
-    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; width: 92%; max-width: 400px; margin-bottom: 8px; z-index: 5; flex-shrink: 0; }
-    .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 1.5px solid #a855f7; color: white; padding: 6px 2px; border-radius: 10px; font-size: 8px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
-    .act-btn span { color: #ffd700; text-shadow: 0 1px 2px #000; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; }
 
-    /* VAULT, MAP, ALBUM, ARCHIVE SCREENS */
-    #castle-screen, #map-screen, #journal-screen, #album-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; padding: 6px 10px; overflow-y: auto; }
-    .title { font-size: 14px; color: #ffd700; margin-top: 3px; text-shadow: 0 0 5px #ffd700; flex-shrink: 0; }
-    .elu-card { width: 100%; max-width: 400px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 9px; padding: 5px 7px; margin: 4px auto; display: flex; gap: 7px; align-items: center; flex-shrink: 0; }
-    .elu-avatar { font-size: 20px; background: #26094d; padding: 3px; border-radius: 50%; border: 1px solid #ffd700; cursor: pointer; }
-    .elu-text { flex: 1; text-align: left; font-size: 9px; line-height: 1.2; color: #e9d5ff; }
+.stat {
+  padding: 9px 12px;
+  background: #ffffff12;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
 
-    .gacha-btn { width: 100%; max-width: 400px; background: linear-gradient(90deg, #b91c1c, #d97706, #6d28d9); border: 1px solid #ffd700; color: #fff; padding: 5px; border-radius: 7px; font-weight: bold; font-size: 10px; cursor: pointer; margin: 0 auto 5px auto; display: block; }
+.shell {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  gap: 14px;
+}
 
-    .shop-tabs { display: flex; gap: 3px; width: 100%; max-width: 400px; margin: 0 auto 5px auto; overflow-x: auto; flex-shrink: 0; padding-bottom: 2px; }
-    .tab-btn { background: #26094d; border: 1.5px solid #a855f7; color: #fff; padding: 4px 7px; border-radius: 7px; font-size: 8px; white-space: nowrap; cursor: pointer; font-weight: bold; }
-    .tab-btn.active { background: #ffd700; color: #1a0933; border-color: #ffd700; }
+.sidebar, .panel {
+  background: linear-gradient(150deg, #2d2055ed, #191332f5);
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  box-shadow: 0 15px 45px #0003;
+}
 
-    .catalog-scrollbox { width: 100%; max-width: 400px; flex: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #6b21a8; border-radius: 9px; padding: 5px; margin: 0 auto 5px auto; }
-    .catalog-list { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-    .item-card { background: rgba(255,255,255,0.05); border: 1px solid #a855f7; border-radius: 7px; padding: 5px; display: flex; flex-direction: column; align-items: center; font-size: 8px; gap: 2px; }
-    .item-card button { background: #d97706; border: none; color: white; padding: 3px 5px; border-radius: 4px; font-weight: bold; font-size: 8px; cursor: pointer; width: 100%; }
+.sidebar { padding: 12px; }
 
-    .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; font-size: 9px; flex-shrink: 0; margin: 0 auto 4px auto; }
-    .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 12px;
+  margin: 3px 0;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--text);
+  background: transparent;
+  text-align: left;
+  font-weight: 800;
+  transition: .15s ease;
+}
 
-    .world-map-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 400px; margin: 0 auto; }
-    .world-card { background: rgba(255,255,255,0.06); border: 1.5px solid #a855f7; border-radius: 9px; padding: 6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left; }
-    .world-card.active { border-color: #ffd700; box-shadow: 0 0 9px rgba(255,215,0,0.4); }
+.nav:hover { background: #ffffff12; transform: translateX(2px); }
 
-    .journal-card { background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 9px; padding: 6px; margin-bottom: 6px; text-align: left; max-width: 400px; width: 100%; margin-left: auto; margin-right: auto; }
-    .journal-card h3 { color: #ffd700; font-size: 11px; margin-bottom: 2px; }
-    .journal-card p { font-size: 8px; color: #e9d5ff; line-height: 1.2; }
+.nav.active {
+  background: linear-gradient(100deg, #8b52d8, #583c9f);
+  border-color: #ffffff35;
+  box-shadow: 0 5px 18px #0002;
+}
 
-    /* FLIGHT SCREEN */
-    #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
-    canvas { display: block; width: 100%; height: 100%; }
-    
-    .fly-hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; z-index: 20; align-items: center; }
-    .hud-box { font-size: 10px; font-weight: bold; color: #ffd700; background: rgba(0,0,0,0.75); padding: 3px 7px; border-radius: 8px; border: 1.5px solid #ffd700; text-shadow: 0 0 4px #000; }
-    .mission-box { position: absolute; top: 38px; left: 8px; right: 8px; background: rgba(15, 7, 40, 0.85); border: 1.5px solid #a855f7; border-radius: 7px; padding: 3px 7px; font-size: 9px; color: #e9d5ff; font-weight: bold; text-align: center; z-index: 20; backdrop-filter: blur(4px); }
-    .mode-toggle-btn { font-size: 9px; font-weight: bold; color: #fff; background: linear-gradient(135deg, #a855f7, #6d28d9); border: 1.5px solid #ffd700; padding: 3px 7px; border-radius: 8px; cursor: pointer; }
+.nav-icon { font-size: 22px; width: 27px; text-align: center; }
 
-    .fly-controls { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 12px; box-sizing: border-box; z-index: 20; pointer-events: none; }
-    .fly-controls.drag-active { justify-content: flex-end; }
-    
-    .d-pad-grid { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 6px; pointer-events: auto; }
-    .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(59, 130, 246, 0.45); border: 2px solid #60a5fa; color: #ffffff; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); pointer-events: auto; }
-    .ctrl-btn:active { background: rgba(59, 130, 246, 0.85); transform: scale(0.92); }
-    
-    .action-cluster { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; pointer-events: auto; }
-    .fire-btn { width: 65px; height: 65px; border-radius: 50%; background: radial-gradient(circle, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%); border: 3px solid #fef08a; color: #ffffff; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .roar-btn { width: 45px; height: 45px; border-radius: 50%; background: radial-gradient(circle, #a855f7 0%, #6d28d9 100%); border: 2px solid #ffd700; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .stunt-btn { width: 45px; height: 45px; border-radius: 50%; background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #ffd700; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.side-note {
+  margin-top: 20px;
+  padding: 13px;
+  border-radius: 16px;
+  background: #0002;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
 
-    /* POPUP OVERLAY */
-    .popup-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-    .popup-overlay.active { display: flex; }
-    .popup-card { background: linear-gradient(135deg, #1e0936, #3b1566); border: 2px solid #ffd700; border-radius: 15px; width: 85%; max-width: 300px; padding: 15px; text-align: center; box-shadow: 0 0 18px rgba(255, 215, 0, 0.5); }
-    .popup-card h3 { color: #ffd700; font-size: 15px; margin-bottom: 5px; }
-    .popup-card p { font-size: 10px; color: #e9d5ff; line-height: 1.2; margin-bottom: 10px; }
-    .popup-card button { background: linear-gradient(90deg, #d97706, #ffd700); border: none; color: #1a0933; padding: 7px 16px; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer; }
-  </style>
+.main { min-width: 0; }
+
+.panel { padding: clamp(13px, 2vw, 23px); }
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  padding: 25px;
+  border: 1px solid #ffffff30;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 78% 32%, #ffe9a8 0 4%, #ffd16d 5%, transparent 6%),
+    radial-gradient(ellipse at 80% 110%, #ee8ed5 0%, transparent 45%),
+    linear-gradient(130deg, #32266f, #7650bd 50%, #e78cce);
+}
+
+.hero:before {
+  content: "✦   ·     ✧      ·  ✦      ·    ✧";
+  position: absolute;
+  inset: 15px 10px auto;
+  color: #fff9d5;
+  letter-spacing: 14px;
+  opacity: .8;
+  pointer-events: none;
+}
+
+.hero-copy { position: relative; z-index: 1; max-width: 60%; }
+
+.eyebrow {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+h1 { font-size: clamp(25px, 4vw, 43px); line-height: 1.05; margin: 12px 0; }
+h2 { font-size: 23px; margin: 0 0 13px; }
+h3 { font-size: 17px; margin: 0 0 8px; }
+p { color: var(--muted); line-height: 1.6; }
+.small { font-size: 12px; color: var(--muted); }
+.hero p { max-width: 440px; color: #fff4ff; }
+
+.hero-art {
+  position: absolute;
+  right: 2%;
+  bottom: -22px;
+  font-size: clamp(90px, 14vw, 175px);
+  filter: drop-shadow(0 14px 10px #30124466);
+  transform: rotate(-9deg);
+  user-select: none;
+}
+
+.button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+
+.btn {
+  border: 1px solid #ffffff35;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: #ffffff12;
+  color: white;
+  font-weight: 850;
+  transition: .15s;
+}
+
+.btn:hover { transform: translateY(-2px); filter: brightness(1.13); }
+
+.btn.primary {
+  color: #352044;
+  border-color: #ffe9a8;
+  background: linear-gradient(120deg, #ffe9a8, #ffb7d9);
+}
+
+.btn.mint { color: #102b36; background: var(--mint); border-color: var(--mint); }
+.btn.danger { background: #d94e87; }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.section { margin-top: 21px; }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.section-heading h2 { margin: 0; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  min-width: 0;
+  padding: 15px;
+  border-radius: 17px;
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg, #ffffff0e, #00000012);
+}
+
+.card p { margin: 5px 0 10px; font-size: 13px; }
+
+.card-art {
+  display: grid;
+  place-items: center;
+  min-height: 95px;
+  margin-bottom: 11px;
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 50% 25%, #ffffff25, transparent 50%),
+    linear-gradient(145deg, #7a58ad, #342252);
+  font-size: 48px;
+}
+
+.card .btn { width: 100%; margin-top: 5px; }
+
+.progress {
+  height: 10px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: #0005;
+  border: 1px solid #ffffff12;
+}
+
+.progress > div {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8dffda, #ffe18a, #ff8fc9);
+  transition: width .25s;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 5px;
+}
+
+.meter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.meter {
+  padding: 13px;
+  background: #ffffff0c;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.meter strong { display: block; font-size: 20px; margin-bottom: 3px; }
+.meter span { color: var(--muted); font-size: 11px; }
+
+.world-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--world-a), var(--world-b));
+}
+
+.world-card .card-art { background: #ffffff18; }
+.lock { color: #ffe9a8; font-weight: 850; font-size: 12px; }
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 520px;
+  border-radius: 16px;
+  background: #191b4b;
+  border: 1px solid #ffffff40;
+  touch-action: none;
+}
+
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.game-controls .btn { flex: 1 1 120px; }
+
+.toast {
+  position: fixed;
+  z-index: 99;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  padding: 13px 18px;
+  max-width: calc(100% - 24px);
+  border: 1px solid #ffffff50;
+  border-radius: 14px;
+  background: #241744f5;
+  box-shadow: 0 10px 35px #0005;
+  font-weight: 850;
+  transition: .2s;
+  text-align: center;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+.list { display: grid; gap: 8px; }
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 13px;
+  background: #ffffff0b;
+  border: 1px solid var(--line);
+}
+
+.list-item .grow { flex: 1; min-width: 0; }
+.list-item p { margin: 3px 0 0; font-size: 12px; }
+
+.badge {
+  display: inline-block;
+  border-radius: 99px;
+  padding: 4px 8px;
+  color: #2d1b43;
+  background: var(--gold);
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed #ffffff35;
+  border-radius: 16px;
+}
+
+.footer {
+  padding: 18px 4px 5px;
+  color: #bdb0e1;
+  font-size: 11px;
+  text-align: center;
+}
+
+.hidden { display: none !important; }
+
+@media (max-width: 800px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding: 8px;
+  }
+  .nav { width: auto; flex: 0 0 auto; padding: 10px 12px; }
+  .nav span:last-child { display: none; }
+  .side-note { display: none; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-copy { max-width: 72%; }
+  .hero-art { right: -2%; }
+}
+
+@media (max-width: 450px) {
+  .app { padding: 9px; }
+  .stats { gap: 5px; }
+  .stat { font-size: 12px; padding: 7px 8px; }
+  .grid { grid-template-columns: 1fr; }
+  .hero { padding: 18px; min-height: 260px; }
+  .hero-copy { max-width: 100%; padding-bottom: 100px; }
+  .hero-art { font-size: 105px; right: 3%; bottom: -22px; }
+  .meter-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
+
 <body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">🐉 DRAGON <span>&</span> PRINCESS MASA</div>
+    <div class="stats">
+      <div class="stat">🪙 <span id="coinStat">250</span></div>
+      <div class="stat">❤️ <span id="lifeStat">7</span></div>
+      <div class="stat">✨ <span id="levelStat">1</span></div>
+    </div>
+  </header>
 
-<div id="app">
-  <div class="hud-header">
-    <span>❤️ <span id="lives-header">5/5</span></span>
-    <span>🪙 <span id="coin-txt">250</span></span>
-  </div>
-
-  <nav>
-    <button id="nav-care" class="active" onclick="switchTab('care')">🐉 Care</button>
-    <button id="nav-castle" onclick="switchTab('castle')">🏰 Vault</button>
-    <button id="nav-map" onclick="switchTab('map')">🗺️ Map</button>
-    <button id="nav-album" onclick="switchTab('album')">📸 Album</button>
-    <button id="nav-journal" onclick="switchTab('journal')">📜 Archive</button>
-    <button id="nav-fly" onclick="switchTab('fly')">🚀 Flight</button>
-  </nav>
-
-  <!-- CARE SCREEN -->
-  <div id="care-screen" class="screen active">
-    <div class="status-box">
-      <div class="bar-row">
-        <div class="bar-label"><span>DRAGON VITALITY</span><span id="hp-val">0%</span></div>
-        <div class="bar-track"><div id="hp-fill" class="bar-fill" style="background:#ef4444;"></div></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <button class="nav active" data-screen="home"><span class="nav-icon">🏰</span><span>Kingdom</span></button>
+      <button class="nav" data-screen="care"><span class="nav-icon">🐉</span><span>Dragon Care</span></button>
+      <button class="nav" data-screen="flight"><span class="nav-icon">🪽</span><span>Flight Missions</span></button>
+      <button class="nav" data-screen="worlds"><span class="nav-icon">🗺️</span><span>World Map</span></button>
+      <button class="nav" data-screen="vault"><span class="nav-icon">💎</span><span>Treasure Vault</span></button>
+      <button class="nav" data-screen="tricks"><span class="nav-icon">✨</span><span>Trick Academy</span></button>
+      <button class="nav" data-screen="album"><span class="nav-icon">📖</span><span>Adventure Journal</span></button>
+      <button class="nav" data-screen="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+      <div class="side-note">
+        <strong>THE ROYAL QUEST</strong><br>
+        Care for Elu, master the skies, discover lost treasures, and restore the magic of Crown Jewel Castle.
+        <br><br>💾 Progress saves in this browser.
       </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>HUNGER</span><span id="f-val">0%</span></div>
-        <div class="bar-track"><div id="f-fill" class="bar-fill" style="background:#f59e0b;"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>HYGIENE</span><span id="c-val">0%</span></div>
-        <div class="bar-track"><div id="c-fill" class="bar-fill" style="background:#3b82f6;"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>AFFECTION</span><span id="l-val">0%</span></div>
-        <div class="bar-track"><div id="l-fill" class="bar-fill" style="background:#ec4899;"></div></div>
-      </div>
-    </div>
+    </aside>
 
-    <div class="viewport" id="viewport">
-      <div id="dragon-node" class="dragon-render"></div>
-      <div id="princess-node" class="princess-render"></div>
-      <div id="action-tool" class="action-tool">🍎</div>
-    </div>
+    <main class="main">
+      <!-- KINGDOM -->
+      <section class="panel screen" id="screen-home">
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow">✦ The royal adventure begins ✦</div>
+            <h1>Welcome to<br>Crown Jewel Castle</h1>
+            <p>Princess Masa and Elu need a brave adventurer. Explore magical realms, train your dragon, and uncover the kingdom's lost treasures.</p>
+            <div class="button-row">
+              <button class="btn primary" onclick="go('flight')">🪽 Begin a Flight</button>
+              <button class="btn" onclick="go('care')">🐉 Visit Elu</button>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">🐉</div>
+        </div>
 
-    <div class="tricks-section">
-      <div class="tricks-header">
-        <span>✨ 50 Duo Tricks Tray</span>
-        <span id="trick-count-lbl" style="font-size:8px; color:#e9d5ff;">Tap any trick!</span>
-      </div>
-      <div class="tricks-scroll" id="tricks-tray-grid"></div>
-    </div>
+        <div class="meter-grid">
+          <div class="meter"><strong id="homeLevel">1</strong><span>Royal level</span></div>
+          <div class="meter"><strong id="homeWorlds">1 / 5</strong><span>Worlds discovered</span></div>
+          <div class="meter"><strong id="homeTricks">0</strong><span>Tricks mastered</span></div>
+          <div class="meter"><strong id="homeTreasures">0</strong><span>Treasures found</span></div>
+          <div class="meter"><strong id="homeFlights">0</strong><span>Flights completed</span></div>
+          <div class="meter"><strong id="homeBest">0</strong><span>Best flight score</span></div>
+        </div>
 
-    <div class="action-grid">
-      <button class="act-btn" onclick="doCare('feed')"><span style="font-size:16px;">🍎</span><span>Feed</span></button>
-      <button class="act-btn" onclick="doCare('wash')"><span style="font-size:16px;">🧼</span><span>Wash</span></button>
-      <button class="act-btn" onclick="doCare('pet')"><span style="font-size:16px;">🖐️</span><span>Pet</span></button>
-      <button class="act-btn" onclick="doCare('hug')"><span style="font-size:16px;">🤗</span><span>Hug</span></button>
-    </div>
+        <div class="section">
+          <div class="section-heading"><h2>🌟 Today's royal missions</h2><span class="badge">EARN REWARDS</span></div>
+          <div class="grid" id="dailyMissions"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-heading"><h2>🗺️ Your next adventure</h2><button class="btn" onclick="go('worlds')">View all realms →</button></div>
+          <div class="grid" id="featuredWorlds"></div>
+        </div>
+      </section>
+
+      <!-- CARE -->
+      <section class="panel screen hidden" id="screen-care">
+        <div class="section-heading">
+          <div><div class="eyebrow">ROYAL DRAGON SANCTUARY</div><h1>Care for Elu 🐉</h1></div>
+          <span class="badge">YOUR COMPANION</span>
+        </div>
+
+        <div class="hero" style="background:linear-gradient(135deg,#225d83,#7654bb 60%,#e88dc4)">
+          <div class="hero-copy">
+            <h1 id="dragonMood">Elu is happy!</h1>
+            <p id="dragonMessage">Your magical dragon loves spending time with you. Keep Elu healthy, clean, and well-rested.</p>
+            <div class="button-row">
+              <button class="btn primary" onclick="care('play')">💖 Play together</button>
+              <button class="btn" onclick="care('pet')">🤍 Give a cuddle</button>
+            </div>
+          </div>
+          <div class="hero-art" id="dragonArt">🐲</div>
+        </div>
+
+        <div class="meter-grid">
+          <div class="meter"><strong id="healthNum">90</strong><span>❤️ Health</span><div class="progress"><div id="healthBar"></div></div></div>
+          <div class="meter"><strong id="hungerNum">75</strong><span>🍓 Fullness</span><div class="progress"><div id="hungerBar"></div></div></div>
+          <div class="meter"><strong id="happinessNum">85</strong><span>💖 Happiness</span><div class="progress"><div id="happinessBar"></div></div></div>
+          <div class="meter"><strong id="cleanNum">80</strong><span>🫧 Cleanliness</span><div class="progress"><div id="cleanBar"></div></div></div>
+          <div class="meter"><strong id="energyNum">85</strong><span>⚡ Energy</span><div class="progress"><div id="energyBar"></div></div></div>
+          <div class="meter"><strong id="bondNum">0</strong><span>💞 Bond level</span><div class="progress"><div id="bondBar"></div></div></div>
+        </div>
+
+        <div class="section">
+          <h2>🧺 Sanctuary activities</h2>
+          <div class="grid">
+            <div class="card"><div class="card-art">🍓</div><h3>Dragon feast</h3><p>Feed Elu magical berries. Restores fullness and energy.</p><button class="btn primary" onclick="care('feed')">Feed · 10 🪙</button></div>
+            <div class="card"><div class="card-art">🫧</div><h3>Crystal bath</h3><p>Clean the scales and make Elu sparkle again.</p><button class="btn primary" onclick="care('bath')">Bathe · 8 🪙</button></div>
+            <div class="card"><div class="card-art">🪮</div><h3>Scale grooming</h3><p>Brush Elu's scales and strengthen your bond.</p><button class="btn primary" onclick="care('groom')">Groom · 5 🪙</button></div>
+            <div class="card"><div class="card-art">🌙</div><h3>Resting nest</h3><p>Recover energy before a difficult flight.</p><button class="btn primary" onclick="care('rest')">Rest for free</button></div>
+            <div class="card"><div class="card-art">🔥</div><h3>Fire training</h3><p>Practice controlled flames to improve your flight.</p><button class="btn primary" onclick="care('train')">Train · 12 🪙</button></div>
+            <div class="card"><div class="card-art">👑</div><h3>Royal bonding</h3><p>Spend time together and build a lasting friendship.</p><button class="btn primary" onclick="care('bond')">Bond · 5 🪙</button></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>🎨 Dragon appearance</h2>
+          <div class="grid" id="dragonSkins"></div>
+        </div>
+      </section>
+
+      <!-- FLIGHT -->
+      <section class="panel screen hidden" id="screen-flight">
+        <div class="section-heading">
+          <div><div class="eyebrow">SKY RIDER TRAINING</div><h1>Flight Missions 🪽</h1></div>
+          <span class="badge" id="flightStatus">READY</span>
+        </div>
+        <p>Steer Elu through dangerous skies. Collect coins, dodge rocks and magical mines, and use your abilities wisely. Each mission gets harder.</p>
+
+        <div class="meter-grid">
+          <div class="meter"><strong id="flightScore">0</strong><span>🏆 Score</span></div>
+          <div class="meter"><strong id="flightCoins">0</strong><span>🪙 Collected</span></div>
+          <div class="meter"><strong id="flightLives">7</strong><span>❤️ Lives left</span></div>
+        </div>
+
+        <div class="section">
+          <canvas id="gameCanvas" width="960" height="540" aria-label="Dragon flight game. Use arrow keys, WASD, or touch to steer."></canvas>
+          <div class="game-controls">
+            <button class="btn primary" id="startFlight" onclick="startGame()">▶ Start / Restart</button>
+            <button class="btn" onclick="useAbility('fire')">🔥 Fire blast · F</button>
+            <button class="btn" onclick="useAbility('roar')">🐉 Dragon roar · R</button>
+            <button class="btn" onclick="useAbility('dash')">⚡ Sky dash · E</button>
+            <button class="btn" onclick="useAbility('stunt')">✨ Stunt · Space</button>
+          </div>
+          <p class="small">Desktop: arrow keys or WASD. Abilities: F, R, E, Space. Mobile: drag Elu with your finger. Avoid red hazards, collect gold coins, and survive until the mission ends.</p>
+        </div>
+
+        <div class="section">
+          <h2>🎯 Mission objectives</h2>
+          <div class="grid" id="flightObjectives"></div>
+        </div>
+      </section>
+
+      <!-- WORLDS -->
+      <section class="panel screen hidden" id="screen-worlds">
+        <div class="eyebrow">FIVE MAGICAL REALMS</div>
+        <h1>World Map 🗺️</h1>
+        <p>Each realm has its own colors, hazards, and difficulty. Complete flights and collect treasure to unlock new destinations.</p>
+        <div class="grid" id="worldList"></div>
+      </section>
+
+      <!-- VAULT -->
+      <section class="panel screen hidden" id="screen-vault">
+        <div class="eyebrow">COLLECT • CRAFT • CUSTOMIZE</div>
+        <h1>Treasure Vault 💎</h1>
+        <p>Spend the coins you earn on dragon appearances, magical companions, royal outfits, and sanctuary decorations. Owned items remain yours.</p>
+        <div class="meter-grid">
+          <div class="meter"><strong id="vaultCoins">250</strong><span>Available coins</span></div>
+          <div class="meter"><strong id="vaultOwned">0</strong><span>Items owned</span></div>
+          <div class="meter"><strong id="vaultTreasures">0</strong><span>Chests discovered</span></div>
+        </div>
+        <div class="section">
+          <div class="section-heading"><h2>🛍️ Royal collection</h2>
+            <select id="shopCategory" class="btn" aria-label="Filter items" onchange="renderShop()">
+              <option value="all">All items</option><option value="skin">Dragon looks</option><option value="outfit">Princess outfits</option><option value="pet">Companions</option><option value="magic">Magic upgrades</option><option value="decor">Castle decor</option>
+            </select>
+          </div>
+          <div class="grid" id="shopGrid"></div>
+        </div>
+      </section>
+
+      <!-- TRICKS -->
+      <section class="panel screen hidden" id="screen-tricks">
+        <div class="eyebrow">DRAGON RIDING SCHOOL</div>
+        <h1>Trick Academy ✨</h1>
+        <p>Practice tricks to increase your bond with Elu. Advanced tricks require a higher bond level. Master them all to become a legendary dragon rider.</p>
+        <div class="meter-grid">
+          <div class="meter"><strong id="tricksKnown">0 / 50</strong><span>Tricks mastered</span></div>
+          <div class="meter"><strong id="trickBond">0</strong><span>Bond points</span></div>
+          <div class="meter"><strong id="trickRewards">0</strong><span>Practice rewards</span></div>
+        </div>
+        <div class="section"><div class="grid" id="trickGrid"></div></div>
+      </section>
+
+      <!-- JOURNAL -->
+      <section class="panel screen hidden" id="screen-album">
+        <div class="eyebrow">THE STORY OF YOUR KINGDOM</div>
+        <h1>Adventure Journal 📖</h1>
+        <p>Your journey is being written one mission at a time. Discover achievements, recover lost treasure, and build a royal legacy.</p>
+        <div class="section"><h2>🏅 Achievements</h2><div class="grid" id="achievementGrid"></div></div>
+        <div class="section"><h2>📜 Royal chronicles</h2><div class="list" id="journalList"></div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="panel screen hidden" id="screen-settings">
+        <div class="eyebrow">YOUR GAME, YOUR ADVENTURE</div>
+        <h1>Settings ⚙️</h1>
+        <div class="card">
+          <h3>Sound effects</h3>
+          <p>Toggle simple synthesized sound effects for dragon actions and rewards.</p>
+          <button class="btn primary" id="soundToggle" onclick="toggleSound()">🔊 Sound: On</button>
+        </div>
+        <div class="section card">
+          <h3>Save data</h3>
+          <p>Your progress is stored in this browser's local storage. It does not automatically sync between devices or browsers.</p>
+          <div class="button-row">
+            <button class="btn" onclick="exportSave()">⬇ Export save</button>
+            <button class="btn" onclick="document.getElementById('importFile').click()">⬆ Import save</button>
+            <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importSave(event)">
+          </div>
+        </div>
+        <div class="section card">
+          <h3>Start a new adventure</h3>
+          <p>This deletes the local save for this game in this browser. Export your save first if you want a backup.</p>
+          <button class="btn danger" onclick="resetGame()">Reset all progress</button>
+        </div>
+        <div class="section card">
+          <h3>Version information</h3>
+          <p>Infinite Masterpiece Edition V2 · Single-file HTML5 canvas game · No external assets required.</p>
+        </div>
+      </section>
+    </main>
   </div>
-
-  <!-- VAULT SCREEN -->
-  <div id="castle-screen" class="screen">
-    <h2 class="title">Crown Jewel Vault</h2>
-
-    <div class="elu-card">
-      <div class="elu-avatar" onclick="triggerGoldenCheat()" title="Tap Elu 5 times!">🎩</div>
-      <div class="elu-text" id="elu-msg">
-        <strong>Elu:</strong> "Welcome Princess Masa! Tap my hat 5 times for a secret surprise!"
-      </div>
-    </div>
-
-    <button class="gacha-btn" onclick="rollGacha()">🎲 Mystery Spin (30 🪙)</button>
-
-    <div class="shop-tabs">
-      <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons</button>
-      <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits</button>
-      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Fire</button>
-      <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds</button>
-      <button class="tab-btn" id="tab-pets" onclick="setCategory('pets')">🐾 Pets</button>
-      <button class="tab-btn" id="tab-decor" onclick="setCategory('decor')">🪴 Decor</button>
-    </div>
-
-    <div class="catalog-scrollbox">
-      <div class="catalog-list" id="catalog-container"></div>
-    </div>
-
-    <div class="pagination">
-      <button class="page-btn" onclick="changePage(-1)">◀ Prev</button>
-      <span id="page-txt">Page 1 / 50</span>
-      <button class="page-btn" onclick="changePage(1)">Next ▶</button>
-    </div>
-  </div>
-
-  <!-- WORLD MAP SCREEN -->
-  <div id="map-screen" class="screen">
-    <h2 class="title" style="margin-bottom:6px;">🗺️ Realm Weather & Map</h2>
-    <div class="world-map-grid" id="world-map-container"></div>
-  </div>
-
-  <!-- ALBUM SCREEN -->
-  <div id="album-screen" class="screen">
-    <h2 class="title" style="margin-bottom:6px;">📸 Royal Photo Album</h2>
-    <button class="gacha-btn" onclick="takeSnapshot()">📷 Take Duo Snapshot (10 🪙)</button>
-    <div class="catalog-scrollbox" id="album-gallery">
-      <p style="font-size:10px; color:#e9d5ff; margin-top:20px;">No snapshots saved yet! Take your first photo above.</p>
-    </div>
-  </div>
-
-  <!-- JOURNAL SCREEN -->
-  <div id="journal-screen" class="screen">
-    <h2 class="title" style="margin-bottom:6px;">📜 Royal Archive & Hall of Legends</h2>
-    
-    <div class="journal-card">
-      <h3>🏆 Endless Rift High Score</h3>
-      <p>Personal Best Score: <span id="hall-of-legends-score">0</span> pts</p>
-    </div>
-
-    <div class="journal-card">
-      <h3>📰 Elu's Daily Gazette</h3>
-      <p id="gazette-news">"Messenger bird reports clear skies and falling gold chests across all cosmic sectors today!"</p>
-    </div>
-
-    <div class="journal-card">
-      <h3>🏆 Active Royal Achievements</h3>
-      <p>Completed Worlds: <span id="journal-missions-done">0</span><br>Master Feedings: <span id="journal-feedings">0</span><br>Tricks Performed: <span id="journal-tricks">0</span></p>
-    </div>
-  </div>
-
-  <!-- FLIGHT SCREEN -->
-  <div id="fly-screen" class="screen">
-    <div class="fly-hud">
-      <div class="hud-box">Lives: <span id="lives-txt">❤️❤️❤️❤️❤️</span></div>
-      <div class="hud-box">Score: <span id="score-txt">0</span></div>
-      <button class="mode-toggle-btn" id="control-toggle-btn" onclick="toggleControlMode()">🎮 Mode: Buttons</button>
-    </div>
-
-    <div class="mission-box" id="mission-hud-box">
-      🎯 Mission: Collect 10 Ice Eggs! Progress: <span id="mission-progress">0/10</span>
-    </div>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <div class="fly-controls" id="fly-controls-container">
-      <div class="d-pad-grid" id="dpad-wrapper">
-        <div></div>
-        <div class="ctrl-btn" id="btn-up">▲</div>
-        <div></div>
-        <div class="ctrl-btn" id="btn-left">◀</div>
-        <div class="ctrl-btn" id="btn-down">▼</div>
-        <div class="ctrl-btn" id="btn-right">▶</div>
-      </div>
-      <div class="action-cluster">
-        <button class="stunt-btn" id="btn-stunt" title="Duo Stunt Barrel Roll">💫</button>
-        <button class="roar-btn" id="btn-roar" title="Dragon Roar">🗣️</button>
-        <button class="fire-btn" id="btn-fire">🔥 FIRE</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- POPUP DIALOG -->
-  <div class="popup-overlay" id="popup-dialog">
-    <div class="popup-card">
-      <h3 id="popup-title">🎉 Mission Complete!</h3>
-      <p id="popup-msg">Princess Masa conquered the realm!</p>
-      <button onclick="closePopupAndContinueFlying()">Enter Endless Rift 🌌</button>
-    </div>
-  </div>
+  <div class="footer">DRAGON & PRINCESS MASA · INFINITE MASTERPIECE V2 · MADE FOR ADVENTURE ✦</div>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
-  /* 1. WEB AUDIO API SYNTHESIZER (CHIPTUNE SOUNDS WITHOUT FILES) */
-  let audioCtx = null;
-  function playSound(type) {
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+"use strict";
 
-      let now = audioCtx.currentTime;
-      if (type === 'coin') {
-        osc.frequency.setValueAtTime(587.33, now);
-        osc.frequency.setValueAtTime(880, now + 0.08);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.start(now); osc.stop(now + 0.25);
-      } else if (type === 'feed') {
-        osc.frequency.setValueAtTime(330, now);
-        osc.frequency.setValueAtTime(440, now + 0.1);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-      } else if (type === 'stunt') {
-        osc.frequency.setValueAtTime(261.63, now);
-        osc.frequency.setValueAtTime(523.25, now + 0.12);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-        osc.start(now); osc.stop(now + 0.35);
-      } else if (type === 'hit') {
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.setValueAtTime(80, now + 0.15);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-      }
-    } catch(e){}
+/* ==========================================================
+   DRAGON & PRINCESS MASA — INFINITE MASTERPIECE V2
+   Single-file browser game. No external libraries.
+   ========================================================== */
+
+const SAVE_KEY = "masa_dragon_infinite_v2";
+
+const WORLDS = [
+  {id:"crown",name:"Crown Jewel Kingdom",icon:"🏰",a:"#7253b8",b:"#d77cc2",desc:"Your home realm. Explore the castle skies and collect your first treasures.",cost:0,difficulty:1,goal:0},
+  {id:"frost",name:"Frost Peak",icon:"❄️",a:"#1b779d",b:"#a8e8ff",desc:"Glittering glaciers, icy tunnels, and slippery wind currents.",cost:250,difficulty:2,goal:2},
+  {id:"magma",name:"Magma Core",icon:"🌋",a:"#9b3e35",b:"#ffad50",desc:"A fiery volcanic realm filled with ember storms and dangerous rocks.",cost:500,difficulty:3,goal:4},
+  {id:"star",name:"Star Void",icon:"🌌",a:"#25245e",b:"#a05ce0",desc:"A cosmic world of star gates, purple nebulae, and fast-moving hazards.",cost:800,difficulty:4,goal:7},
+  {id:"thunder",name:"Thunder Spire",icon:"⚡",a:"#34406e",b:"#7ee5e8",desc:"The ultimate storm challenge. Survive the lightning and claim the crown.",cost:1200,difficulty:5,goal:10}
+];
+
+const TRICKS = [
+ ["Sky Spiral","🌀",0],["Royal Loop","🔄",0],["Twinkle Dive","✨",0],["Cloud Bounce","☁️",0],["Wing Wave","🪽",0],
+ ["Comet Turn","☄️",1],["Crystal Flip","💎",1],["Moonlight Glide","🌙",1],["Firefly Dance","🪲",1],["Rainbow Arc","🌈",1],
+ ["Star Barrel Roll","⭐",2],["Dragon Corkscrew","🐉",2],["Aurora Sweep","🌌",2],["Phoenix Rise","🔥",2],["Crown Spin","👑",2],
+ ["Frost Feather","❄️",3],["Meteor Twist","☄️",3],["Cloud Carousel","🎠",3],["Magic Ribbon","🎀",3],["Starlight Drop","🌠",3],
+ ["Double Loop","🔁",4],["Golden Spiral","🟡",4],["Thunder Roll","⚡",4],["Prism Dive","🔷",4],["Moonbeam Flip","🌛",4],
+ ["Fire Crown","🔥",5],["Crystal Comet","💠",5],["Royal Eclipse","🌑",5],["Silver Phoenix","🕊️",5],["Galaxy Waltz","🌌",5],
+ ["Triple Spiral","🌀",6],["Dragon Meteor","☄️",6],["Celestial Twist","🌟",6],["Frost Nova","❄️",6],["Rainbow Rocket","🚀",6],
+ ["Infinity Loop","♾️",7],["Diamond Cyclone","💎",7],["Solar Flare","☀️",7],["Nebula Dance","🌌",7],["Lightning Crown","⚡",7],
+ ["Legendary Sky Dance","👑",8],["Prismatic Phoenix","🌈",8],["Dragon Starburst","🐲",8],["Heaven's Spiral","🌠",8],["Cosmic Crown Flip","🌌",8],
+ ["Eternal Aurora","🌌",9],["Infinite Comet","☄️",9],["Seven-Star Flight","⭐",9],["Celestial Dragon Waltz","🐉",10],["The Crown Jewel Finale","👑",10]
+];
+
+const SHOP = [
+ {id:"skin_mint",name:"Mint Crystal Scales",cat:"skin",icon:"🐉",cost:100,desc:"A shimmering mint-green dragon look.",unlock:0},
+ {id:"skin_royal",name:"Royal Amethyst",cat:"skin",icon:"🐲",cost:250,desc:"Purple scales with a royal glow.",unlock:0},
+ {id:"skin_solar",name:"Solar Dragon",cat:"skin",icon:"☀️",cost:400,desc:"Golden scales inspired by the sun.",unlock:0},
+ {id:"skin_ice",name:"Frost Dragon",cat:"skin",icon:"❄️",cost:500,desc:"An icy look from Frost Peak.",unlock:2},
+ {id:"outfit_star",name:"Starlight Gown",cat:"outfit",icon:"👗",cost:150,desc:"A gown woven from magical starlight.",unlock:0},
+ {id:"outfit_crown",name:"Royal Crown",cat:"outfit",icon:"👑",cost:200,desc:"A sparkling crown for Princess Masa.",unlock:0},
+ {id:"pet_fox",name:"Moon Fox",cat:"pet",icon:"🦊",cost:300,desc:"A tiny enchanted friend for the castle.",unlock:1},
+ {id:"pet_owl",name:"Crystal Owl",cat:"pet",icon:"🦉",cost:350,desc:"A wise companion who watches the skies.",unlock:2},
+ {id:"magic_shield",name:"Sky Shield",cat:"magic",icon:"🛡️",cost:250,desc:"Start each flight with one protective shield.",unlock:0},
+ {id:"magic_magnet",name:"Coin Magnet",cat:"magic",icon:"🧲",cost:300,desc:"Pull nearby coins closer during flight.",unlock:0},
+ {id:"magic_heart",name:"Extra Heart",cat:"magic",icon:"💖",cost:400,desc:"Adds one bonus life at the start of each flight.",unlock:0},
+ {id:"decor_fountain",name:"Crystal Fountain",cat:"decor",icon:"⛲",cost:175,desc:"A sparkling fountain for your sanctuary.",unlock:0},
+ {id:"decor_rainbow",name:"Rainbow Bridge",cat:"decor",icon:"🌈",cost:225,desc:"A colorful bridge for the royal garden.",unlock:1},
+ {id:"decor_throne",name:"Gemstone Throne",cat:"decor",icon:"🪑",cost:450,desc:"A grand throne for Crown Jewel Castle.",unlock:3}
+];
+
+const MISSIONS = [
+ {id:"flight1",name:"First Flight",desc:"Complete your first flight mission.",goal:1,reward:60,type:"flights"},
+ {id:"coins100",name:"Coin Collector",desc:"Collect 100 coins across your adventures.",goal:100,reward:75,type:"totalCoins"},
+ {id:"trick5",name:"Rising Star",desc:"Master five dragon tricks.",goal:5,reward:50,type:"tricks"},
+ {id:"bond20",name:"Dragon Best Friend",desc:"Build 20 bond points with Elu.",goal:20,reward:50,type:"bond"}
+];
+
+const ACHIEVEMENTS = [
+ {id:"first_flight",name:"Wings of Courage",icon:"🪽",desc:"Complete your first flight.",test:s=>s.flights>=1,reward:50},
+ {id:"treasure_1",name:"Treasure Seeker",icon:"💎",desc:"Find your first treasure chest.",test:s=>s.treasures>=1,reward:40},
+ {id:"tricks_5",name:"Trick Apprentice",icon:"✨",desc:"Master five dragon tricks.",test:s=>s.tricks.length>=5,reward:60},
+ {id:"bond_20",name:"True Companions",icon:"💞",desc:"Reach 20 bond points.",test:s=>s.bond>=20,reward:50},
+ {id:"world_3",name:"Realm Explorer",icon:"🗺️",desc:"Unlock three realms.",test:s=>s.unlockedWorlds.length>=3,reward:100},
+ {id:"score_1000",name:"Sky Champion",icon:"🏆",desc:"Score 1,000 points in one flight.",test:s=>s.bestScore>=1000,reward:100},
+ {id:"coins_500",name:"Royal Riches",icon:"🪙",desc:"Collect 500 coins across flights.",test:s=>s.totalCoins>=500,reward:100},
+ {id:"all_10",name:"Dragon Legend",icon:"🐉",desc:"Reach royal level 10.",test:s=>s.level>=10,reward:250}
+];
+
+const defaultState = () => ({
+ coins:250, lives:7, level:1, xp:0, health:90, hunger:75, happiness:85,
+ clean:80, energy:85, bond:0, tricks:[], owned:["skin_default"], equippedSkin:"skin_default",
+ ownedWorlds:["crown"], unlockedWorlds:["crown"], world:"crown", items:[],
+ flights:0, bestScore:0, totalCoins:0, treasures:0, sound:true,
+ achievements:[], journal:[{text:"Princess Masa and Elu arrived at Crown Jewel Castle.",time:Date.now()}],
+ missionClaimed:[], tricksPracticed:0, chestsOpened:0
+});
+
+let state = loadState();
+let activeScreen = "home";
+let toastTimer = null;
+let audioContext = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return defaultState();
+    const saved = JSON.parse(raw);
+    return Object.assign(defaultState(), saved);
+  } catch (e) {
+    console.warn("Could not load save; starting a new game.", e);
+    return defaultState();
   }
-
-  /* 2. 50 DUO TRICKS DEFINITIONS */
-  const DUO_TRICKS = [
-    { id: 1, name: "1. Crown Spin 👑", desc: "Masa holds crown while dragon spins." },
-    { id: 2, name: "2. Tail High-Five 🖐️", desc: "Masa high-fives the sweeping tail." },
-    { id: 3, name: "3. Tickle Sneak 🪶", desc: "Masa tickles dragon scales." },
-    { id: 4, name: "4. Starlight Pyramid 🔺", desc: "Acrobatic adventurer monument pose." },
-    { id: 5, name: "5. Cozy Blanket Nap 🛌", desc: "Curling up together under stars." },
-    { id: 6, name: "6. Double Bubble Pop 🫧", desc: "Blowing soap bubbles together." },
-    { id: 7, name: "7. Yarn Ball Juggle 🧶", desc: "Passing yarn back and forth." },
-    { id: 8, name: "8. Lullaby Duet 🎶", desc: "Singing a soothing melody." },
-    { id: 9, name: "9. Sparkle High Leap ✨", desc: "Dragon leaps while Masa cheers." },
-    { id: 10, name: "10. Belly Drum Beat 🪘", desc: "Tapping chubby dragon belly." },
-    { id: 11, name: "11. Nose-to-Nose Boop 👃", desc: "Gentle affectionate greeting." },
-    { id: 12, name: "12. Wing Cape Glider 🦇", desc: "Masa wraps in dragon wings." },
-    { id: 13, name: "13. Starlight Waltz 💃", desc: "Graceful ballroom twirl." },
-    { id: 14, name: "14. Tail Ride Slide 🎢", desc: "Masa slides down dragon tail." },
-    { id: 15, name: "15. Horn Ring Toss 💍", desc: "Tossing rings onto golden horns." },
-    { id: 16, name: "16. Cloud Pillow Rest ☁️", desc: "Resting on a soft puffy cloud." },
-    { id: 17, name: "17. Sunset Silhouette 🌅", desc: "Striking a heroic pose at dusk." },
-    { id: 18, name: "18. Mirror Mimicry 🪞", desc: "Copying each other's expressions." },
-    { id: 19, name: "19. Feather Tickle 🪶", desc: "Soft feather giggles." },
-    { id: 20, name: "20. Scale Polish 🧼", desc: "Polishing sparkling dragon scales." },
-    { id: 21, name: "21. Heart Sparkle Burst 💖", desc: "Releasing floating heart magic." },
-    { id: 22, name: "22. Shoulder Ride 🎒", desc: "Dragon carries Masa proudly." },
-    { id: 23, name: "23. Foot Stomp Dance 💃", desc: "Rhythmic cute foot tapping." },
-    { id: 24, name: "24. Peek-a-Boo Wing 🙈", desc: "Hiding behind wing membranes." },
-    { id: 25, name: "25. Starry Wish 🌠", desc: "Whispering wishes to the sky." },
-    { id: 26, name: "26. Frost Breath Puff ❄️", desc: "Gentle cooling ice crystals." },
-    { id: 27, name: "27. Warm Ember Glow 🔥", desc: "Cozy fireplace warmth." },
-    { id: 28, name: "28. Flower Crown Weave 🌸", desc: "Weaving daisy crowns together." },
-    { id: 29, name: "29. Rainbow Ribbon Twirl 🌈", desc: "Swirling colorful ribbons." },
-    { id: 30, name: "30. Treasure Chest Guard 🪙", desc: "Guarding gold coins together." },
-    { id: 31, name: "31. Butterfly Chase 🦋", desc: "Chasing magical flutter bugs." },
-    { id: 32, name: "32. Honey Snack Share 🍯", desc: "Sharing sweet royal treats." },
-    { id: 33, name: "33. Echo Yell 🗣️", desc: "Shouting into castle halls." },
-    { id: 34, name: "34. Shadow Puppet Show 🐇", desc: "Making cute hand shadow shapes." },
-    { id: 35, name: "35. Shield Guard Stance 🛡️", desc: "Protective defensive duo pose." },
-    { id: 36, name: "36. Starry Constellation 🌟", desc: "Mapping stars in the room." },
-    { id: 37, name: "37. Rolling Donut Toy 🍩", desc: "Rolling round toy treats." },
-    { id: 38, name: "38. Comet Dash Stunt ☄️", desc: "Fast sprinting dash." },
-    { id: 39, name: "39. Royal Wave 👑", desc: "Wave to the kingdom citizens." },
-    { id: 40, name: "40. Sleepy Yawn 🥱", desc: "Synchronized sleepy yawns." },
-    { id: 41, name: "41. Mud Splash Clean 🚿", desc: "Washing away playtime mud." },
-    { id: 42, name: "42. Leaf Pile Jump 🍂", desc: "Jumping into autumn leaves." },
-    { id: 43, name: "43. Snowman Build ⛄", desc: "Building miniature snow dragons." },
-    { id: 44, name: "44. Kite Flying 🪁", desc: "Flying wind kites high." },
-    { id: 45, name: "45. Teatime Party 🍵", desc: "Royal tea party setup." },
-    { id: 46, name: "46. Book Reading 📖", desc: "Storytime adventure tales." },
-    { id: 47, name: "47. Telescope Stargazing 🔭", desc: "Looking through observatory lenses." },
-    { id: 48, name: "48. Victory Fanfare 🎺", desc: "Playing celebratory trumpets." },
-    { id: 49, name: "49. Magic Spell Chant 🔮", desc: "Casting cozy glitter spells." },
-    { id: 50, name: "50. Ultimate Bond Oath 🤝", desc: "Swearing eternal partnership!" }
-  ];
-
-  /* 3. CATALOG & WORLDS */
-  const ELEMENTS = ["Inferno", "Frost", "Void", "Storm", "Golden", "Emerald", "Solar", "Galactic", "Lava", "Nebula"];
-  const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
-  const PET_BASES = [{name: "Cloud Sprite", icon: "☁️"}, {name: "Star Fairy", icon: "⭐"}, {name: "Firefly", icon: "✨"}];
-  const DECOR_BASES = [{name: "Starry Rug", icon: "🛏️"}, {name: "Crystal Vase", icon: "💎"}, {name: "Stained Window", icon: "🪟"}];
-
-  const WORLD_THEMES = [
-    { type: 'frost', name: 'Frost Peak', weather: '❄️ Falling Snow', bg1: '#0c2340', bg2: '#1d4ed8', obs: ['🧊', '❄️'], pColor: '#93c5fd', mission: "Collect 10 Frozen Eggs!", targetType: 'item', targetIcon: '🥚', targetGoal: 10 },
-    { type: 'lava', name: 'Magma Core', weather: '🌋 Heat Waves', bg1: '#2a0800', bg2: '#991b1b', obs: ['☄️', '🔥'], pColor: '#f97316', mission: "Destroy 12 Magma Rocks!", targetType: 'destroy', targetIcon: '☄️', targetGoal: 12 },
-    { type: 'void', name: 'Star Void', weather: '🌌 Cosmic Dust', bg1: '#110022', bg2: '#581c87', obs: ['🌌', '👾'], pColor: '#c084fc', mission: "Collect 15 Star Orbs!", targetType: 'item', targetIcon: '🔮', targetGoal: 15 },
-    { type: 'storm', name: 'Thunder Spire', weather: '⚡ Electric Gale', bg1: '#0f172a', bg2: '#1e3a8a', obs: ['⚡', '🌪️'], pColor: '#38bdf8', mission: "Collect 10 Spark Energy!", targetType: 'item', targetIcon: '⚡', targetGoal: 10 }
-  ];
-
-  function generateCatalog(type) {
-    let items = [];
-    for (let i = 1; i <= 500; i++) {
-      let elem = ELEMENTS[i % ELEMENTS.length];
-      let hue = (i * 137.5) % 360;
-
-      if (type === 'dragons') {
-        items.push({ id: `dragon_${i}`, name: `#${i} ${elem} Puff`, color: `hsl(${hue}, 85%, 55%)`, belly: `hsl(${hue}, 90%, 80%)`, glow: `hsl(${hue}, 80%, 50%)`, cost: i * 15 });
-      } else if (type === 'outfits') {
-        items.push({ id: `outfit_${i}`, name: `#${i} ${elem} Dress`, icon: OUTFIT_BASES[i % OUTFIT_BASES.length], hue: hue, cost: i * 10 });
-      } else if (type === 'fire') {
-        items.push({ id: `fire_${i}`, name: `#${i} ${elem} Flame`, hue: hue, cost: i * 12 });
-      } else if (type === 'worlds') {
-        let wt = WORLD_THEMES[i % WORLD_THEMES.length];
-        items.push({ id: `world_${i}`, name: `#${i} ${wt.name}`, bg1: wt.bg1, bg2: wt.bg2, type: wt.type, obs: wt.obs, pColor: wt.pColor, mission: wt.mission, targetType: wt.targetType, targetIcon: wt.targetIcon, targetGoal: wt.targetGoal, cost: i * 20 });
-      } else if (type === 'pets') {
-        let p = PET_BASES[i % PET_BASES.length];
-        items.push({ id: `pet_${i}`, name: `#${i} ${p.name}`, icon: p.icon, cost: i * 18 });
-      } else if (type === 'decor') {
-        let dec = DECOR_BASES[i % DECOR_BASES.length];
-        items.push({ id: `decor_${i}`, name: `#${i} ${dec.name}`, icon: dec.icon, cost: i * 15 });
-      }
-    }
-    return items;
-  }
-
-  const CATALOGS = {
-    dragons: generateCatalog('dragons'),
-    outfits: generateCatalog('outfits'),
-    fire: generateCatalog('fire'),
-    worlds: generateCatalog('worlds'),
-    pets: generateCatalog('pets'),
-    decor: generateCatalog('decor')
-  };
-
-  /* 4. STATE */
-  let state = {
-    coins: 250,
-    hunger: 95,
-    clean: 95,
-    love: 95,
-    health: 95,
-    lives: 5,
-    controlMode: 'buttons',
-    feedCount: 0,
-    missionsCompletedCount: 0,
-    tricksPerformedCount: 0,
-    bestScore: 0,
-    snapshots: [],
-    equipped: {
-      dragon: CATALOGS.dragons[0],
-      outfit: CATALOGS.outfits[0],
-      fire: CATALOGS.fire[0],
-      world: CATALOGS.worlds[0],
-      pet: CATALOGS.pets[0],
-      decor: CATALOGS.decor[0]
-    },
-    unlockedIds: ['dragon_1', 'outfit_1', 'fire_1', 'world_1', 'pet_1', 'decor_1']
-  };
-
-  let dressHue = 0;
-  let currentCarePose = 'idle';
-  let missionCount = 0;
-  let missionCompletedInRun = false;
-  let eluTapCount = 0;
-
-  setInterval(() => {
-    dressHue = (dressHue + 2) % 360;
-    const pNode = document.getElementById('princess-node');
-    if (pNode) {
-      pNode.innerHTML = getPrincessMasaSVG(`hsl(${dressHue}, 90%, 60%)`, `hsl(${(dressHue+40)%360}, 95%, 75%)`, currentCarePose);
-    }
-  }, 50);
-
-  const saved = localStorage.getItem('dp_infinite_state');
-  if (saved) {
-    try {
-      let parsed = JSON.parse(saved);
-      Object.assign(state, parsed);
-      ['dragons','outfits','fire','worlds','pets','decor'].forEach(cat => {
-        let key = cat === 'decor' ? 'decor' : cat.slice(0, -1);
-        if (parsed.equipped && parsed.equipped[key]) {
-          let found = CATALOGS[cat].find(x => x.id === parsed.equipped[key].id);
-          if (found) state.equipped[key] = found;
-        }
-      });
-    } catch(e){}
-  }
-
-  function saveState() {
-    localStorage.setItem('dp_infinite_state', JSON.stringify(state));
-  }
-
-  function triggerGoldenCheat() {
-    eluTapCount++;
-    if (eluTapCount >= 5) {
-      let goldenDragon = { id: 'golden_legend', name: 'Prismatic Legend', color: 'gold', belly: '#fff', glow: '#ff00ff' };
-      CATALOGS.dragons.unshift(goldenDragon);
-      state.unlockedIds.push('golden_legend');
-      state.equipped.dragon = goldenDragon;
-      alert("✨ SECRET CHEAT UNLOCKED: Prismatic Legend Dragon!");
-      eluTapCount = 0;
-      updateUI();
-    }
-  }
-
-  function getChubbyDragonSVG(color, belly, glow) {
-    return `<svg viewBox="0 0 120 120" width="100%" height="100%">
-      <path d="M 30 85 Q 10 100 8 112 Q 18 118 32 95 Z" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <ellipse cx="55" cy="72" rx="36" ry="30" fill="${color}" stroke="#fff" stroke-width="2.8"/>
-      <ellipse cx="64" cy="76" rx="22" ry="20" fill="${belly}"/>
-      <circle cx="78" cy="42" r="26" fill="${color}" stroke="#fff" stroke-width="2.8"/>
-      <ellipse cx="88" cy="38" rx="8" ry="11" fill="#1e1b4b" stroke="#fff" stroke-width="1.2"/>
-      <circle cx="86" cy="34" r="3.5" fill="#ffffff"/>
-      <ellipse cx="98" cy="46" rx="11" ry="8" fill="${color}" stroke="#fff" stroke-width="2"/>
-    </svg>`;
-  }
-
-  function getPrincessMasaSVG(dressColor, accentColor, pose = 'idle') {
-    return `<svg viewBox="0 0 100 120" width="100%" height="100%">
-      <path d="M 35 60 Q 15 110 50 112 Q 85 110 65 60 Z" fill="${dressColor}" stroke="#ffffff" stroke-width="2"/>
-      <text x="50" y="92" font-family="sans-serif" font-weight="900" font-size="13" fill="#ffd700" text-anchor="middle">MASA</text>
-      <circle cx="50" cy="35" r="15" fill="#fbcfe8"/>
-      <circle cx="44" cy="33" r="2.5" fill="#1e1b4b"/>
-      <circle cx="56" cy="33" r="2.5" fill="#1e1b4b"/>
-      <path d="M 38 22 L 42 12 L 50 18 L 58 12 L 62 22 Z" fill="#ffd700" stroke="#ffffff" stroke-width="1"/>
-    </svg>`;
-  }
-
-  function updateUI() {
-    state.health = Math.round((state.hunger + state.clean + state.love) / 3);
-    if (state.health >= 50 && state.lives === 0) state.lives = 5;
-
-    document.getElementById('coin-txt').innerText = state.coins;
-    document.getElementById('lives-header').innerText = `${state.lives}/5`;
-    document.getElementById('lives-txt').innerText = '❤️'.repeat(state.lives) + '🖤'.repeat(5 - state.lives);
-
-    document.getElementById('hp-val').innerText = state.health + '%';
-    document.getElementById('f-val').innerText = state.hunger + '%';
-    document.getElementById('c-val').innerText = state.clean + '%';
-    document.getElementById('l-val').innerText = state.love + '%';
-
-    document.getElementById('hp-fill').style.width = state.health + '%';
-    document.getElementById('f-fill').style.width = state.hunger + '%';
-    document.getElementById('c-fill').style.width = state.clean + '%';
-    document.getElementById('l-fill').style.width = state.love + '%';
-
-    const d = document.getElementById('dragon-node');
-    d.innerHTML = getChubbyDragonSVG(state.equipped.dragon.color, state.equipped.dragon.belly, state.equipped.dragon.glow);
-
-    const dpadWrap = document.getElementById('dpad-wrapper');
-    const ctrlToggleBtn = document.getElementById('control-toggle-btn');
-    const flyControlsContainer = document.getElementById('fly-controls-container');
-
-    if (state.controlMode === 'drag') {
-      dpadWrap.style.display = 'none';
-      ctrlToggleBtn.innerText = '👆 Mode: Drag';
-      flyControlsContainer.classList.add('drag-active');
-    } else {
-      dpadWrap.style.display = 'grid';
-      ctrlToggleBtn.innerText = '🎮 Mode: Buttons';
-      flyControlsContainer.classList.remove('drag-active');
-    }
-
-    let w = state.equipped.world;
-    document.getElementById('mission-hud-box').innerHTML = `🎯 Mission: ${w.mission} Progress: <span id="mission-progress">${missionCount}/${w.targetGoal}</span>`;
-    document.getElementById('journal-missions-done').innerText = state.missionsCompletedCount;
-    document.getElementById('journal-feedings').innerText = state.feedCount;
-    document.getElementById('journal-tricks').innerText = state.tricksPerformedCount;
-    document.getElementById('hall-of-legends-score').innerText = state.bestScore;
-
-    saveState();
-  }
-
-  function toggleControlMode() {
-    state.controlMode = state.controlMode === 'buttons' ? 'drag' : 'buttons';
-    updateUI();
-  }
-
-  /* POPULATE 50 TRICKS TRAY */
-  function renderTricksTray() {
-    const tray = document.getElementById('tricks-tray-grid');
-    tray.innerHTML = '';
-    DUO_TRICKS.forEach(trick => {
-      const btn = document.createElement('button');
-      btn.className = 'trick-btn';
-      btn.innerText = trick.name;
-      btn.onclick = () => performDuoTrick(trick);
-      tray.appendChild(btn);
-    });
-  }
-
-  function performDuoTrick(trick) {
-    state.love = Math.min(100, state.love + 5);
-    state.coins += 2;
-    state.tricksPerformedCount++;
-    playSound('stunt');
-
-    const vp = document.getElementById('viewport');
-    const floatEl = document.createElement('div');
-    floatEl.className = 'floating-text';
-    floatEl.innerText = `✨ Stunt: ${trick.name}!`;
-    floatEl.style.left = '18%'; floatEl.style.top = '20%';
-    vp.appendChild(floatEl);
-    setTimeout(() => floatEl.remove(), 1200);
-
-    updateUI();
-  }
-
-  /* PHOTO ALBUM SNAPSHOTS */
-  function takeSnapshot() {
-    if (state.coins < 10) return alert("Taking a snapshot costs 10 coins!");
-    state.coins -= 10;
-    state.snapshots.push({ id: Date.now(), title: `Duo Memory #${state.snapshots.length + 1}`, date: new Date().toLocaleDateString() });
-    playSound('coin');
-    alert("📸 Snapshot saved to your Royal Photo Album!");
-    updateAlbumGallery();
-    updateUI();
-  }
-
-  function updateAlbumGallery() {
-    const gal = document.getElementById('album-gallery');
-    if (state.snapshots.length === 0) {
-      gal.innerHTML = '<p style="font-size:10px; color:#e9d5ff; margin-top:20px;">No snapshots saved yet! Take your first photo above.</p>';
-      return;
-    }
-    gal.innerHTML = '';
-    state.snapshots.forEach(s => {
-      const card = document.createElement('div');
-      card.className = 'journal-card';
-      card.innerHTML = `<h3>📸 ${s.title}</h3><p>Captured: ${s.date} (Deco: ${state.equipped.decor.icon})</p>`;
-      gal.appendChild(card);
-    });
-  }
-
-  /* CARE ACTIONS */
-  let isAnimatingCare = false;
-  function doCare(type) {
-    if (isAnimatingCare) return;
-    isAnimatingCare = true;
-    currentCarePose = type;
-
-    let floatText = '';
-    let toolIcon = '';
-
-    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 30); state.feedCount++; floatText = '🍎🍏 +Hunger!'; toolIcon = '🍎'; playSound('feed'); }
-    if (type === 'wash') { state.clean = Math.min(100, state.clean + 30); floatText = '🧼🫧 +Clean!'; toolIcon = '🧽'; playSound('feed'); }
-    if (type === 'pet') { state.love = Math.min(100, state.love + 20); floatText = '🖐️💖 +Love!'; toolIcon = '🖐️'; playSound('coin'); }
-    if (type === 'hug') { state.love = Math.min(100, state.love + 35); floatText = '🤗🥰 +Hug!'; toolIcon = '💖'; playSound('coin'); }
-    
-    state.coins += 3;
-
-    const p = document.getElementById('princess-node');
-    const tool = document.getElementById('action-tool');
-    const vp = document.getElementById('viewport');
-
-    p.className = type === 'hug' ? 'princess-render hugging' : 'princess-render interact';
-    tool.innerText = toolIcon;
-    tool.style.left = '32%'; tool.style.top = '35%';
-    tool.classList.add('active');
-
-    setTimeout(() => {
-      const floatEl = document.createElement('div');
-      floatEl.className = 'floating-text';
-      floatEl.innerText = floatText;
-      floatEl.style.left = '20%'; floatEl.style.top = '15%';
-      vp.appendChild(floatEl);
-      setTimeout(() => floatEl.remove(), 1200);
-    }, 300);
-
-    setTimeout(() => {
-      p.className = 'princess-render';
-      tool.classList.remove('active');
-      currentCarePose = 'idle';
-      isAnimatingCare = false;
-      updateUI();
-    }, 1300);
-
-    updateUI();
-  }
-
-  /* SHOP LOGIC */
-  let currentCategory = 'dragons';
-  let currentPage = 1;
-  const ITEMS_PER_PAGE = 10;
-
-  function setCategory(cat) {
-    currentCategory = cat;
-    currentPage = 1;
-    document.querySelectorAll('.shop-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + cat).classList.add('active');
-    renderCatalog();
-  }
-
-  function changePage(delta) {
-    let maxPages = Math.ceil(CATALOGS[currentCategory].length / ITEMS_PER_PAGE);
-    currentPage = Math.max(1, Math.min(maxPages, currentPage + delta));
-    renderCatalog();
-  }
-
-  function renderCatalog() {
-    const container = document.getElementById('catalog-container');
-    container.innerHTML = '';
-
-    let list = CATALOGS[currentCategory];
-    let start = (currentPage - 1) * ITEMS_PER_PAGE;
-    let pageItems = list.slice(start, start + ITEMS_PER_PAGE);
-
-    let maxPages = Math.ceil(list.length / ITEMS_PER_PAGE);
-    document.getElementById('page-txt').innerText = `Page ${currentPage} / ${maxPages}`;
-
-    pageItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card';
-
-      let key = currentCategory === 'decor' ? 'decor' : currentCategory.slice(0, -1);
-      let isUnlocked = state.unlockedIds.includes(item.id);
-      let isEquipped = state.equipped[key]?.id === item.id;
-      let preview = item.icon || (currentCategory === 'fire' ? '🔥' : '🐉');
-
-      card.innerHTML = `
-        <span style="font-size:16px;">${preview}</span>
-        <strong>${item.name}</strong>
-        <span>${isUnlocked ? 'Unlocked' : item.cost + ' 🪙'}</span>
-        <button onclick="handleItemAction('${currentCategory}', '${item.id}')">
-          ${isEquipped ? 'Equipped' : isUnlocked ? 'Equip' : 'Buy'}
-        </button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function handleItemAction(cat, itemId) {
-    let item = CATALOGS[cat].find(x => x.id === itemId);
-    let key = cat === 'decor' ? 'decor' : cat.slice(0, -1);
-
-    if (state.unlockedIds.includes(itemId)) {
-      state.equipped[key] = item;
-      playSound('coin');
-    } else if (state.coins >= item.cost) {
-      state.coins -= item.cost;
-      state.unlockedIds.push(itemId);
-      state.equipped[key] = item;
-      playSound('coin');
-    }
-    updateUI();
-    renderCatalog();
-  }
-
-  function rollGacha() {
-    if (state.coins < 30) return alert("Mystery Spin costs 30 coins!");
-    state.coins -= 30;
-    let categories = ['dragons', 'outfits', 'fire', 'worlds', 'pets', 'decor'];
-    let randomCat = categories[Math.floor(Math.random() * categories.length)];
-    let list = CATALOGS[randomCat];
-    let randomItem = list[Math.floor(Math.random() * list.length)];
-
-    if (!state.unlockedIds.includes(randomItem.id)) state.unlockedIds.push(randomItem.id);
-    state.equipped[randomCat === 'decor' ? 'decor' : randomCat.slice(0,-1)] = randomItem;
-    playSound('coin');
-    alert(`🎉 Mystery Jackpot! You won ${randomItem.name}!`);
-    updateUI();
-    renderCatalog();
-  }
-
-  function renderWorldMap() {
-    const container = document.getElementById('world-map-container');
-    container.innerHTML = '';
-    WORLD_THEMES.forEach((wt, idx) => {
-      const card = document.createElement('div');
-      card.className = `world-card ${state.equipped.world.type === wt.type ? 'active' : ''}`;
-      card.innerHTML = `
-        <div>
-          <strong style="color:#ffd700; font-size:10px;">${wt.name}</strong>
-          <p style="font-size:8px; color:#e9d5ff;">Forecast: ${wt.weather}</p>
-        </div>
-        <button class="sub-act-btn" style="width:60px; background:#3b1566; color:#ffd700; border:1px solid #ffd700; border-radius:5px; padding:3px;" onclick="selectWorld(${idx})">${state.equipped.world.type === wt.type ? 'Active' : 'Travel'}</button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function selectWorld(idx) {
-    let matchedWorld = CATALOGS.worlds.find(w => w.type === WORLD_THEMES[idx].type);
-    if (matchedWorld) {
-      state.equipped.world = matchedWorld;
-      playSound('coin');
-      alert(`🚀 Traveling to ${matchedWorld.name}!`);
-      updateUI();
-      renderWorldMap();
-    }
-  }
-
-  function switchTab(screenName) {
-    if (screenName === 'fly' && state.lives <= 0) {
-      alert("Masa's dragon is out of energy! Nurse it back to health in Care! ❤️");
-      screenName = 'care';
-    }
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-
-    document.getElementById(screenName + '-screen').classList.add('active');
-    document.getElementById('nav-' + screenName).classList.add('active');
-
-    if (screenName === 'castle') renderCatalog();
-    if (screenName === 'map') renderWorldMap();
-    if (screenName === 'album') updateAlbumGallery();
-    if (screenName === 'fly') startFlyGame();
-    else stopFlyGame();
-  }
-
-  /* FLIGHT ENGINE WITH WEATHER PHYSICS & METEOR SHOWERS */
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  let gameLoopId = null;
-  let dragonX = 80, dragonY = 150;
-  let isFiring = false, comboStreak = 0, isStunting = false;
-  let obstacles = [], coinPickups = [], missionPickups = [], goldChests = [], meteors = [], flameParticles = [], weatherParticles = [];
-  let score = 0, flightTime = 0;
-
-  let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
-  let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
-
-  function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
-  }
-
-  function startFlyGame() {
-    resizeCanvas();
-    dragonX = 80; dragonY = canvas.height / 2;
-    obstacles = []; coinPickups = []; missionPickups = []; goldChests = []; meteors = []; flameParticles = []; weatherParticles = [];
-    score = 0; missionCount = 0; missionCompletedInRun = false; comboStreak = 0; flightTime = 0; isStunting = false;
-
-    for (let i = 0; i < 35; i++) {
-      weatherParticles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 1 + Math.random() * 2.5, speedY: 1 + Math.random() * 2 });
-    }
-    updateUI();
-    if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
-  }
-
-  function stopFlyGame() {
-    if (gameLoopId) { cancelAnimationFrame(gameLoopId); gameLoopId = null; }
-  }
-
-  const addTouch = (elem, startFn, endFn) => {
-    if (!elem) return;
-    elem.addEventListener('touchstart', (e) => { e.preventDefault(); startFn(); });
-    elem.addEventListener('touchend', (e) => { e.preventDefault(); endFn(); });
-    elem.addEventListener('mousedown', startFn);
-    elem.addEventListener('mouseup', endFn);
-  };
-
-  addTouch(document.getElementById('btn-up'), () => moveUp = true, () => moveUp = false);
-  addTouch(document.getElementById('btn-down'), () => moveDown = true, () => moveDown = false);
-  addTouch(document.getElementById('btn-left'), () => moveLeft = true, () => moveLeft = false);
-  addTouch(document.getElementById('btn-right'), () => moveRight = true, () => moveRight = false);
-  addTouch(document.getElementById('btn-fire'), () => isFiring = true, () => isFiring = false);
-  addTouch(document.getElementById('btn-roar'), () => {
-    obstacles = []; score += 50; playSound('stunt');
-    alert("🗣️ MEGA ROAR! All obstacles cleared!");
-  }, () => {});
-  addTouch(document.getElementById('btn-stunt'), () => {
-    if (isStunting) return;
-    isStunting = true;
-    score += 25; playSound('stunt');
-    setTimeout(() => isStunting = false, 1000);
-  }, () => {});
-
-  canvas.addEventListener('touchstart', (e) => {
-    if (state.controlMode !== 'drag') return;
-    const r = canvas.getBoundingClientRect();
-    const cx = e.touches[0].clientX - r.left, cy = e.touches[0].clientY - r.top;
-    if (Math.abs(cx - dragonX) < 70 && Math.abs(cy - dragonY) < 70) {
-      isDragging = true; dragOffsetX = cx - dragonX; dragOffsetY = cy - dragonY;
-    }
-  }, { passive: false });
-  canvas.addEventListener('touchmove', (e) => {
-    if (state.controlMode !== 'drag' || !isDragging) return;
-    const r = canvas.getBoundingClientRect();
-    dragonX = (e.touches[0].clientX - r.left) - dragOffsetX;
-    dragonY = (e.touches[0].clientY - r.top) - dragOffsetY;
-  }, { passive: false });
-  canvas.addEventListener('touchend', () => isDragging = false);
-
-  function updateFlyGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    flightTime += 0.016;
-    let w = state.equipped.world;
-
-    let isNight = Math.floor(flightTime / 25) % 2 === 1;
-    let bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    bgGrad.addColorStop(0, isNight ? '#05021a' : (w.bg1 || '#0c0414'));
-    bgGrad.addColorStop(1, isNight ? '#120536' : (w.bg2 || '#26094d'));
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Weather Physics Particles (Swirl around dragon)
-    ctx.fillStyle = w.pColor || '#ffffff';
-    weatherParticles.forEach(p => {
-      let dx = dragonX - p.x;
-      let dy = dragonY - p.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 100) {
-        p.x += (dx / dist) * 1.5;
-        p.y += (dy / dist) * 1.5;
-      }
-      p.x -= 1.2; p.y += p.speedY;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.y > canvas.height) p.y = 0;
-      ctx.fillRect(p.x, p.y, p.size, p.size);
-    });
-
-    if (state.controlMode === 'buttons') {
-      if (moveUp) dragonY -= 6;
-      if (moveDown) dragonY += 6;
-      if (moveLeft) dragonX -= 6;
-      if (moveRight) dragonX += 6;
-    }
-
-    dragonY = Math.max(40, Math.min(canvas.height - 80, dragonY));
-    dragonX = Math.max(40, Math.min(canvas.width - 100, dragonX));
-
-    if (isFiring) {
-      flameParticles.push({ x: dragonX + 40, y: dragonY - 5, vx: 12, vy: (Math.random() - 0.5) * 2, size: 12, life: 1 });
-    }
-
-    for (let i = flameParticles.length - 1; i >= 0; i--) {
-      let p = flameParticles[i];
-      p.x += p.vx; p.life -= 0.04;
-      if (p.life <= 0) { flameParticles.splice(i, 1); continue; }
-      ctx.fillStyle = `rgba(239, 68, 68, ${p.life})`;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
-
-      for (let j = goldChests.length - 1; j >= 0; j--) {
-        let ch = goldChests[j];
-        if (Math.abs(p.x - ch.x) < 30 && Math.abs(p.y - ch.y) < 30) {
-          goldChests.splice(j, 1);
-          state.coins += 25; score += 40; playSound('coin');
-          updateUI();
-          break;
-        }
-      }
-    }
-
-    // Render Dragon & Companion
-    ctx.save();
-    ctx.translate(dragonX, dragonY);
-    if (isStunting) ctx.rotate(flightTime * 15);
-
-    ctx.fillStyle = state.equipped.dragon.color;
-    ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.fill();
-    ctx.font = '18px serif';
-    ctx.fillText(state.equipped.pet.icon, -45, -20);
-    ctx.fillText("👑👧🏻", -10, -15);
-    ctx.restore();
-
-    // Spawns
-    if (Math.random() < 0.025) obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, icon: w.obs[0], size: 35, speed: 4 });
-    if (Math.random() < 0.02) coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 3.5 });
-    if (w.targetType === 'item' && Math.random() < 0.02) missionPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 3.5 });
-    if (Math.random() < 0.005) goldChests.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 3 });
-    if (Math.random() < 0.004) meteors.push({ x: canvas.width, y: Math.random() * (canvas.height - 100) + 30, speed: 5 });
-
-    for (let i = coinPickups.length - 1; i >= 0; i--) {
-      let c = coinPickups[i]; c.x -= c.speed;
-      ctx.font = '22px serif'; ctx.fillText('🪙', c.x, c.y);
-      if (Math.abs(c.x - dragonX) < 35 && Math.abs(c.y - dragonY) < 35) {
-        coinPickups.splice(i, 1);
-        state.coins += (comboStreak >= 5 ? 10 : 5);
-        comboStreak++; playSound('coin');
-        updateUI();
-      }
-    }
-
-    for (let i = meteors.length - 1; i >= 0; i--) {
-      let m = meteors[i]; m.x -= m.speed; m.y += m.speed * 0.5;
-      ctx.font = '24px serif'; ctx.fillText('🌠', m.x, m.y);
-      if (Math.abs(m.x - dragonX) < 35 && Math.abs(m.y - dragonY) < 35) {
-        meteors.splice(i, 1);
-        state.coins += 50; score += 100; playSound('coin');
-        updateUI();
-      }
-    }
-
-    for (let i = goldChests.length - 1; i >= 0; i--) {
-      let ch = goldChests[i]; ch.x -= ch.speed;
-      ctx.font = '24px serif'; ctx.fillText('📦', ch.x, ch.y);
-      if (Math.abs(ch.x - dragonX) < 35 && Math.abs(ch.y - dragonY) < 35) {
-        goldChests.splice(i, 1);
-        state.coins += 25; score += 40; playSound('coin');
-        updateUI();
-      }
-    }
-
-    for (let i = missionPickups.length - 1; i >= 0; i--) {
-      let mp = missionPickups[i]; mp.x -= mp.speed;
-      ctx.font = '24px serif'; ctx.fillText(w.targetIcon, mp.x, mp.y);
-      if (Math.abs(mp.x - dragonX) < 35 && Math.abs(mp.y - dragonY) < 35) {
-        missionPickups.splice(i, 1);
-        if (!missionCompletedInRun) {
-          missionCount++; score += 20; state.coins += 3; playSound('coin');
-          checkMissionVictory();
-          updateUI();
-        }
-      }
-    }
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-      let obs = obstacles[i]; obs.x -= obs.speed;
-      ctx.font = obs.size + 'px serif'; ctx.fillText(obs.icon, obs.x, obs.y);
-      if (Math.abs(obs.x - dragonX) < 30 && Math.abs(obs.y - dragonY) < 30) {
-        if (!isStunting) {
-          obstacles.splice(i, 1);
-          comboStreak = 0;
-          state.lives = Math.max(0, state.lives - 1);
-          playSound('hit');
-          updateUI();
-          if (state.lives <= 0) {
-            stopFlyGame();
-            alert("Masa's dragon ran out of energy! Nurse it back to health in Care! ❤️");
-            switchTab('care');
-            return;
-          }
-        } else {
-          obstacles.splice(i, 1);
-          score += 15;
-          playSound('stunt');
-        }
-      }
-    }
-
-    if (score > state.bestScore) {
-      state.bestScore = score;
-    }
-
-    document.getElementById('score-txt').innerText = score;
-    gameLoopId = requestAnimationFrame(updateFlyGame);
-  }
-
-  function checkMissionVictory() {
-    let w = state.equipped.world;
-    if (missionCount >= w.targetGoal && !missionCompletedInRun) {
-      missionCompletedInRun = true;
-      state.coins += 50;
-      state.lives = 5;
-      state.missionsCompletedCount++;
-      playSound('coin');
-      
-      document.getElementById('popup-title').innerText = "🎉 Mission Complete!";
-      document.getElementById('popup-msg').innerText = `Princess Masa conquered the ${w.name}!\n\n+50 Bonus Coins! Entering Endless Rift...`;
-      document.getElementById('popup-dialog').classList.add('active');
-    }
-  }
-
-  function closePopupAndContinueFlying() {
-    document.getElementById('popup-dialog').classList.remove('active');
-    missionCount = 0;
-    missionCompletedInRun = false;
-    updateUI();
-  }
-
-  renderTricksTray();
+}
+
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+  catch (e) { console.warn("Browser could not save progress.", e); }
+}
+
+function clamp(n, min=0, max=100) { return Math.max(min, Math.min(max, n)); }
+function rand(min,max) { return Math.random()*(max-min)+min; }
+
+function logEvent(text) {
+  state.journal.unshift({text,time:Date.now()});
+  state.journal = state.journal.slice(0,60);
+}
+
+function notify(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove("show"), 2400);
+}
+
+function sound(freq=540,duration=.09,type="sine") {
+  if (!state.sound) return;
+  try {
+    audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(.08,audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
+    osc.connect(gain); gain.connect(audioContext.destination);
+    osc.start(); osc.stop(audioContext.currentTime+duration);
+  } catch(e) {}
+}
+
+function earn(amount, reason="Royal reward") {
+  state.coins += amount;
+  logEvent(`${reason}: earned ${amount} coins.`);
+  sound(760,.12,"triangle");
+  notify(`🪙 +${amount} coins — ${reason}`);
+  checkAchievements();
   updateUI();
-  window.addEventListener('resize', resizeCanvas);
+}
+
+function spend(amount) {
+  if (state.coins < amount) {
+    notify("Not enough coins yet. Complete a flight to earn more!");
+    sound(160,.1,"square");
+    return false;
+  }
+  state.coins -= amount;
+  updateUI();
+  return true;
+}
+
+function xpGain(amount) {
+  state.xp += amount;
+  while (state.xp >= state.level*100) {
+    state.xp -= state.level*100;
+    state.level++;
+    state.coins += 40 + state.level*5;
+    notify(`🌟 LEVEL UP! Royal level ${state.level}! Bonus coins awarded.`);
+    logEvent(`Reached royal level ${state.level}.`);
+    sound(800,.18,"triangle");
+  }
+  checkAchievements();
+  updateUI();
+}
+
+function go(screen) {
+  activeScreen = screen;
+  document.querySelectorAll(".screen").forEach(el=>el.classList.add("hidden"));
+  const target = document.getElementById("screen-"+screen);
+  if (target) target.classList.remove("hidden");
+  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.screen===screen));
+  if (screen==="flight") drawGame();
+  renderAll();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll(".nav").forEach(btn=>{
+  btn.addEventListener("click",()=>go(btn.dataset.screen));
+});
+
+function updateUI() {
+  document.getElementById("coinStat").textContent=state.coins;
+  document.getElementById("lifeStat").textContent=state.lives;
+  document.getElementById("levelStat").textContent=state.level;
+  document.getElementById("homeLevel").textContent=state.level;
+  document.getElementById("homeWorlds").textContent=state.unlockedWorlds.length+" / "+WORLDS.length;
+  document.getElementById("homeTricks").textContent=state.tricks.length;
+  document.getElementById("homeTreasures").textContent=state.treasures;
+  document.getElementById("homeFlights").textContent=state.flights;
+  document.getElementById("homeBest").textContent=state.bestScore;
+  document.getElementById("vaultCoins").textContent=state.coins;
+  document.getElementById("vaultOwned").textContent=state.owned.length+state.items.length;
+  document.getElementById("vaultTreasures").textContent=state.treasures;
+  document.getElementById("tricksKnown").textContent=state.tricks.length+" / "+TRICKS.length;
+  document.getElementById("trickBond").textContent=state.bond;
+  document.getElementById("trickRewards").textContent=state.tricksPracticed;
+  document.getElementById("soundToggle").textContent=state.sound?"🔊 Sound: On":"🔇 Sound: Off";
+  ["health","hunger","happiness","clean","energy"].forEach(key=>{
+    const val=clamp(state[key]);
+    const num=document.getElementById(key+"Num");
+    const bar=document.getElementById(key+"Bar");
+    if(num) num.textContent=val;
+    if(bar) bar.style.width=val+"%";
+  });
+  document.getElementById("bondNum").textContent=state.bond;
+  document.getElementById("bondBar").style.width=clamp(state.bond,0,100)+"%";
+  document.getElementById("dragonMood").textContent =
+    state.happiness>75?"Elu is overjoyed!":state.happiness>45?"Elu is happy!":"Elu needs some love.";
+  document.getElementById("dragonMessage").textContent =
+    state.health<40?"Elu looks tired. Rest and care for your dragon before flying.":
+    state.hunger<30?"Elu's tummy is rumbling. A dragon feast would help!":
+    state.energy<25?"Elu needs to rest before the next flight.":
+    "Your magical dragon loves spending time with you. Keep Elu healthy, clean, and well-rested.";
+  document.getElementById("dragonArt").textContent =
+    state.equippedSkin==="skin_ice"?"🐲":state.equippedSkin==="skin_solar"?"🐉":state.equippedSkin==="skin_royal"?"🐲":"🐉";
+  save();
+}
+
+function renderAll() {
+  updateUI();
+  renderMissions();
+  renderWorlds();
+  renderShop();
+  renderTricks();
+  renderAchievements();
+  renderJournal();
+  renderSkins();
+  renderFlightObjectives();
+}
+
+function care(action) {
+  const costs={feed:10,bath:8,groom:5,train:12,bond:5};
+  if (costs[action] && !spend(costs[action])) return;
+  switch(action) {
+    case "feed":
+      state.hunger=clamp(state.hunger+28); state.health=clamp(state.health+5);
+      state.energy=clamp(state.energy+8); notify("🍓 Elu loved the magical berries!"); break;
+    case "bath":
+      state.clean=clamp(state.clean+35); state.happiness=clamp(state.happiness+5);
+      notify("🫧 Elu sparkles after the crystal bath!"); break;
+    case "groom":
+      state.clean=clamp(state.clean+15); state.bond+=3; state.happiness=clamp(state.happiness+8);
+      notify("🪮 Beautiful scales and a stronger bond!"); break;
+    case "rest":
+      state.energy=clamp(state.energy+35); state.health=clamp(state.health+10);
+      notify("🌙 Elu had a peaceful rest."); break;
+    case "train":
+      state.energy=clamp(state.energy-10); state.bond+=2; xpGain(15);
+      notify("🔥 Fire training complete!"); break;
+    case "bond":
+      state.bond+=5; state.happiness=clamp(state.happiness+12);
+      state.energy=clamp(state.energy-3); xpGain(5);
+      notify("💞 Your friendship grows stronger!"); break;
+    case "play":
+      state.bond+=3; state.happiness=clamp(state.happiness+15);
+      state.energy=clamp(state.energy-5); xpGain(8);
+      notify("💖 You and Elu had an amazing time!"); break;
+    case "pet":
+      state.bond+=1; state.happiness=clamp(state.happiness+5);
+      notify("🤍 Elu nuzzles your hand."); break;
+  }
+  state.bond=Math.min(100,state.bond);
+  state.tricksPracticed++;
+  logEvent("Spent time caring for Elu: "+action+".");
+  sound(480,.1);
+  checkAchievements();
+  updateUI();
+  renderAll();
+}
+
+function renderMissions() {
+  const root=document.getElementById("dailyMissions");
+  root.innerHTML="";
+  MISSIONS.forEach(m=>{
+    const current=missionProgress(m);
+    const claimed=state.missionClaimed.includes(m.id);
+    const done=current>=m.goal;
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${m.id==="flight1"?"🪽":m.id==="coins100"?"🪙":m.id==="trick5"?"✨":"💞"}</div>
+      <h3>${m.name}</h3><p>${m.desc}</p>
+      <div class="bar-label"><span>Progress</span><span>${Math.min(current,m.goal)} / ${m.goal}</span></div>
+      <div class="progress"><div style="width:${Math.min(100,current/m.goal*100)}%"></div></div>
+      <p>Reward: 🪙 ${m.reward}</p>
+      <button class="btn ${done&&!claimed?"primary":""}" ${!done||claimed?"disabled":""} data-claim="${m.id}">${claimed?"✓ Claimed":done?"Claim reward":"In progress"}</button>`;
+    root.appendChild(card);
+  });
+  root.querySelectorAll("[data-claim]").forEach(b=>b.onclick=()=>claimMission(b.dataset.claim));
+}
+
+function missionProgress(m) {
+  return ({flights:state.flights,totalCoins:state.totalCoins,tricks:state.tricks.length,bond:state.bond})[m.type]||0;
+}
+
+function claimMission(id) {
+  const m=MISSIONS.find(x=>x.id===id);
+  if(!m||state.missionClaimed.includes(id)||missionProgress(m)<m.goal)return;
+  state.missionClaimed.push(id);
+  earn(m.reward,"Mission complete");
+  xpGain(20);
+  renderMissions();
+}
+
+function renderWorlds() {
+  const roots=[document.getElementById("worldList"),document.getElementById("featuredWorlds")];
+  roots.forEach((root,index)=>{
+    root.innerHTML="";
+    const worlds=index===0?WORLDS:WORLDS.slice(0,3);
+    worlds.forEach(w=>{
+      const unlocked=state.unlockedWorlds.includes(w.id);
+      const selected=state.world===w.id;
+      const card=document.createElement("div");
+      card.className="card world-card";
+      card.style.setProperty("--world-a",w.a);
+      card.style.setProperty("--world-b",w.b);
+      const progress=state.flights;
+      const requirement=w.goal;
+      card.innerHTML=`<div class="card-art">${w.icon}</div>
+        <h3>${w.name}</h3><p>${w.desc}</p>
+        <p>Difficulty: ${"★".repeat(w.difficulty)}${"☆".repeat(5-w.difficulty)}</p>
+        ${unlocked?`<span class="badge">${selected?"CURRENT REALM":"UNLOCKED"}</span>`:`<div class="lock">🔒 ${w.cost} coins · ${requirement} flights</div>`}
+        <button class="btn ${unlocked?"primary":""}" data-world="${w.id}" ${!unlocked&&progress<requirement?"disabled":""}>
+          ${selected?"Selected":unlocked?"Travel here":"Unlock realm"}
+        </button>`;
+      root.appendChild(card);
+    });
+    root.querySelectorAll("[data-world]").forEach(b=>b.onclick=()=>selectWorld(b.dataset.world));
+  });
+}
+
+function selectWorld(id) {
+  const w=WORLDS.find(x=>x.id===id);
+  if(!w)return;
+  if(!state.unlockedWorlds.includes(id)) {
+    if(state.flights<w.goal) { notify(`Complete ${w.goal} flights to reach this realm.`); return; }
+    if(!spend(w.cost))return;
+    state.unlockedWorlds.push(id);
+    logEvent(`Unlocked the realm: ${w.name}.`);
+    notify(`🗺️ ${w.name} unlocked!`);
+  }
+  state.world=id;
+  state.unlockedWorlds=[...new Set([...state.unlockedWorlds,id])];
+  checkAchievements();
+  save(); renderAll();
+  notify(`✨ Traveling to ${w.name}!`);
+}
+
+function renderShop() {
+  const root=document.getElementById("shopGrid");
+  if(!root)return;
+  root.innerHTML="";
+  const filter=document.getElementById("shopCategory")?.value||"all";
+  SHOP.filter(i=>filter==="all"||i.cat===filter).forEach(item=>{
+    const owned=state.owned.includes(item.id)||state.items.includes(item.id);
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${item.icon}</div><h3>${item.name}</h3>
+      <p>${item.desc}</p><p>Category: ${item.cat}</p>
+      ${owned?`<span class="badge">OWNED</span>`:`<p>Price: 🪙 ${item.cost}</p>`}
+      <button class="btn ${owned?"":"primary"}" data-buy="${item.id}" ${owned?"disabled":""}>${owned?"✓ In collection":"Purchase item"}</button>
+      ${item.cat==="skin"&&owned?`<button class="btn" data-equip="${item.id}">Equip look</button>`:""}`;
+    root.appendChild(card);
+  });
+  root.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>buyItem(b.dataset.buy));
+  root.querySelectorAll("[data-equip]").forEach(b=>b.onclick=()=>equipSkin(b.dataset.equip));
+}
+
+function buyItem(id) {
+  const item=SHOP.find(x=>x.id===id);
+  if(!item)return;
+  if(state.owned.includes(id)||state.items.includes(id))return;
+  if(state.unlockedWorlds.length<item.unlock) { notify("Explore more realms to unlock this item."); return; }
+  if(!spend(item.cost))return;
+  if(item.cat==="skin") state.owned.push(id); else state.items.push(id);
+  logEvent(`Purchased ${item.name}.`);
+  earn(0, "Purchase complete");
+  xpGain(10);
+  renderAll();
+}
+
+function equipSkin(id) {
+  if(!state.owned.includes(id))return;
+  state.equippedSkin=id;
+  notify("🎨 Dragon look equipped!");
+  updateUI();
+}
+
+function renderSkins() {
+  const root=document.getElementById("dragonSkins");
+  if(!root)return;
+  root.innerHTML="";
+  const skins=[
+    {id:"skin_default",name:"Elu's Original Look",icon:"🐉",desc:"The classic dragon look."},
+    ...SHOP.filter(x=>x.cat==="skin").map(x=>({id:x.id,name:x.name,icon:x.icon,desc:x.desc}))
+  ];
+  skins.forEach(s=>{
+    const owned=state.owned.includes(s.id);
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${s.icon}</div><h3>${s.name}</h3><p>${s.desc}</p>
+      <button class="btn ${state.equippedSkin===s.id?"primary":""}" data-skin="${s.id}" ${!owned?"disabled":""}>
+      ${state.equippedSkin===s.id?"✓ Equipped":owned?"Equip look":"Purchase in Vault"}</button>`;
+    root.appendChild(card);
+  });
+  root.querySelectorAll("[data-skin]").forEach(b=>b.onclick=()=>equipSkin(b.dataset.skin));
+}
+
+function renderTricks() {
+  const root=document.getElementById("trickGrid");
+  if(!root)return;
+  root.innerHTML="";
+  TRICKS.forEach((t,i)=>{
+    const [name,icon,required]=t;
+    const mastered=state.tricks.includes(i);
+    const canPractice=state.bond>=required;
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${icon}</div><h3>${i+1}. ${name}</h3>
+      <p>${mastered?"You have mastered this move.":"Practice the move to earn experience and bond points."}</p>
+      <p>${mastered?'<span class="badge">MASTERED</span>':canPractice?"Ready to practice":`🔒 Requires ${required} bond`}</p>
+      <button class="btn ${canPractice&&!mastered?"primary":""}" data-trick="${i}" ${mastered||!canPractice?"disabled":""}>
+      ${mastered?"✓ Mastered":"Practice trick"}</button>`;
+    root.appendChild(card);
+  });
+  root.querySelectorAll("[data-trick]").forEach(b=>b.onclick=()=>practiceTrick(Number(b.dataset.trick)));
+}
+
+function practiceTrick(i) {
+  const t=TRICKS[i];
+  if(!t||state.tricks.includes(i)||state.bond<t[2])return;
+  state.tricks.push(i);
+  state.bond=Math.min(100,state.bond+2);
+  state.happiness=clamp(state.happiness+3);
+  state.tricksPracticed++;
+  earn(2,"Trick practice");
+  xpGain(12);
+  logEvent(`Mastered the ${t[0]} trick.`);
+  checkAchievements();
+  renderAll();
+}
+
+function renderAchievements() {
+  const root=document.getElementById("achievementGrid");
+  if(!root)return;
+  root.innerHTML="";
+  ACHIEVEMENTS.forEach(a=>{
+    const unlocked=state.achievements.includes(a.id);
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${unlocked?a.icon:"🔒"}</div><h3>${a.name}</h3><p>${a.desc}</p>
+      <p>Reward: 🪙 ${a.reward}</p><span class="badge">${unlocked?"UNLOCKED":"NOT YET EARNED"}</span>`;
+    root.appendChild(card);
+  });
+}
+
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(a=>{
+    if(!state.achievements.includes(a.id)&&a.test(state)) {
+      state.achievements.push(a.id);
+      state.coins+=a.reward;
+      logEvent(`Achievement unlocked: ${a.name}.`);
+      notify(`🏅 Achievement: ${a.name}! +${a.reward} coins`);
+      sound(900,.18,"triangle");
+    }
+  });
+  save();
+}
+
+function renderJournal() {
+  const root=document.getElementById("journalList");
+  if(!root)return;
+  root.innerHTML="";
+  if(!state.journal.length) {
+    root.innerHTML='<div class="empty">Your adventure story begins here.</div>';
+    return;
+  }
+  state.journal.slice(0,25).forEach(entry=>{
+    const el=document.createElement("div");
+    el.className="list-item";
+    el.innerHTML=`<div>📜</div><div class="grow"><strong>${escapeHTML(entry.text)}</strong><p>${new Date(entry.time).toLocaleString()}</p></div>`;
+    root.appendChild(el);
+  });
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function renderFlightObjectives() {
+  const root=document.getElementById("flightObjectives");
+  if(!root)return;
+  root.innerHTML="";
+  [
+    ["🪙","Collect treasure","Gold coins add to your score and wallet."],
+    ["🪨","Dodge hazards","Rocks and magical mines cost lives on impact."],
+    ["🔥","Fire blast","F clears nearby hazards. Use it strategically."],
+    ["🐉","Dragon roar","R clears hazards in front of Elu."],
+    ["⚡","Sky dash","E gives a short burst of speed and protection."],
+    ["✨","Stunt combo","Space earns bonus points when used in the air."]
+  ].forEach(x=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<div class="card-art">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p>`;
+    root.appendChild(card);
+  });
+}
+
+/* ===================== FLIGHT GAME ===================== */
+
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+const GW=960, GH=540;
+let game={
+  running:false,over:false,score:0,coins:0,lives:7,time:0,spawn:0,
+  player:{x:180,y:260,vy:0,shield:0,dash:0,blink:0},
+  hazards:[],pickups:[],particles:[],texts:[],keys:{},last:0,
+  cooldown:{fire:0,roar:0,dash:0,stunt:0},frame:0,world:"crown"
+};
+
+function activeWorld() { return WORLDS.find(w=>w.id===state.world)||WORLDS[0]; }
+
+function startGame() {
+  game={
+    running:true,over:false,score:0,coins:0,lives:Math.min(7,state.lives+(state.items.includes("magic_heart")?1:0)),
+    time:0,spawn:0,player:{x:180,y:260,vy:0,shield:state.items.includes("magic_shield")?1:0,dash:0,blink:0},
+    hazards:[],pickups:[],particles:[],texts:[],keys:{},last:performance.now(),
+    cooldown:{fire:0,roar:0,dash:0,stunt:0},frame:0,world:state.world
+  };
+  document.getElementById("flightStatus").textContent="IN FLIGHT";
+  document.getElementById("startFlight").textContent="↻ Restart Flight";
+  updateFlightStats();
+  sound(620,.15);
+  requestAnimationFrame(loop);
+}
+
+function updateFlightStats() {
+  document.getElementById("flightScore").textContent=Math.floor(game.score);
+  document.getElementById("flightCoins").textContent=game.coins;
+  document.getElementById("flightLives").textContent=game.lives;
+}
+
+function spawnParticle(x,y,color,size=4,vx=0,vy=0,life=1) {
+  game.particles.push({x,y,color,size,vx,vy,life,max:life});
+}
+
+function floatText(x,y,text,color="#fff0a3") {
+  game.texts.push({x,y,text,color,life:1});
+}
+
+function spawnHazard() {
+  const diff=activeWorld().difficulty;
+  const roll=Math.random();
+  if(roll<.62) {
+    game.hazards.push({
+      type:"rock",x:GW+30,y:rand(55,GH-65),r:rand(20,34),
+      vy:rand(-40,40)*(Math.random()<.5?-1:1),speed:rand(205,270)+diff*24,
+      phase:rand(0,8),color:activeWorld().b
+    });
+  } else if(roll<.86) {
+    game.hazards.push({
+      type:"mine",x:GW+30,y:rand(65,GH-70),r:22,
+      vy:rand(-60,60),speed:rand(220,290)+diff*24,
+      phase:rand(0,8),color:"#ff527e"
+    });
+  } else {
+    game.hazards.push({
+      type:"gate",x:GW+40,y:rand(120,GH-120),r:32,
+      vy:rand(-35,35),speed:rand(220,280)+diff*22,
+      phase:rand(0,8),color:"#ffe36c"
+    });
+  }
+}
+
+function spawnPickup() {
+  const y=rand(70,GH-75);
+  game.pickups.push({x:GW+30,y,r:14,phase:rand(0,8),speed:230,type:Math.random()<.08?"chest":"coin"});
+}
+
+function useAbility(which) {
+  if(!game.running) { notify("Start a flight first!"); return; }
+  if(game.cooldown[which]>0) { notify("That ability is recharging."); return; }
+  const p=game.player;
+  if(which==="fire") {
+    game.cooldown.fire=3.2;
+    for(let i=0;i<9;i++)spawnParticle(p.x+50,p.y+rand(-20,20),"#ff974f",rand(4,10),rand(200,450),rand(-100,100),.55);
+    game.hazards=game.hazards.filter(h=>{
+      if(h.x>p.x&&h.x<p.x+360){floatText(h.x,h.y,"BURN!","#ffb06d");return false;}
+      return true;
+    });
+    game.score+=30;floatText(p.x+80,p.y-30,"FIRE BLAST!");
+    sound(180,.22,"sawtooth");
+  } else if(which==="roar") {
+    game.cooldown.roar=8;
+    game.hazards=game.hazards.filter(h=>{
+      if(h.x>p.x-30&&h.x<p.x+420){floatText(h.x,h.y,"ROAR!","#9ef9ff");return false;}
+      return true;
+    });
+    for(let i=0;i<22;i++)spawnParticle(p.x+rand(0,300),p.y+rand(-130,130),"#a5f9ff",rand(3,8),rand(30,170),rand(-80,80),.6);
+    game.score+=50;floatText(p.x+100,p.y-55,"DRAGON ROAR!");
+    sound(100,.4,"triangle");
+  } else if(which==="dash") {
+    game.cooldown.dash=6;
+    p.dash=1.1;p.shield=Math.max(p.shield,1.2);
+    game.score+=20;floatText(p.x,p.y-35,"SKY DASH!");
+    sound(880,.15,"sawtooth");
+  } else if(which==="stunt") {
+    game.cooldown.stunt=2;
+    game.score+=25;floatText(p.x,p.y-40,"+25 STUNT!");
+    for(let i=0;i<12;i++)spawnParticle(p.x,p.y,"#ffe58a",rand(3,7),rand(-90,90),rand(-90,90),.65);
+    sound(700,.1,"triangle");
+  }
+  updateFlightStats();
+}
+
+function hitPlayer() {
+  const p=game.player;
+  if(p.blink>0)return;
+  if(p.shield>0||p.dash>0) {
+    floatText(p.x,p.y-35,"SHIELDED!","#9effdf");
+    p.shield=Math.max(0,p.shield-.45);
+    sound(550,.1);
+    return;
+  }
+  game.lives--;
+  p.blink=1.3;
+  p.shield=.3;
+  floatText(p.x,p.y-38,"OUCH! ❤️","#ff789f");
+  for(let i=0;i<12;i++)spawnParticle(p.x,p.y,"#ff789f",rand(3,7),rand(-100,100),rand(-100,100),.5);
+  sound(130,.22,"square");
+  updateFlightStats();
+  if(game.lives<=0)endGame(false);
+}
+
+function loop(now) {
+  if(!game.running)return;
+  const dt=Math.min(.035,(now-game.last)/1000||.016);
+  game.last=now;
+  updateGame(dt);
+  drawGame();
+  if(game.running)requestAnimationFrame(loop);
+}
+
+function updateGame(dt) {
+  game.time+=dt;game.frame++;
+  const p=game.player;
+  const diff=activeWorld().difficulty;
+  const speed=(game.world==="thunder"?1.4:1)+Math.min(1.2,game.time/90)+diff*.07;
+  p.blink=Math.max(0,p.blink-dt);
+  p.shield=Math.max(0,p.shield-dt);
+  p.dash=Math.max(0,p.dash-dt);
+  Object.keys(game.cooldown).forEach(k=>game.cooldown[k]=Math.max(0,game.cooldown[k]-dt));
+
+  const k=game.keys;
+  if(k.ArrowUp||k.w||k.W)p.y-=310*dt;
+  if(k.ArrowDown||k.s||k.S)p.y+=310*dt;
+  if(k.ArrowLeft||k.a||k.A)p.x-=260*dt;
+  if(k.ArrowRight||k.d||k.D)p.x+=260*dt;
+  p.x=clamp(p.x,65,430);p.y=clamp(p.y,55,GH-60);
+
+  game.spawn-=dt;
+  if(game.spawn<=0) {
+    spawnHazard();
+    if(Math.random()<.86)spawnPickup();
+    game.spawn=Math.max(.42,1.12-game.time*.006-rand(0,.24));
+  }
+
+  game.hazards.forEach(h=>{
+    h.x-=(h.speed*speed+(p.dash>0?120:0))*dt;
+    h.y+=Math.sin(game.time*2+h.phase)*h.vy*dt;
+    h.y=clamp(h.y,35,GH-35);
+    const d=Math.hypot(h.x-p.x,h.y-p.y);
+    if(d<h.r+22&&!h.hit) {h.hit=true;hitPlayer();}
+  });
+  game.hazards=game.hazards.filter(h=>h.x>-80&&!h.hit);
+
+  game.pickups.forEach(c=>{
+    c.x-=(c.speed*speed+(p.dash>0?100:0))*dt;
+    c.y+=Math.sin(game.time*3+c.phase)*18*dt;
+    const magnet=state.items.includes("magic_magnet")?80:0;
+    if(Math.hypot(c.x-p.x,c.y-p.y)<c.r+24+magnet) {
+      if(c.type==="chest") {
+        game.coins+=25;game.score+=150;state.treasures++;state.chestsOpened++;
+        floatText(c.x,c.y,"TREASURE +25 🪙","#ffe58a");
+        logEvent("Found a treasure chest during flight.");
+        sound(1000,.2,"triangle");
+      } else {
+        game.coins++;game.score+=10;
+        floatText(c.x,c.y,"+1","#ffe58a");
+        sound(650,.04);
+      }
+      c.collected=true;
+    }
+  });
+  game.pickups=game.pickups.filter(c=>c.x>-50&&!c.collected);
+
+  game.particles.forEach(a=>{a.x+=a.vx*dt;a.y+=a.vy*dt;a.life-=dt;a.vy+=12*dt;});
+  game.particles=game.particles.filter(a=>a.life>0);
+  game.texts.forEach(t=>{t.y-=25*dt;t.life-=dt;});
+  game.texts=game.texts.filter(t=>t.life>0);
+  game.score+=dt*(8+diff*2);
+  updateFlightStats();
+
+  if(game.time>=45+diff*7)endGame(true);
+}
+
+function endGame(survived) {
+  if(!game.running)return;
+  game.running=false;game.over=true;
+  const score=Math.floor(game.score);
+  state.flights++;
+  state.bestScore=Math.max(state.bestScore,score);
+  state.totalCoins+=game.coins;
+  state.coins+=game.coins;
+  state.lives=Math.max(1,game.lives);
+  state.xp+=Math.floor(score/12);
+  state.health=clamp(state.health-(7-game.lives)*5);
+  state.energy=clamp(state.energy-12);
+  logEvent(`${survived?"Completed":"Ended"} a flight in ${activeWorld().name}: ${score} points, ${game.coins} coins.`);
+  document.getElementById("flightStatus").textContent=survived?"MISSION COMPLETE":"FLIGHT ENDED";
+  document.getElementById("startFlight").textContent="▶ Fly Again";
+  if(survived) {
+    notify(`🏆 Mission complete! ${score} points · ${game.coins} coins collected!`);
+    sound(950,.3,"triangle");
+  } else {
+    notify(`Flight ended. You scored ${score} points. Train and try again!`);
+  }
+  xpGain(Math.floor(score/12));
+  checkAchievements();
+  renderAll();
+  updateFlightStats();
+  drawGame();
+}
+
+function drawGame() {
+  if(!ctx)return;
+  const w=GW,h=GH,world=activeWorld();
+  const t=game.time||0;
+  const grad=ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,world.a);grad.addColorStop(1,world.b);
+  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+
+  // Stars and glimmer
+  for(let i=0;i<70;i++) {
+    const x=((i*137.7-t*(8+i%4)*3)%w+w)%w;
+    const y=(i*71.3)%h;
+    ctx.globalAlpha=.25+.6*(.5+.5*Math.sin(t*2+i));
+    ctx.fillStyle="#fff";
+    ctx.beginPath();ctx.arc(x,y,i%9===0?2.5:1.2,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // Moon / sun
+  ctx.fillStyle="#fff1c6";ctx.globalAlpha=.8;
+  ctx.beginPath();ctx.arc(760,95,42,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=world.a;ctx.beginPath();ctx.arc(778,83,40,0,Math.PI*2);ctx.fill();
+
+  // Layered fantasy mountains
+  for(let layer=0;layer<3;layer++) {
+    ctx.beginPath();ctx.moveTo(0,h);
+    for(let x=0;x<=w+50;x+=50) {
+      const y=290+layer*65+Math.sin(x*.018+layer*3-t*.2)*(45+layer*10);
+      ctx.lineTo(x,y);
+    }
+    ctx.lineTo(w,h);ctx.closePath();
+    ctx.fillStyle=["#2c245e","#211d4b","#171737"][layer];ctx.fill();
+  }
+
+  // Castle silhouette
+  const castleX=660-(t*12%120);
+  ctx.fillStyle="#171532";
+  ctx.fillRect(castleX,270,160,170);
+  ctx.fillRect(castleX+20,230,35,65);
+  ctx.fillRect(castleX+105,220,32,75);
+  ctx.fillRect(castleX+60,190,38,105);
+  for(let i=0;i<5;i++) {
+    const tx=castleX+i*32;
+    ctx.beginPath();ctx.moveTo(tx,270);ctx.lineTo(tx+15,235);ctx.lineTo(tx+30,270);ctx.fill();
+  }
+  ctx.fillStyle="#ffe4a3";
+  for(let y=0;y<4;y++)for(let x=0;x<4;x++) {
+    ctx.fillRect(castleX+13+x*35,300+y*32,8,13);
+  }
+  ctx.fillStyle="#d8c3ff";
+  ctx.fillRect(castleX+72,350,15,55);
+
+  // Floating magical platforms
+  for(let i=0;i<5;i++) {
+    const x=((i*230-t*55)%(w+180)+(w+180))%(w+180)-80;
+    const y=110+(i%3)*105;
+    ctx.fillStyle="#ffffff22";
+    ctx.beginPath();ctx.ellipse(x,y,58,12,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#a8f7ff99";
+    ctx.beginPath();ctx.ellipse(x,y-2,48,5,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#8f78cf";
+    ctx.beginPath();ctx.moveTo(x-25,y+6);ctx.lineTo(x+23,y+6);ctx.lineTo(x+9,y+29);ctx.lineTo(x-10,y+22);ctx.fill();
+  }
+
+  // Atmospheric swirls
+  for(let i=0;i<10;i++) {
+    const x=((i*121-t*95)%(w+80)+(w+80))%(w+80);
+    const y=70+(i*57)%400;
+    ctx.strokeStyle="#ffffff24";ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(x,y,25,6,Math.sin(t+i)*.5,0,Math.PI*1.6);ctx.stroke();
+  }
+
+  // Pickups
+  game.pickups.forEach(c=>{
+    ctx.save();ctx.translate(c.x,c.y+Math.sin(t*5+c.phase)*3);
+    if(c.type==="chest") {
+      ctx.shadowBlur=18;ctx.shadowColor="#ffe66d";
+      ctx.fillStyle="#a45c2c";ctx.fillRect(-15,-10,30,22);
+      ctx.fillStyle="#ffd35f";ctx.fillRect(-16,-12,32,7);ctx.fillRect(-3,-5,6,16);
+    } else {
+      ctx.shadowBlur=15;ctx.shadowColor="#ffec80";
+      ctx.fillStyle="#ffe16b";ctx.beginPath();
+      for(let i=0;i<10;i++) {
+        const a=i*Math.PI/5-Math.PI/2,r=i%2?7:14;
+        ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+      }
+      ctx.closePath();ctx.fill();
+    }
+    ctx.restore();
+  });
+
+  // Hazards
+  game.hazards.forEach(o=>{
+    ctx.save();ctx.translate(o.x,o.y);ctx.rotate(t*1.2+o.phase);
+    if(o.type==="rock") {
+      ctx.fillStyle="#777f9c";ctx.strokeStyle="#c3cbe9";ctx.lineWidth=3;
+      ctx.beginPath();
+      for(let i=0;i<8;i++) {
+        const a=i*Math.PI/4,r=o.r*(i%2?.78:1.05);
+        if(i===0)ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);
+        else ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+      }
+      ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle="#ffffff38";ctx.fillRect(-5,-o.r/2,7,12);
+    } else if(o.type==="mine") {
+      ctx.shadowBlur=18;ctx.shadowColor="#ff4b8d";
+      ctx.fillStyle="#d92d68";ctx.beginPath();ctx.arc(0,0,o.r*.75,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle="#ff9dbd";ctx.lineWidth=3;
+      for(let i=0;i<8;i++) {
+        const a=i*Math.PI/4;
+        ctx.beginPath();ctx.moveTo(Math.cos(a)*12,Math.sin(a)*12);ctx.lineTo(Math.cos(a)*o.r,Math.sin(a)*o.r);ctx.stroke();
+      }
+      ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-5,-5,4,0,Math.PI*2);ctx.fill();
+    } else {
+      ctx.strokeStyle="#fff1a2";ctx.lineWidth=8;ctx.shadowBlur=20;ctx.shadowColor="#ffe36c";
+      ctx.beginPath();ctx.arc(0,0,o.r,0,Math.PI*2);ctx.stroke();
+      ctx.strokeStyle="#ffffff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,o.r-7,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.restore();
+  });
+
+  // Player dragon — custom vector artwork
+  drawDragon(game.player,t);
+
+  // Particles and floating score text
+  game.particles.forEach(a=>{
+    ctx.globalAlpha=clamp(a.life/a.max,0,1);
+    ctx.fillStyle=a.color;ctx.beginPath();ctx.arc(a.x,a.y,a.size,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  game.texts.forEach(o=>{
+    ctx.globalAlpha=clamp(o.life,0,1);
+    ctx.fillStyle=o.color;ctx.font="bold 18px system-ui";ctx.textAlign="center";
+    ctx.fillText(o.text,o.x,o.y);
+  });
+  ctx.globalAlpha=1;
+
+  // HUD
+  ctx.fillStyle="#120b32b8";roundedRect(18,16,250,45,12);ctx.fill();
+  ctx.fillStyle="#fff";ctx.font="bold 17px system-ui";ctx.textAlign="left";
+  ctx.fillText("🏆 "+Math.floor(game.score)+"    ❤️ "+game.lives,32,44);
+  ctx.font="12px system-ui";ctx.fillStyle="#fff9d6";
+  ctx.fillText(world.name+" · Difficulty "+world.difficulty+"/5",22,h-18);
+
+  if(!game.running) {
+    ctx.fillStyle="#100b28a8";ctx.fillRect(0,0,w,h);
+    ctx.textAlign="center";
+    ctx.fillStyle="#ffe8a5";ctx.font="900 36px system-ui";
+    ctx.fillText(game.over?"FLIGHT COMPLETE":"READY TO FLY?",w/2,h/2-24);
+    ctx.fillStyle="#fff";ctx.font="17px system-ui";
+    ctx.fillText(game.over?"Start another mission to beat your record.":"Press Start / Restart to launch your adventure.",w/2,h/2+17);
+    ctx.font="14px system-ui";ctx.fillStyle="#d9ceff";
+    ctx.fillText("Collect gold · Avoid hazards · Master the skies",w/2,h/2+48);
+  }
+}
+
+function roundedRect(x,y,w,h,r) {
+  ctx.beginPath();ctx.roundRect(x,y,w,h,r);
+}
+
+function drawDragon(p,t) {
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  if(p.blink>0&&Math.floor(t*18)%2===0)ctx.globalAlpha=.35;
+  if(p.dash>0) {
+    ctx.fillStyle="#8dffda33";
+    ctx.beginPath();ctx.ellipse(-45,0,65,27,0,0,Math.PI*2);ctx.fill();
+  }
+  if(p.shield>0) {
+    ctx.strokeStyle="#a4ffe4bb";ctx.lineWidth=4;
+    ctx.beginPath();ctx.ellipse(0,0,47,39,0,0,Math.PI*2);ctx.stroke();
+  }
+
+  // Tail
+  ctx.strokeStyle="#3bd7c1";ctx.lineWidth=12;ctx.lineCap="round";
+  ctx.beginPath();ctx.moveTo(-24,10);ctx.quadraticCurveTo(-51,30,-64,10+Math.sin(t*5)*8);ctx.stroke();
+  ctx.fillStyle="#ffe59a";ctx.beginPath();ctx.moveTo(-65,10);ctx.lineTo(-78,2);ctx.lineTo(-74,18);ctx.fill();
+
+  // Back wing
+  ctx.fillStyle="#9d75ff";ctx.strokeStyle="#e4caff";ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-15,-7);ctx.quadraticCurveTo(-53,-57,-29,-68);
+  ctx.quadraticCurveTo(-6,-58,2,-32);ctx.quadraticCurveTo(24,-47,29,-34);
+  ctx.lineTo(16,-6);ctx.closePath();ctx.fill();ctx.stroke();
+
+  // Body
+  const body=ctx.createLinearGradient(-25,-20,25,25);
+  body.addColorStop(0,"#a2ffe5");body.addColorStop(1,"#21b6aa");
+  ctx.fillStyle=body;ctx.strokeStyle="#d5fff3";ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(-3,6,33,24,-.12,0,Math.PI*2);ctx.fill();ctx.stroke();
+
+  // Belly
+  ctx.fillStyle="#ffe3ad";ctx.beginPath();ctx.ellipse(8,13,18,14,-.15,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#dfaa88";ctx.lineWidth=1;
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(-2,5+i*7);ctx.quadraticCurveTo(8,8+i*7,18,5+i*7);ctx.stroke();}
+
+  // Front wing
+  ctx.fillStyle="#65e9d5";ctx.strokeStyle="#e3fff8";ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-8,-5);ctx.quadraticCurveTo(-18,-45,7,-51);
+  ctx.quadraticCurveTo(25,-47,28,-27);ctx.lineTo(14,-3);ctx.closePath();ctx.fill();ctx.stroke();
+
+  // Head
+  ctx.fillStyle="#4ee0c7";ctx.strokeStyle="#e3fff8";ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(24,-15,22,19,-.2,0,Math.PI*2);ctx.fill();ctx.stroke();
+  // Snout
+  ctx.fillStyle="#8bffe9";ctx.beginPath();ctx.ellipse(41,-7,15,10,.1,0,Math.PI*2);ctx.fill();ctx.stroke();
+  // Horns
+  ctx.fillStyle="#ffe8a6";
+  ctx.beginPath();ctx.moveTo(12,-28);ctx.lineTo(5,-44);ctx.lineTo(20,-33);ctx.fill();
+  ctx.beginPath();ctx.moveTo(29,-31);ctx.lineTo(32,-46);ctx.lineTo(38,-28);ctx.fill();
+  // Eye
+  ctx.fillStyle="#fff";ctx.beginPath();ctx.ellipse(30,-19,7,8,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#2b1b51";ctx.beginPath();ctx.arc(33,-18,3.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(34,-20,1.3,0,Math.PI*2);ctx.fill();
+  // Nostrils and smile
+  ctx.fillStyle="#287f79";ctx.beginPath();ctx.arc(49,-9,1.8,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#287f79";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(43,-3,5,.2,1.5);ctx.stroke();
+
+  // Princess Masa riding on top
+  ctx.fillStyle="#ffbbd9";ctx.beginPath();ctx.ellipse(-1,-32,14,15,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#f4d3ad";ctx.beginPath();ctx.arc(0,-43,10,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#5a2a62";ctx.beginPath();ctx.arc(0,-47,10,Math.PI,Math.PI*2);ctx.fill();
+  ctx.fillRect(-10,-47,5,15);
+  // Crown
+  ctx.fillStyle="#ffe16b";ctx.beginPath();ctx.moveTo(-8,-50);ctx.lineTo(-8,-59);ctx.lineTo(-2,-54);ctx.lineTo(2,-61);ctx.lineTo(6,-54);ctx.lineTo(9,-58);ctx.lineTo(8,-50);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,-54,1.5,0,Math.PI*2);ctx.fill();
+
+  // Sparkles
+  for(let i=0;i<3;i++) {
+    const sx=-25+i*25,sy=-43-Math.sin(t*5+i)*6;
+    ctx.fillStyle="#fff4a8";ctx.beginPath();ctx.arc(sx,sy,2,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+
+function keyDown(e) {
+  const keys=["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," ","Space"];
+  if(keys.includes(e.key))e.preventDefault();
+  game.keys[e.key]=true;
+  if(e.repeat)return;
+  const key=e.key.toLowerCase();
+  if(key==="f")useAbility("fire");
+  if(key==="r")useAbility("roar");
+  if(key==="e")useAbility("dash");
+  if(e.key===" "||e.key==="Space")useAbility("stunt");
+}
+function keyUp(e){game.keys[e.key]=false;}
+window.addEventListener("keydown",keyDown);
+window.addEventListener("keyup",keyUp);
+window.addEventListener("blur",()=>{game.keys={};});
+
+let dragging=false;
+function canvasPosition(e) {
+  const rect=canvas.getBoundingClientRect();
+  return {x:(e.clientX-rect.left)*GW/rect.width,y:(e.clientY-rect.top)*GH/rect.height};
+}
+canvas.addEventListener("pointerdown",e=>{
+  if(!game.running)return;
+  dragging=true;canvas.setPointerCapture?.(e.pointerId);
+  const pos=canvasPosition(e);game.player.x=clamp(pos.x,65,430);game.player.y=clamp(pos.y,55,GH-60);
+});
+canvas.addEventListener("pointermove",e=>{
+  if(!dragging||!game.running)return;
+  const pos=canvasPosition(e);game.player.x=clamp(pos.x,65,430);game.player.y=clamp(pos.y,55,GH-60);
+});
+canvas.addEventListener("pointerup",()=>dragging=false);
+canvas.addEventListener("pointercancel",()=>dragging=false);
+
+function toggleSound() {
+  state.sound=!state.sound;
+  updateUI();
+  notify(state.sound?"Sound effects enabled.":"Sound effects muted.");
+}
+
+function exportSave() {
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="masa-dragon-save.json";a.click();
+  URL.revokeObjectURL(url);
+  notify("Save export started.");
+}
+
+function importSave(event) {
+  const file=event.target.files?.[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try {
+      const data=JSON.parse(reader.result);
+      if(typeof data.coins!=="number"||!Array.isArray(data.unlockedWorlds)||!Array.isArray(data.tricks))throw new Error("Invalid save");
+      state=Object.assign(defaultState(),data);
+      save();renderAll();go("home");
+      notify("Save imported successfully!");
+    } catch(e) { notify("That save file is invalid."); }
+    event.target.value="";
+  };
+  reader.readAsText(file);
+}
+
+function resetGame() {
+  if(!confirm("Reset all Princess Masa and Elu progress in this browser? Export a backup first if needed."))return;
+  localStorage.removeItem(SAVE_KEY);
+  state=defaultState();
+  game.running=false;game.over=false;
+  renderAll();go("home");
+  notify("A brand-new royal adventure begins!");
+}
+
+function init() {
+  // Normalize saves from future or older edits.
+  state.unlockedWorlds=[...new Set(["crown",...(state.unlockedWorlds||[])])];
+  state.owned=[...new Set(["skin_default",...(state.owned||[])])];
+  if(!WORLDS.some(w=>w.id===state.world))state.world="crown";
+  updateUI();
+  renderAll();
+  drawGame();
+}
+
+init();
 </script>
 </body>
 </html>
