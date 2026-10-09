@@ -1,1684 +1,751 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#170f36">
-<title>Dragon & Princess Masa — Infinite Masterpiece V2</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#7046b8">
+<title>Princess Masa & the Dragon of Crown Jewel</title>
 <style>
-:root {
-  --night: #170f36;
-  --panel: #24184c;
-  --panel2: #352261;
-  --gold: #ffd66e;
-  --pink: #ff8fc9;
-  --mint: #8dffda;
-  --text: #fff7ff;
-  --muted: #c6bce9;
-  --line: #ffffff26;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--text);
-  background:
-    radial-gradient(ellipse at 50% -20%, #6a3e9c 0%, transparent 55%),
-    linear-gradient(160deg, #100b28, #21123f 55%, #10162e);
-  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-}
-
-button { font: inherit; cursor: pointer; }
-
-button:focus-visible {
-  outline: 3px solid white;
-  outline-offset: 3px;
-}
-
-.app { max-width: 1450px; margin: auto; padding: 16px; }
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-
-.brand {
-  font-size: clamp(19px, 3vw, 30px);
-  font-weight: 950;
-  letter-spacing: -.8px;
-}
-
-.brand span { color: var(--gold); }
-
-.stats { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.stat {
-  padding: 9px 12px;
-  background: #ffffff12;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.shell {
-  display: grid;
-  grid-template-columns: 215px minmax(0, 1fr);
-  gap: 14px;
-}
-
-.sidebar, .panel {
-  background: linear-gradient(150deg, #2d2055ed, #191332f5);
-  border: 1px solid var(--line);
-  border-radius: 23px;
-  box-shadow: 0 15px 45px #0003;
-}
-
-.sidebar { padding: 12px; }
-
-.nav {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 13px 12px;
-  margin: 3px 0;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  color: var(--text);
-  background: transparent;
-  text-align: left;
-  font-weight: 800;
-  transition: .15s ease;
-}
-
-.nav:hover { background: #ffffff12; transform: translateX(2px); }
-
-.nav.active {
-  background: linear-gradient(100deg, #8b52d8, #583c9f);
-  border-color: #ffffff35;
-  box-shadow: 0 5px 18px #0002;
-}
-
-.nav-icon { font-size: 22px; width: 27px; text-align: center; }
-
-.side-note {
-  margin-top: 20px;
-  padding: 13px;
-  border-radius: 16px;
-  background: #0002;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.main { min-width: 0; }
-
-.panel { padding: clamp(13px, 2vw, 23px); }
-
-.hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 250px;
-  padding: 25px;
-  border: 1px solid #ffffff30;
-  border-radius: 20px;
-  background:
-    radial-gradient(circle at 78% 32%, #ffe9a8 0 4%, #ffd16d 5%, transparent 6%),
-    radial-gradient(ellipse at 80% 110%, #ee8ed5 0%, transparent 45%),
-    linear-gradient(130deg, #32266f, #7650bd 50%, #e78cce);
-}
-
-.hero:before {
-  content: "✦   ·     ✧      ·  ✦      ·    ✧";
-  position: absolute;
-  inset: 15px 10px auto;
-  color: #fff9d5;
-  letter-spacing: 14px;
-  opacity: .8;
-  pointer-events: none;
-}
-
-.hero-copy { position: relative; z-index: 1; max-width: 60%; }
-
-.eyebrow {
-  color: var(--gold);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 11px;
-  font-weight: 950;
-}
-
-h1 { font-size: clamp(25px, 4vw, 43px); line-height: 1.05; margin: 12px 0; }
-h2 { font-size: 23px; margin: 0 0 13px; }
-h3 { font-size: 17px; margin: 0 0 8px; }
-p { color: var(--muted); line-height: 1.6; }
-.small { font-size: 12px; color: var(--muted); }
-.hero p { max-width: 440px; color: #fff4ff; }
-
-.hero-art {
-  position: absolute;
-  right: 2%;
-  bottom: -22px;
-  font-size: clamp(90px, 14vw, 175px);
-  filter: drop-shadow(0 14px 10px #30124466);
-  transform: rotate(-9deg);
-  user-select: none;
-}
-
-.button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
-
-.btn {
-  border: 1px solid #ffffff35;
-  border-radius: 12px;
-  padding: 10px 14px;
-  background: #ffffff12;
-  color: white;
-  font-weight: 850;
-  transition: .15s;
-}
-
-.btn:hover { transform: translateY(-2px); filter: brightness(1.13); }
-
-.btn.primary {
-  color: #352044;
-  border-color: #ffe9a8;
-  background: linear-gradient(120deg, #ffe9a8, #ffb7d9);
-}
-
-.btn.mint { color: #102b36; background: var(--mint); border-color: var(--mint); }
-.btn.danger { background: #d94e87; }
-.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-.section { margin-top: 21px; }
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.section-heading h2 { margin: 0; }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.card {
-  min-width: 0;
-  padding: 15px;
-  border-radius: 17px;
-  border: 1px solid var(--line);
-  background: linear-gradient(145deg, #ffffff0e, #00000012);
-}
-
-.card p { margin: 5px 0 10px; font-size: 13px; }
-
-.card-art {
-  display: grid;
-  place-items: center;
-  min-height: 95px;
-  margin-bottom: 11px;
-  border-radius: 13px;
-  background:
-    radial-gradient(circle at 50% 25%, #ffffff25, transparent 50%),
-    linear-gradient(145deg, #7a58ad, #342252);
-  font-size: 48px;
-}
-
-.card .btn { width: 100%; margin-top: 5px; }
-
-.progress {
-  height: 10px;
-  border-radius: 99px;
-  overflow: hidden;
-  background: #0005;
-  border: 1px solid #ffffff12;
-}
-
-.progress > div {
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #8dffda, #ffe18a, #ff8fc9);
-  transition: width .25s;
-}
-
-.bar-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 10px 0 5px;
-}
-
-.meter-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.meter {
-  padding: 13px;
-  background: #ffffff0c;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-}
-
-.meter strong { display: block; font-size: 20px; margin-bottom: 3px; }
-.meter span { color: var(--muted); font-size: 11px; }
-
-.world-card {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(145deg, var(--world-a), var(--world-b));
-}
-
-.world-card .card-art { background: #ffffff18; }
-.lock { color: #ffe9a8; font-weight: 850; font-size: 12px; }
-
-#gameCanvas {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 520px;
-  border-radius: 16px;
-  background: #191b4b;
-  border: 1px solid #ffffff40;
-  touch-action: none;
-}
-
-.game-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.game-controls .btn { flex: 1 1 120px; }
-
-.toast {
-  position: fixed;
-  z-index: 99;
-  left: 50%;
-  bottom: 20px;
-  transform: translate(-50%, 20px);
-  opacity: 0;
-  pointer-events: none;
-  padding: 13px 18px;
-  max-width: calc(100% - 24px);
-  border: 1px solid #ffffff50;
-  border-radius: 14px;
-  background: #241744f5;
-  box-shadow: 0 10px 35px #0005;
-  font-weight: 850;
-  transition: .2s;
-  text-align: center;
-}
-
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-.list { display: grid; gap: 8px; }
-
-.list-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 13px;
-  background: #ffffff0b;
-  border: 1px solid var(--line);
-}
-
-.list-item .grow { flex: 1; min-width: 0; }
-.list-item p { margin: 3px 0 0; font-size: 12px; }
-
-.badge {
-  display: inline-block;
-  border-radius: 99px;
-  padding: 4px 8px;
-  color: #2d1b43;
-  background: var(--gold);
-  font-size: 10px;
-  font-weight: 950;
-}
-
-.empty {
-  padding: 30px;
-  text-align: center;
-  color: var(--muted);
-  border: 1px dashed #ffffff35;
-  border-radius: 16px;
-}
-
-.footer {
-  padding: 18px 4px 5px;
-  color: #bdb0e1;
-  font-size: 11px;
-  text-align: center;
-}
-
-.hidden { display: none !important; }
-
-@media (max-width: 800px) {
-  .shell { grid-template-columns: 1fr; }
-  .sidebar {
-    display: flex;
-    overflow-x: auto;
-    gap: 5px;
-    padding: 8px;
-  }
-  .nav { width: auto; flex: 0 0 auto; padding: 10px 12px; }
-  .nav span:last-child { display: none; }
-  .side-note { display: none; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .hero-copy { max-width: 72%; }
-  .hero-art { right: -2%; }
-}
-
-@media (max-width: 450px) {
-  .app { padding: 9px; }
-  .stats { gap: 5px; }
-  .stat { font-size: 12px; padding: 7px 8px; }
-  .grid { grid-template-columns: 1fr; }
-  .hero { padding: 18px; min-height: 260px; }
-  .hero-copy { max-width: 100%; padding-bottom: 100px; }
-  .hero-art { font-size: 105px; right: 3%; bottom: -22px; }
-  .meter-grid { grid-template-columns: 1fr 1fr; }
-}
+:root{--purple:#7046b8;--pink:#ff7eb6;--gold:#ffd66b;--ink:#382454}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#a7e8ff;touch-action:manipulation}
+button,select{font:inherit}
+button{border:0;border-radius:14px;padding:10px 14px;background:white;color:var(--ink);font-weight:800;box-shadow:0 3px 0 #34214a25;cursor:pointer;transition:transform .12s}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.4}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block}
+#top{position:fixed;z-index:3;top:env(safe-area-inset-top,8px);left:0;right:0;padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;pointer-events:none}
+.panel{background:#ffffffeb;border:2px solid #ffffffd9;border-radius:18px;padding:8px 12px;box-shadow:0 5px 18px #3d286425;backdrop-filter:blur(8px)}
+#stats{font-size:13px;font-weight:900;line-height:1.7}
+#title{font-size:clamp(13px,2.7vw,21px);font-weight:1000;color:#7046b8;text-shadow:0 1px white}
+#message{position:fixed;z-index:4;top:88px;left:50%;transform:translateX(-50%);width:max-content;max-width:90vw;text-align:center;background:#fff8e8f5;border:2px solid white;border-radius:20px;padding:9px 15px;font-weight:800;font-size:13px;box-shadow:0 4px 15px #34214a25;pointer-events:none}
+#nav{position:fixed;z-index:5;left:0;right:0;bottom:0;padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;background:linear-gradient(transparent,#3d285425)}
+#nav button{font-size:clamp(11px,2.8vw,14px);padding:10px 12px}
+.primary{background:var(--purple);color:white}
+.pink{background:#ffb5d5}
+.gold{background:#ffe49b}
+#controls{position:fixed;z-index:4;left:12px;right:12px;bottom:95px;display:none;justify-content:space-between;align-items:end;pointer-events:none}
+#controls button{pointer-events:auto;background:#ffffffd9;width:64px;height:58px;font-size:23px;border-radius:20px;touch-action:none}
+#rightControls{display:flex;gap:8px}
+#rightControls button{width:58px}
+#hint{position:fixed;z-index:2;left:50%;bottom:170px;transform:translateX(-50%);padding:7px 12px;background:#ffffffb8;border-radius:14px;font-size:12px;font-weight:800;white-space:nowrap;pointer-events:none}
+#modal{position:fixed;z-index:10;inset:0;background:#2b1849a8;display:none;align-items:center;justify-content:center;padding:18px}
+#modal.show{display:flex}
+#modalCard{width:min(560px,100%);max-height:82dvh;overflow:auto;background:#fff8f0;border:4px solid white;border-radius:26px;padding:20px;box-shadow:0 15px 60px #170c35aa}
+#modalCard h2{margin:0 0 8px;color:var(--purple)}
+#modalCard p{line-height:1.5}
+#modalContent{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:15px 0}
+.option{background:white;border:2px solid #eadcfb;border-radius:17px;padding:12px;text-align:center}
+.option strong{display:block;margin-bottom:5px}
+.option p{font-size:12px;margin:5px 0 10px}
+#modalActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#toast{position:fixed;z-index:20;bottom:calc(88px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#37224f;color:white;border-radius:16px;padding:11px 17px;font-weight:900;font-size:13px;display:none;text-align:center;max-width:90vw}
+@media(max-width:520px){#top{padding:7px}#stats{font-size:11px;padding:6px 9px}#title{font-size:13px}#message{top:72px;font-size:11px;padding:7px 10px}#nav{gap:5px}#nav button{padding:9px 10px;border-radius:12px}#controls{bottom:95px}#hint{bottom:160px}}
 </style>
 </head>
-
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand">🐉 DRAGON <span>&</span> PRINCESS MASA</div>
-    <div class="stats">
-      <div class="stat">🪙 <span id="coinStat">250</span></div>
-      <div class="stat">❤️ <span id="lifeStat">7</span></div>
-      <div class="stat">✨ <span id="levelStat">1</span></div>
-    </div>
-  </header>
+<canvas id="game" aria-label="Princess Masa and her dragon game"></canvas>
 
-  <div class="shell">
-    <aside class="sidebar">
-      <button class="nav active" data-screen="home"><span class="nav-icon">🏰</span><span>Kingdom</span></button>
-      <button class="nav" data-screen="care"><span class="nav-icon">🐉</span><span>Dragon Care</span></button>
-      <button class="nav" data-screen="flight"><span class="nav-icon">🪽</span><span>Flight Missions</span></button>
-      <button class="nav" data-screen="worlds"><span class="nav-icon">🗺️</span><span>World Map</span></button>
-      <button class="nav" data-screen="vault"><span class="nav-icon">💎</span><span>Treasure Vault</span></button>
-      <button class="nav" data-screen="tricks"><span class="nav-icon">✨</span><span>Trick Academy</span></button>
-      <button class="nav" data-screen="album"><span class="nav-icon">📖</span><span>Adventure Journal</span></button>
-      <button class="nav" data-screen="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
-      <div class="side-note">
-        <strong>THE ROYAL QUEST</strong><br>
-        Care for Elu, master the skies, discover lost treasures, and restore the magic of Crown Jewel Castle.
-        <br><br>💾 Progress saves in this browser.
-      </div>
-    </aside>
-
-    <main class="main">
-      <!-- KINGDOM -->
-      <section class="panel screen" id="screen-home">
-        <div class="hero">
-          <div class="hero-copy">
-            <div class="eyebrow">✦ The royal adventure begins ✦</div>
-            <h1>Welcome to<br>Crown Jewel Castle</h1>
-            <p>Princess Masa and Elu need a brave adventurer. Explore magical realms, train your dragon, and uncover the kingdom's lost treasures.</p>
-            <div class="button-row">
-              <button class="btn primary" onclick="go('flight')">🪽 Begin a Flight</button>
-              <button class="btn" onclick="go('care')">🐉 Visit Elu</button>
-            </div>
-          </div>
-          <div class="hero-art" aria-hidden="true">🐉</div>
-        </div>
-
-        <div class="meter-grid">
-          <div class="meter"><strong id="homeLevel">1</strong><span>Royal level</span></div>
-          <div class="meter"><strong id="homeWorlds">1 / 5</strong><span>Worlds discovered</span></div>
-          <div class="meter"><strong id="homeTricks">0</strong><span>Tricks mastered</span></div>
-          <div class="meter"><strong id="homeTreasures">0</strong><span>Treasures found</span></div>
-          <div class="meter"><strong id="homeFlights">0</strong><span>Flights completed</span></div>
-          <div class="meter"><strong id="homeBest">0</strong><span>Best flight score</span></div>
-        </div>
-
-        <div class="section">
-          <div class="section-heading"><h2>🌟 Today's royal missions</h2><span class="badge">EARN REWARDS</span></div>
-          <div class="grid" id="dailyMissions"></div>
-        </div>
-
-        <div class="section">
-          <div class="section-heading"><h2>🗺️ Your next adventure</h2><button class="btn" onclick="go('worlds')">View all realms →</button></div>
-          <div class="grid" id="featuredWorlds"></div>
-        </div>
-      </section>
-
-      <!-- CARE -->
-      <section class="panel screen hidden" id="screen-care">
-        <div class="section-heading">
-          <div><div class="eyebrow">ROYAL DRAGON SANCTUARY</div><h1>Care for Elu 🐉</h1></div>
-          <span class="badge">YOUR COMPANION</span>
-        </div>
-
-        <div class="hero" style="background:linear-gradient(135deg,#225d83,#7654bb 60%,#e88dc4)">
-          <div class="hero-copy">
-            <h1 id="dragonMood">Elu is happy!</h1>
-            <p id="dragonMessage">Your magical dragon loves spending time with you. Keep Elu healthy, clean, and well-rested.</p>
-            <div class="button-row">
-              <button class="btn primary" onclick="care('play')">💖 Play together</button>
-              <button class="btn" onclick="care('pet')">🤍 Give a cuddle</button>
-            </div>
-          </div>
-          <div class="hero-art" id="dragonArt">🐲</div>
-        </div>
-
-        <div class="meter-grid">
-          <div class="meter"><strong id="healthNum">90</strong><span>❤️ Health</span><div class="progress"><div id="healthBar"></div></div></div>
-          <div class="meter"><strong id="hungerNum">75</strong><span>🍓 Fullness</span><div class="progress"><div id="hungerBar"></div></div></div>
-          <div class="meter"><strong id="happinessNum">85</strong><span>💖 Happiness</span><div class="progress"><div id="happinessBar"></div></div></div>
-          <div class="meter"><strong id="cleanNum">80</strong><span>🫧 Cleanliness</span><div class="progress"><div id="cleanBar"></div></div></div>
-          <div class="meter"><strong id="energyNum">85</strong><span>⚡ Energy</span><div class="progress"><div id="energyBar"></div></div></div>
-          <div class="meter"><strong id="bondNum">0</strong><span>💞 Bond level</span><div class="progress"><div id="bondBar"></div></div></div>
-        </div>
-
-        <div class="section">
-          <h2>🧺 Sanctuary activities</h2>
-          <div class="grid">
-            <div class="card"><div class="card-art">🍓</div><h3>Dragon feast</h3><p>Feed Elu magical berries. Restores fullness and energy.</p><button class="btn primary" onclick="care('feed')">Feed · 10 🪙</button></div>
-            <div class="card"><div class="card-art">🫧</div><h3>Crystal bath</h3><p>Clean the scales and make Elu sparkle again.</p><button class="btn primary" onclick="care('bath')">Bathe · 8 🪙</button></div>
-            <div class="card"><div class="card-art">🪮</div><h3>Scale grooming</h3><p>Brush Elu's scales and strengthen your bond.</p><button class="btn primary" onclick="care('groom')">Groom · 5 🪙</button></div>
-            <div class="card"><div class="card-art">🌙</div><h3>Resting nest</h3><p>Recover energy before a difficult flight.</p><button class="btn primary" onclick="care('rest')">Rest for free</button></div>
-            <div class="card"><div class="card-art">🔥</div><h3>Fire training</h3><p>Practice controlled flames to improve your flight.</p><button class="btn primary" onclick="care('train')">Train · 12 🪙</button></div>
-            <div class="card"><div class="card-art">👑</div><h3>Royal bonding</h3><p>Spend time together and build a lasting friendship.</p><button class="btn primary" onclick="care('bond')">Bond · 5 🪙</button></div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>🎨 Dragon appearance</h2>
-          <div class="grid" id="dragonSkins"></div>
-        </div>
-      </section>
-
-      <!-- FLIGHT -->
-      <section class="panel screen hidden" id="screen-flight">
-        <div class="section-heading">
-          <div><div class="eyebrow">SKY RIDER TRAINING</div><h1>Flight Missions 🪽</h1></div>
-          <span class="badge" id="flightStatus">READY</span>
-        </div>
-        <p>Steer Elu through dangerous skies. Collect coins, dodge rocks and magical mines, and use your abilities wisely. Each mission gets harder.</p>
-
-        <div class="meter-grid">
-          <div class="meter"><strong id="flightScore">0</strong><span>🏆 Score</span></div>
-          <div class="meter"><strong id="flightCoins">0</strong><span>🪙 Collected</span></div>
-          <div class="meter"><strong id="flightLives">7</strong><span>❤️ Lives left</span></div>
-        </div>
-
-        <div class="section">
-          <canvas id="gameCanvas" width="960" height="540" aria-label="Dragon flight game. Use arrow keys, WASD, or touch to steer."></canvas>
-          <div class="game-controls">
-            <button class="btn primary" id="startFlight" onclick="startGame()">▶ Start / Restart</button>
-            <button class="btn" onclick="useAbility('fire')">🔥 Fire blast · F</button>
-            <button class="btn" onclick="useAbility('roar')">🐉 Dragon roar · R</button>
-            <button class="btn" onclick="useAbility('dash')">⚡ Sky dash · E</button>
-            <button class="btn" onclick="useAbility('stunt')">✨ Stunt · Space</button>
-          </div>
-          <p class="small">Desktop: arrow keys or WASD. Abilities: F, R, E, Space. Mobile: drag Elu with your finger. Avoid red hazards, collect gold coins, and survive until the mission ends.</p>
-        </div>
-
-        <div class="section">
-          <h2>🎯 Mission objectives</h2>
-          <div class="grid" id="flightObjectives"></div>
-        </div>
-      </section>
-
-      <!-- WORLDS -->
-      <section class="panel screen hidden" id="screen-worlds">
-        <div class="eyebrow">FIVE MAGICAL REALMS</div>
-        <h1>World Map 🗺️</h1>
-        <p>Each realm has its own colors, hazards, and difficulty. Complete flights and collect treasure to unlock new destinations.</p>
-        <div class="grid" id="worldList"></div>
-      </section>
-
-      <!-- VAULT -->
-      <section class="panel screen hidden" id="screen-vault">
-        <div class="eyebrow">COLLECT • CRAFT • CUSTOMIZE</div>
-        <h1>Treasure Vault 💎</h1>
-        <p>Spend the coins you earn on dragon appearances, magical companions, royal outfits, and sanctuary decorations. Owned items remain yours.</p>
-        <div class="meter-grid">
-          <div class="meter"><strong id="vaultCoins">250</strong><span>Available coins</span></div>
-          <div class="meter"><strong id="vaultOwned">0</strong><span>Items owned</span></div>
-          <div class="meter"><strong id="vaultTreasures">0</strong><span>Chests discovered</span></div>
-        </div>
-        <div class="section">
-          <div class="section-heading"><h2>🛍️ Royal collection</h2>
-            <select id="shopCategory" class="btn" aria-label="Filter items" onchange="renderShop()">
-              <option value="all">All items</option><option value="skin">Dragon looks</option><option value="outfit">Princess outfits</option><option value="pet">Companions</option><option value="magic">Magic upgrades</option><option value="decor">Castle decor</option>
-            </select>
-          </div>
-          <div class="grid" id="shopGrid"></div>
-        </div>
-      </section>
-
-      <!-- TRICKS -->
-      <section class="panel screen hidden" id="screen-tricks">
-        <div class="eyebrow">DRAGON RIDING SCHOOL</div>
-        <h1>Trick Academy ✨</h1>
-        <p>Practice tricks to increase your bond with Elu. Advanced tricks require a higher bond level. Master them all to become a legendary dragon rider.</p>
-        <div class="meter-grid">
-          <div class="meter"><strong id="tricksKnown">0 / 50</strong><span>Tricks mastered</span></div>
-          <div class="meter"><strong id="trickBond">0</strong><span>Bond points</span></div>
-          <div class="meter"><strong id="trickRewards">0</strong><span>Practice rewards</span></div>
-        </div>
-        <div class="section"><div class="grid" id="trickGrid"></div></div>
-      </section>
-
-      <!-- JOURNAL -->
-      <section class="panel screen hidden" id="screen-album">
-        <div class="eyebrow">THE STORY OF YOUR KINGDOM</div>
-        <h1>Adventure Journal 📖</h1>
-        <p>Your journey is being written one mission at a time. Discover achievements, recover lost treasure, and build a royal legacy.</p>
-        <div class="section"><h2>🏅 Achievements</h2><div class="grid" id="achievementGrid"></div></div>
-        <div class="section"><h2>📜 Royal chronicles</h2><div class="list" id="journalList"></div></div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section class="panel screen hidden" id="screen-settings">
-        <div class="eyebrow">YOUR GAME, YOUR ADVENTURE</div>
-        <h1>Settings ⚙️</h1>
-        <div class="card">
-          <h3>Sound effects</h3>
-          <p>Toggle simple synthesized sound effects for dragon actions and rewards.</p>
-          <button class="btn primary" id="soundToggle" onclick="toggleSound()">🔊 Sound: On</button>
-        </div>
-        <div class="section card">
-          <h3>Save data</h3>
-          <p>Your progress is stored in this browser's local storage. It does not automatically sync between devices or browsers.</p>
-          <div class="button-row">
-            <button class="btn" onclick="exportSave()">⬇ Export save</button>
-            <button class="btn" onclick="document.getElementById('importFile').click()">⬆ Import save</button>
-            <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importSave(event)">
-          </div>
-        </div>
-        <div class="section card">
-          <h3>Start a new adventure</h3>
-          <p>This deletes the local save for this game in this browser. Export your save first if you want a backup.</p>
-          <button class="btn danger" onclick="resetGame()">Reset all progress</button>
-        </div>
-        <div class="section card">
-          <h3>Version information</h3>
-          <p>Infinite Masterpiece Edition V2 · Single-file HTML5 canvas game · No external assets required.</p>
-        </div>
-      </section>
-    </main>
+<div id="top">
+  <div class="panel">
+    <div id="title">👑 CROWN JEWEL</div>
+    <div id="stats">🪙 0 · ❤️ 7/7</div>
   </div>
-  <div class="footer">DRAGON & PRINCESS MASA · INFINITE MASTERPIECE V2 · MADE FOR ADVENTURE ✦</div>
+  <div class="panel" style="text-align:right">
+    <div id="worldName" style="font-weight:1000">🏰 Castle Gardens</div>
+    <div id="modeName" style="font-size:12px;font-weight:800">Dragon Care</div>
+  </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="message">Welcome home, Princess Masa! Your dragon missed you! 💖</div>
+
+<div id="hint">✨ Take care of your dragon or explore the skies!</div>
+
+<div id="controls">
+  <button id="up" aria-label="Fly up">⬆️</button>
+  <div id="rightControls">
+    <button id="down" aria-label="Fly down">⬇️</button>
+    <button id="boost" aria-label="Fly faster">⚡</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button id="care" class="primary">🛁 Care</button>
+  <button id="fly">🐉 Fly!</button>
+  <button id="worlds">🌎 Worlds</button>
+  <button id="custom">👗 Style</button>
+  <button id="missions">⭐ Missions</button>
+  <button id="help">💬 Elu</button>
+</div>
+
+<div id="modal">
+  <div id="modalCard">
+    <h2 id="modalTitle">Welcome!</h2>
+    <p id="modalDesc"></p>
+    <div id="modalContent"></div>
+    <div id="modalActions">
+      <button id="closeModal">Back</button>
+    </div>
+  </div>
+</div>
+<div id="toast" role="status"></div>
 
 <script>
 "use strict";
-
-/* ==========================================================
-   DRAGON & PRINCESS MASA — INFINITE MASTERPIECE V2
-   Single-file browser game. No external libraries.
-   ========================================================== */
-
-const SAVE_KEY = "masa_dragon_infinite_v2";
-
-const WORLDS = [
-  {id:"crown",name:"Crown Jewel Kingdom",icon:"🏰",a:"#7253b8",b:"#d77cc2",desc:"Your home realm. Explore the castle skies and collect your first treasures.",cost:0,difficulty:1,goal:0},
-  {id:"frost",name:"Frost Peak",icon:"❄️",a:"#1b779d",b:"#a8e8ff",desc:"Glittering glaciers, icy tunnels, and slippery wind currents.",cost:250,difficulty:2,goal:2},
-  {id:"magma",name:"Magma Core",icon:"🌋",a:"#9b3e35",b:"#ffad50",desc:"A fiery volcanic realm filled with ember storms and dangerous rocks.",cost:500,difficulty:3,goal:4},
-  {id:"star",name:"Star Void",icon:"🌌",a:"#25245e",b:"#a05ce0",desc:"A cosmic world of star gates, purple nebulae, and fast-moving hazards.",cost:800,difficulty:4,goal:7},
-  {id:"thunder",name:"Thunder Spire",icon:"⚡",a:"#34406e",b:"#7ee5e8",desc:"The ultimate storm challenge. Survive the lightning and claim the crown.",cost:1200,difficulty:5,goal:10}
-];
-
-const TRICKS = [
- ["Sky Spiral","🌀",0],["Royal Loop","🔄",0],["Twinkle Dive","✨",0],["Cloud Bounce","☁️",0],["Wing Wave","🪽",0],
- ["Comet Turn","☄️",1],["Crystal Flip","💎",1],["Moonlight Glide","🌙",1],["Firefly Dance","🪲",1],["Rainbow Arc","🌈",1],
- ["Star Barrel Roll","⭐",2],["Dragon Corkscrew","🐉",2],["Aurora Sweep","🌌",2],["Phoenix Rise","🔥",2],["Crown Spin","👑",2],
- ["Frost Feather","❄️",3],["Meteor Twist","☄️",3],["Cloud Carousel","🎠",3],["Magic Ribbon","🎀",3],["Starlight Drop","🌠",3],
- ["Double Loop","🔁",4],["Golden Spiral","🟡",4],["Thunder Roll","⚡",4],["Prism Dive","🔷",4],["Moonbeam Flip","🌛",4],
- ["Fire Crown","🔥",5],["Crystal Comet","💠",5],["Royal Eclipse","🌑",5],["Silver Phoenix","🕊️",5],["Galaxy Waltz","🌌",5],
- ["Triple Spiral","🌀",6],["Dragon Meteor","☄️",6],["Celestial Twist","🌟",6],["Frost Nova","❄️",6],["Rainbow Rocket","🚀",6],
- ["Infinity Loop","♾️",7],["Diamond Cyclone","💎",7],["Solar Flare","☀️",7],["Nebula Dance","🌌",7],["Lightning Crown","⚡",7],
- ["Legendary Sky Dance","👑",8],["Prismatic Phoenix","🌈",8],["Dragon Starburst","🐲",8],["Heaven's Spiral","🌠",8],["Cosmic Crown Flip","🌌",8],
- ["Eternal Aurora","🌌",9],["Infinite Comet","☄️",9],["Seven-Star Flight","⭐",9],["Celestial Dragon Waltz","🐉",10],["The Crown Jewel Finale","👑",10]
-];
-
-const SHOP = [
- {id:"skin_mint",name:"Mint Crystal Scales",cat:"skin",icon:"🐉",cost:100,desc:"A shimmering mint-green dragon look.",unlock:0},
- {id:"skin_royal",name:"Royal Amethyst",cat:"skin",icon:"🐲",cost:250,desc:"Purple scales with a royal glow.",unlock:0},
- {id:"skin_solar",name:"Solar Dragon",cat:"skin",icon:"☀️",cost:400,desc:"Golden scales inspired by the sun.",unlock:0},
- {id:"skin_ice",name:"Frost Dragon",cat:"skin",icon:"❄️",cost:500,desc:"An icy look from Frost Peak.",unlock:2},
- {id:"outfit_star",name:"Starlight Gown",cat:"outfit",icon:"👗",cost:150,desc:"A gown woven from magical starlight.",unlock:0},
- {id:"outfit_crown",name:"Royal Crown",cat:"outfit",icon:"👑",cost:200,desc:"A sparkling crown for Princess Masa.",unlock:0},
- {id:"pet_fox",name:"Moon Fox",cat:"pet",icon:"🦊",cost:300,desc:"A tiny enchanted friend for the castle.",unlock:1},
- {id:"pet_owl",name:"Crystal Owl",cat:"pet",icon:"🦉",cost:350,desc:"A wise companion who watches the skies.",unlock:2},
- {id:"magic_shield",name:"Sky Shield",cat:"magic",icon:"🛡️",cost:250,desc:"Start each flight with one protective shield.",unlock:0},
- {id:"magic_magnet",name:"Coin Magnet",cat:"magic",icon:"🧲",cost:300,desc:"Pull nearby coins closer during flight.",unlock:0},
- {id:"magic_heart",name:"Extra Heart",cat:"magic",icon:"💖",cost:400,desc:"Adds one bonus life at the start of each flight.",unlock:0},
- {id:"decor_fountain",name:"Crystal Fountain",cat:"decor",icon:"⛲",cost:175,desc:"A sparkling fountain for your sanctuary.",unlock:0},
- {id:"decor_rainbow",name:"Rainbow Bridge",cat:"decor",icon:"🌈",cost:225,desc:"A colorful bridge for the royal garden.",unlock:1},
- {id:"decor_throne",name:"Gemstone Throne",cat:"decor",icon:"🪑",cost:450,desc:"A grand throne for Crown Jewel Castle.",unlock:3}
-];
-
-const MISSIONS = [
- {id:"flight1",name:"First Flight",desc:"Complete your first flight mission.",goal:1,reward:60,type:"flights"},
- {id:"coins100",name:"Coin Collector",desc:"Collect 100 coins across your adventures.",goal:100,reward:75,type:"totalCoins"},
- {id:"trick5",name:"Rising Star",desc:"Master five dragon tricks.",goal:5,reward:50,type:"tricks"},
- {id:"bond20",name:"Dragon Best Friend",desc:"Build 20 bond points with Elu.",goal:20,reward:50,type:"bond"}
-];
-
-const ACHIEVEMENTS = [
- {id:"first_flight",name:"Wings of Courage",icon:"🪽",desc:"Complete your first flight.",test:s=>s.flights>=1,reward:50},
- {id:"treasure_1",name:"Treasure Seeker",icon:"💎",desc:"Find your first treasure chest.",test:s=>s.treasures>=1,reward:40},
- {id:"tricks_5",name:"Trick Apprentice",icon:"✨",desc:"Master five dragon tricks.",test:s=>s.tricks.length>=5,reward:60},
- {id:"bond_20",name:"True Companions",icon:"💞",desc:"Reach 20 bond points.",test:s=>s.bond>=20,reward:50},
- {id:"world_3",name:"Realm Explorer",icon:"🗺️",desc:"Unlock three realms.",test:s=>s.unlockedWorlds.length>=3,reward:100},
- {id:"score_1000",name:"Sky Champion",icon:"🏆",desc:"Score 1,000 points in one flight.",test:s=>s.bestScore>=1000,reward:100},
- {id:"coins_500",name:"Royal Riches",icon:"🪙",desc:"Collect 500 coins across flights.",test:s=>s.totalCoins>=500,reward:100},
- {id:"all_10",name:"Dragon Legend",icon:"🐉",desc:"Reach royal level 10.",test:s=>s.level>=10,reward:250}
-];
-
-const defaultState = () => ({
- coins:250, lives:7, level:1, xp:0, health:90, hunger:75, happiness:85,
- clean:80, energy:85, bond:0, tricks:[], owned:["skin_default"], equippedSkin:"skin_default",
- ownedWorlds:["crown"], unlockedWorlds:["crown"], world:"crown", items:[],
- flights:0, bestScore:0, totalCoins:0, treasures:0, sound:true,
- achievements:[], journal:[{text:"Princess Masa and Elu arrived at Crown Jewel Castle.",time:Date.now()}],
- missionClaimed:[], tricksPracticed:0, chestsOpened:0
-});
-
-let state = loadState();
-let activeScreen = "home";
-let toastTimer = null;
-let audioContext = null;
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return defaultState();
-    const saved = JSON.parse(raw);
-    return Object.assign(defaultState(), saved);
-  } catch (e) {
-    console.warn("Could not load save; starting a new game.", e);
-    return defaultState();
-  }
-}
-
-function save() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
-  catch (e) { console.warn("Browser could not save progress.", e); }
-}
-
-function clamp(n, min=0, max=100) { return Math.max(min, Math.min(max, n)); }
-function rand(min,max) { return Math.random()*(max-min)+min; }
-
-function logEvent(text) {
-  state.journal.unshift({text,time:Date.now()});
-  state.journal = state.journal.slice(0,60);
-}
-
-function notify(message) {
-  const el = document.getElementById("toast");
-  el.textContent = message;
-  el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>el.classList.remove("show"), 2400);
-}
-
-function sound(freq=540,duration=.09,type="sine") {
-  if (!state.sound) return;
-  try {
-    audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(.08,audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
-    osc.connect(gain); gain.connect(audioContext.destination);
-    osc.start(); osc.stop(audioContext.currentTime+duration);
-  } catch(e) {}
-}
-
-function earn(amount, reason="Royal reward") {
-  state.coins += amount;
-  logEvent(`${reason}: earned ${amount} coins.`);
-  sound(760,.12,"triangle");
-  notify(`🪙 +${amount} coins — ${reason}`);
-  checkAchievements();
-  updateUI();
-}
-
-function spend(amount) {
-  if (state.coins < amount) {
-    notify("Not enough coins yet. Complete a flight to earn more!");
-    sound(160,.1,"square");
-    return false;
-  }
-  state.coins -= amount;
-  updateUI();
-  return true;
-}
-
-function xpGain(amount) {
-  state.xp += amount;
-  while (state.xp >= state.level*100) {
-    state.xp -= state.level*100;
-    state.level++;
-    state.coins += 40 + state.level*5;
-    notify(`🌟 LEVEL UP! Royal level ${state.level}! Bonus coins awarded.`);
-    logEvent(`Reached royal level ${state.level}.`);
-    sound(800,.18,"triangle");
-  }
-  checkAchievements();
-  updateUI();
-}
-
-function go(screen) {
-  activeScreen = screen;
-  document.querySelectorAll(".screen").forEach(el=>el.classList.add("hidden"));
-  const target = document.getElementById("screen-"+screen);
-  if (target) target.classList.remove("hidden");
-  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.screen===screen));
-  if (screen==="flight") drawGame();
-  renderAll();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-document.querySelectorAll(".nav").forEach(btn=>{
-  btn.addEventListener("click",()=>go(btn.dataset.screen));
-});
-
-function updateUI() {
-  document.getElementById("coinStat").textContent=state.coins;
-  document.getElementById("lifeStat").textContent=state.lives;
-  document.getElementById("levelStat").textContent=state.level;
-  document.getElementById("homeLevel").textContent=state.level;
-  document.getElementById("homeWorlds").textContent=state.unlockedWorlds.length+" / "+WORLDS.length;
-  document.getElementById("homeTricks").textContent=state.tricks.length;
-  document.getElementById("homeTreasures").textContent=state.treasures;
-  document.getElementById("homeFlights").textContent=state.flights;
-  document.getElementById("homeBest").textContent=state.bestScore;
-  document.getElementById("vaultCoins").textContent=state.coins;
-  document.getElementById("vaultOwned").textContent=state.owned.length+state.items.length;
-  document.getElementById("vaultTreasures").textContent=state.treasures;
-  document.getElementById("tricksKnown").textContent=state.tricks.length+" / "+TRICKS.length;
-  document.getElementById("trickBond").textContent=state.bond;
-  document.getElementById("trickRewards").textContent=state.tricksPracticed;
-  document.getElementById("soundToggle").textContent=state.sound?"🔊 Sound: On":"🔇 Sound: Off";
-  ["health","hunger","happiness","clean","energy"].forEach(key=>{
-    const val=clamp(state[key]);
-    const num=document.getElementById(key+"Num");
-    const bar=document.getElementById(key+"Bar");
-    if(num) num.textContent=val;
-    if(bar) bar.style.width=val+"%";
-  });
-  document.getElementById("bondNum").textContent=state.bond;
-  document.getElementById("bondBar").style.width=clamp(state.bond,0,100)+"%";
-  document.getElementById("dragonMood").textContent =
-    state.happiness>75?"Elu is overjoyed!":state.happiness>45?"Elu is happy!":"Elu needs some love.";
-  document.getElementById("dragonMessage").textContent =
-    state.health<40?"Elu looks tired. Rest and care for your dragon before flying.":
-    state.hunger<30?"Elu's tummy is rumbling. A dragon feast would help!":
-    state.energy<25?"Elu needs to rest before the next flight.":
-    "Your magical dragon loves spending time with you. Keep Elu healthy, clean, and well-rested.";
-  document.getElementById("dragonArt").textContent =
-    state.equippedSkin==="skin_ice"?"🐲":state.equippedSkin==="skin_solar"?"🐉":state.equippedSkin==="skin_royal"?"🐲":"🐉";
-  save();
-}
-
-function renderAll() {
-  updateUI();
-  renderMissions();
-  renderWorlds();
-  renderShop();
-  renderTricks();
-  renderAchievements();
-  renderJournal();
-  renderSkins();
-  renderFlightObjectives();
-}
-
-function care(action) {
-  const costs={feed:10,bath:8,groom:5,train:12,bond:5};
-  if (costs[action] && !spend(costs[action])) return;
-  switch(action) {
-    case "feed":
-      state.hunger=clamp(state.hunger+28); state.health=clamp(state.health+5);
-      state.energy=clamp(state.energy+8); notify("🍓 Elu loved the magical berries!"); break;
-    case "bath":
-      state.clean=clamp(state.clean+35); state.happiness=clamp(state.happiness+5);
-      notify("🫧 Elu sparkles after the crystal bath!"); break;
-    case "groom":
-      state.clean=clamp(state.clean+15); state.bond+=3; state.happiness=clamp(state.happiness+8);
-      notify("🪮 Beautiful scales and a stronger bond!"); break;
-    case "rest":
-      state.energy=clamp(state.energy+35); state.health=clamp(state.health+10);
-      notify("🌙 Elu had a peaceful rest."); break;
-    case "train":
-      state.energy=clamp(state.energy-10); state.bond+=2; xpGain(15);
-      notify("🔥 Fire training complete!"); break;
-    case "bond":
-      state.bond+=5; state.happiness=clamp(state.happiness+12);
-      state.energy=clamp(state.energy-3); xpGain(5);
-      notify("💞 Your friendship grows stronger!"); break;
-    case "play":
-      state.bond+=3; state.happiness=clamp(state.happiness+15);
-      state.energy=clamp(state.energy-5); xpGain(8);
-      notify("💖 You and Elu had an amazing time!"); break;
-    case "pet":
-      state.bond+=1; state.happiness=clamp(state.happiness+5);
-      notify("🤍 Elu nuzzles your hand."); break;
-  }
-  state.bond=Math.min(100,state.bond);
-  state.tricksPracticed++;
-  logEvent("Spent time caring for Elu: "+action+".");
-  sound(480,.1);
-  checkAchievements();
-  updateUI();
-  renderAll();
-}
-
-function renderMissions() {
-  const root=document.getElementById("dailyMissions");
-  root.innerHTML="";
-  MISSIONS.forEach(m=>{
-    const current=missionProgress(m);
-    const claimed=state.missionClaimed.includes(m.id);
-    const done=current>=m.goal;
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${m.id==="flight1"?"🪽":m.id==="coins100"?"🪙":m.id==="trick5"?"✨":"💞"}</div>
-      <h3>${m.name}</h3><p>${m.desc}</p>
-      <div class="bar-label"><span>Progress</span><span>${Math.min(current,m.goal)} / ${m.goal}</span></div>
-      <div class="progress"><div style="width:${Math.min(100,current/m.goal*100)}%"></div></div>
-      <p>Reward: 🪙 ${m.reward}</p>
-      <button class="btn ${done&&!claimed?"primary":""}" ${!done||claimed?"disabled":""} data-claim="${m.id}">${claimed?"✓ Claimed":done?"Claim reward":"In progress"}</button>`;
-    root.appendChild(card);
-  });
-  root.querySelectorAll("[data-claim]").forEach(b=>b.onclick=()=>claimMission(b.dataset.claim));
-}
-
-function missionProgress(m) {
-  return ({flights:state.flights,totalCoins:state.totalCoins,tricks:state.tricks.length,bond:state.bond})[m.type]||0;
-}
-
-function claimMission(id) {
-  const m=MISSIONS.find(x=>x.id===id);
-  if(!m||state.missionClaimed.includes(id)||missionProgress(m)<m.goal)return;
-  state.missionClaimed.push(id);
-  earn(m.reward,"Mission complete");
-  xpGain(20);
-  renderMissions();
-}
-
-function renderWorlds() {
-  const roots=[document.getElementById("worldList"),document.getElementById("featuredWorlds")];
-  roots.forEach((root,index)=>{
-    root.innerHTML="";
-    const worlds=index===0?WORLDS:WORLDS.slice(0,3);
-    worlds.forEach(w=>{
-      const unlocked=state.unlockedWorlds.includes(w.id);
-      const selected=state.world===w.id;
-      const card=document.createElement("div");
-      card.className="card world-card";
-      card.style.setProperty("--world-a",w.a);
-      card.style.setProperty("--world-b",w.b);
-      const progress=state.flights;
-      const requirement=w.goal;
-      card.innerHTML=`<div class="card-art">${w.icon}</div>
-        <h3>${w.name}</h3><p>${w.desc}</p>
-        <p>Difficulty: ${"★".repeat(w.difficulty)}${"☆".repeat(5-w.difficulty)}</p>
-        ${unlocked?`<span class="badge">${selected?"CURRENT REALM":"UNLOCKED"}</span>`:`<div class="lock">🔒 ${w.cost} coins · ${requirement} flights</div>`}
-        <button class="btn ${unlocked?"primary":""}" data-world="${w.id}" ${!unlocked&&progress<requirement?"disabled":""}>
-          ${selected?"Selected":unlocked?"Travel here":"Unlock realm"}
-        </button>`;
-      root.appendChild(card);
-    });
-    root.querySelectorAll("[data-world]").forEach(b=>b.onclick=()=>selectWorld(b.dataset.world));
-  });
-}
-
-function selectWorld(id) {
-  const w=WORLDS.find(x=>x.id===id);
-  if(!w)return;
-  if(!state.unlockedWorlds.includes(id)) {
-    if(state.flights<w.goal) { notify(`Complete ${w.goal} flights to reach this realm.`); return; }
-    if(!spend(w.cost))return;
-    state.unlockedWorlds.push(id);
-    logEvent(`Unlocked the realm: ${w.name}.`);
-    notify(`🗺️ ${w.name} unlocked!`);
-  }
-  state.world=id;
-  state.unlockedWorlds=[...new Set([...state.unlockedWorlds,id])];
-  checkAchievements();
-  save(); renderAll();
-  notify(`✨ Traveling to ${w.name}!`);
-}
-
-function renderShop() {
-  const root=document.getElementById("shopGrid");
-  if(!root)return;
-  root.innerHTML="";
-  const filter=document.getElementById("shopCategory")?.value||"all";
-  SHOP.filter(i=>filter==="all"||i.cat===filter).forEach(item=>{
-    const owned=state.owned.includes(item.id)||state.items.includes(item.id);
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${item.icon}</div><h3>${item.name}</h3>
-      <p>${item.desc}</p><p>Category: ${item.cat}</p>
-      ${owned?`<span class="badge">OWNED</span>`:`<p>Price: 🪙 ${item.cost}</p>`}
-      <button class="btn ${owned?"":"primary"}" data-buy="${item.id}" ${owned?"disabled":""}>${owned?"✓ In collection":"Purchase item"}</button>
-      ${item.cat==="skin"&&owned?`<button class="btn" data-equip="${item.id}">Equip look</button>`:""}`;
-    root.appendChild(card);
-  });
-  root.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>buyItem(b.dataset.buy));
-  root.querySelectorAll("[data-equip]").forEach(b=>b.onclick=()=>equipSkin(b.dataset.equip));
-}
-
-function buyItem(id) {
-  const item=SHOP.find(x=>x.id===id);
-  if(!item)return;
-  if(state.owned.includes(id)||state.items.includes(id))return;
-  if(state.unlockedWorlds.length<item.unlock) { notify("Explore more realms to unlock this item."); return; }
-  if(!spend(item.cost))return;
-  if(item.cat==="skin") state.owned.push(id); else state.items.push(id);
-  logEvent(`Purchased ${item.name}.`);
-  earn(0, "Purchase complete");
-  xpGain(10);
-  renderAll();
-}
-
-function equipSkin(id) {
-  if(!state.owned.includes(id))return;
-  state.equippedSkin=id;
-  notify("🎨 Dragon look equipped!");
-  updateUI();
-}
-
-function renderSkins() {
-  const root=document.getElementById("dragonSkins");
-  if(!root)return;
-  root.innerHTML="";
-  const skins=[
-    {id:"skin_default",name:"Elu's Original Look",icon:"🐉",desc:"The classic dragon look."},
-    ...SHOP.filter(x=>x.cat==="skin").map(x=>({id:x.id,name:x.name,icon:x.icon,desc:x.desc}))
-  ];
-  skins.forEach(s=>{
-    const owned=state.owned.includes(s.id);
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${s.icon}</div><h3>${s.name}</h3><p>${s.desc}</p>
-      <button class="btn ${state.equippedSkin===s.id?"primary":""}" data-skin="${s.id}" ${!owned?"disabled":""}>
-      ${state.equippedSkin===s.id?"✓ Equipped":owned?"Equip look":"Purchase in Vault"}</button>`;
-    root.appendChild(card);
-  });
-  root.querySelectorAll("[data-skin]").forEach(b=>b.onclick=()=>equipSkin(b.dataset.skin));
-}
-
-function renderTricks() {
-  const root=document.getElementById("trickGrid");
-  if(!root)return;
-  root.innerHTML="";
-  TRICKS.forEach((t,i)=>{
-    const [name,icon,required]=t;
-    const mastered=state.tricks.includes(i);
-    const canPractice=state.bond>=required;
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${icon}</div><h3>${i+1}. ${name}</h3>
-      <p>${mastered?"You have mastered this move.":"Practice the move to earn experience and bond points."}</p>
-      <p>${mastered?'<span class="badge">MASTERED</span>':canPractice?"Ready to practice":`🔒 Requires ${required} bond`}</p>
-      <button class="btn ${canPractice&&!mastered?"primary":""}" data-trick="${i}" ${mastered||!canPractice?"disabled":""}>
-      ${mastered?"✓ Mastered":"Practice trick"}</button>`;
-    root.appendChild(card);
-  });
-  root.querySelectorAll("[data-trick]").forEach(b=>b.onclick=()=>practiceTrick(Number(b.dataset.trick)));
-}
-
-function practiceTrick(i) {
-  const t=TRICKS[i];
-  if(!t||state.tricks.includes(i)||state.bond<t[2])return;
-  state.tricks.push(i);
-  state.bond=Math.min(100,state.bond+2);
-  state.happiness=clamp(state.happiness+3);
-  state.tricksPracticed++;
-  earn(2,"Trick practice");
-  xpGain(12);
-  logEvent(`Mastered the ${t[0]} trick.`);
-  checkAchievements();
-  renderAll();
-}
-
-function renderAchievements() {
-  const root=document.getElementById("achievementGrid");
-  if(!root)return;
-  root.innerHTML="";
-  ACHIEVEMENTS.forEach(a=>{
-    const unlocked=state.achievements.includes(a.id);
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${unlocked?a.icon:"🔒"}</div><h3>${a.name}</h3><p>${a.desc}</p>
-      <p>Reward: 🪙 ${a.reward}</p><span class="badge">${unlocked?"UNLOCKED":"NOT YET EARNED"}</span>`;
-    root.appendChild(card);
-  });
-}
-
-function checkAchievements() {
-  ACHIEVEMENTS.forEach(a=>{
-    if(!state.achievements.includes(a.id)&&a.test(state)) {
-      state.achievements.push(a.id);
-      state.coins+=a.reward;
-      logEvent(`Achievement unlocked: ${a.name}.`);
-      notify(`🏅 Achievement: ${a.name}! +${a.reward} coins`);
-      sound(900,.18,"triangle");
-    }
-  });
-  save();
-}
-
-function renderJournal() {
-  const root=document.getElementById("journalList");
-  if(!root)return;
-  root.innerHTML="";
-  if(!state.journal.length) {
-    root.innerHTML='<div class="empty">Your adventure story begins here.</div>';
-    return;
-  }
-  state.journal.slice(0,25).forEach(entry=>{
-    const el=document.createElement("div");
-    el.className="list-item";
-    el.innerHTML=`<div>📜</div><div class="grow"><strong>${escapeHTML(entry.text)}</strong><p>${new Date(entry.time).toLocaleString()}</p></div>`;
-    root.appendChild(el);
-  });
-}
-
-function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-function renderFlightObjectives() {
-  const root=document.getElementById("flightObjectives");
-  if(!root)return;
-  root.innerHTML="";
-  [
-    ["🪙","Collect treasure","Gold coins add to your score and wallet."],
-    ["🪨","Dodge hazards","Rocks and magical mines cost lives on impact."],
-    ["🔥","Fire blast","F clears nearby hazards. Use it strategically."],
-    ["🐉","Dragon roar","R clears hazards in front of Elu."],
-    ["⚡","Sky dash","E gives a short burst of speed and protection."],
-    ["✨","Stunt combo","Space earns bonus points when used in the air."]
-  ].forEach(x=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<div class="card-art">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p>`;
-    root.appendChild(card);
-  });
-}
-
-/* ===================== FLIGHT GAME ===================== */
-
-const canvas=document.getElementById("gameCanvas");
+(()=>{
+const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
-const GW=960, GH=540;
-let game={
-  running:false,over:false,score:0,coins:0,lives:7,time:0,spawn:0,
-  player:{x:180,y:260,vy:0,shield:0,dash:0,blink:0},
-  hazards:[],pickups:[],particles:[],texts:[],keys:{},last:0,
-  cooldown:{fire:0,roar:0,dash:0,stunt:0},frame:0,world:"crown"
+if(!ctx){document.getElementById("message").textContent="This browser does not support canvas.";return;}
+
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rand=(a,b)=>a+Math.random()*(b-a);
+
+const worlds=[
+ {name:"Castle Gardens",emoji:"🏰",cost:0,sky:["#a2e9ff","#f6fbff"],ground:"#8bda91",hazard:"🌳",desc:"Your magical home. Learn to fly safely!"},
+ {name:"Candy Cloud Kingdom",emoji:"🍬",cost:100,sky:["#ffc4ed","#b5c5ff"],ground:"#ffb7df",hazard:"🍭",desc:"Dodge giant lollipops and floating candy!"},
+ {name:"Crystal Ice Mountains",emoji:"❄️",cost:220,sky:["#a8edff","#527ecb"],ground:"#a5e7fa",hazard:"💎",desc:"Glide through icy crystals and frozen peaks!"},
+ {name:"Enchanted Forest",emoji:"🌲",cost:350,sky:["#9de5bb","#277e83"],ground:"#67c779",hazard:"🌲",desc:"Navigate ancient trees and enchanted mushrooms!"},
+ {name:"Starry Dragon Realm",emoji:"🌌",cost:500,sky:["#33265f","#8b68c8"],ground:"#6550a4",hazard:"☄️",desc:"A magical space adventure full of comets!"},
+ {name:"Rainbow Sky Palace",emoji:"🌈",cost:750,sky:["#ffe0ae","#d8c2ff"],ground:"#a9eddb",hazard:"🌈",desc:"The ultimate challenge above the rainbow!"}
+];
+
+const defaults={
+ coins:0,world:0,unlocked:[0],lives:7,flights:0,highScore:0,
+ care:{hunger:45,clean:65,happy:50,energy:100,health:100},
+ dragonColor:"#a56df0",wingColor:"#ff9dcc",princessColor:"#ff80ba",
+ accessory:0,outfit:0,completed:[],totalCoins:0
 };
+let saved={};
+try{saved=JSON.parse(localStorage.getItem("crownJewelSave")||"{}")||{};}catch(e){}
+const state={...defaults,...saved,
+ care:{...defaults.care,...(saved.care||{})},
+ unlocked:Array.isArray(saved.unlocked)?saved.unlocked:[0],
+ completed:Array.isArray(saved.completed)?saved.completed:[]
+};
+state.unlocked=[...new Set([0,...state.unlocked])].filter(i=>Number.isInteger(i)&&i>=0&&i<worlds.length);
+state.world=state.unlocked.includes(state.world)?state.world:0;
+state.lives=clamp(Number(state.lives)||7,0,7);
+state.coins=Math.max(0,Number(state.coins)||0);
 
-function activeWorld() { return WORLDS.find(w=>w.id===state.world)||WORLDS[0]; }
+let mode="care",last=0,elapsed=0,frame=0;
+let toastTimer=0;
+let particles=[];
+let obstacles=[];
+let pickups=[];
+let spawnTimer=0;
+let distance=0;
+let flightCoins=0;
+let boostTime=0;
+let pointerDown=false;
+let action=null;
+let princess={x:.19,y:.69,scale:1,walk:0};
+let dragon={x:.66,y:.68,wing:0,blink:0,tail:0};
+let flight={x:.24,y:.5,vy:0,invincible:0};
+let mission={type:"coins",target:10,progress:0};
+let bestMessage="Welcome home, Princess Masa!";
 
-function startGame() {
-  game={
-    running:true,over:false,score:0,coins:0,lives:Math.min(7,state.lives+(state.items.includes("magic_heart")?1:0)),
-    time:0,spawn:0,player:{x:180,y:260,vy:0,shield:state.items.includes("magic_shield")?1:0,dash:0,blink:0},
-    hazards:[],pickups:[],particles:[],texts:[],keys:{},last:performance.now(),
-    cooldown:{fire:0,roar:0,dash:0,stunt:0},frame:0,world:state.world
-  };
-  document.getElementById("flightStatus").textContent="IN FLIGHT";
-  document.getElementById("startFlight").textContent="↻ Restart Flight";
-  updateFlightStats();
-  sound(620,.15);
-  requestAnimationFrame(loop);
+function save(){
+ try{localStorage.setItem("crownJewelSave",JSON.stringify(state));}
+ catch(e){say("Your browser couldn't save progress. Check storage settings.");}
+}
+function say(text){
+ $("message").textContent=text;
+ bestMessage=text;
+}
+function toast(text){
+ const el=$("toast");
+ el.textContent=text;el.style.display="block";toastTimer=2.5;
+}
+function updateHUD(){
+ $("stats").textContent=`🪙 ${state.coins} · ❤️ ${state.lives}/7 · 🐉 ${Math.round(state.care.health)}%`;
+ $("worldName").textContent=worlds[state.world].emoji+" "+worlds[state.world].name;
+ $("modeName").textContent=mode==="care"?"Dragon Care":mode==="flight"?"✈️ Flight Mission":"Crown Jewel";
+ $("controls").style.display=mode==="flight"?"flex":"none";
+ $("hint").textContent=mode==="flight"?"⬆️⬇️ Steer · ⚡ Boost · Avoid obstacles!":
+ "✨ "+(mode==="care"?"Choose a care activity and watch Masa walk to her dragon!":"Explore your magical kingdom!");
+ $("care").classList.toggle("primary",mode==="care");
+ $("fly").classList.toggle("primary",mode==="flight");
+}
+function resize(){
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.max(1,Math.floor(innerWidth*dpr));
+ canvas.height=Math.max(1,Math.floor(innerHeight*dpr));
+ canvas.style.width=innerWidth+"px";canvas.style.height=innerHeight+"px";
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize",resize);
+resize();
+
+function roundedRect(x,y,w,h,r,color){
+ ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
+}
+function ellipse(x,y,rx,ry,color){
+ ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),0,0,Math.PI*2);ctx.fill();
+}
+function line(points,color,width=3){
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap="round";ctx.lineJoin="round";
+ ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();
+}
+function text(t,x,y,size,color="#fff",align="center"){
+ ctx.font=`900 ${size}px system-ui,sans-serif`;ctx.textAlign=align;ctx.textBaseline="middle";
+ ctx.lineWidth=3;ctx.strokeStyle="#4a2c6570";ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);
+}
+function cloud(x,y,s=1){
+ ctx.fillStyle="#ffffffcc";ctx.beginPath();
+ ctx.ellipse(x,y,34*s,13*s,0,0,Math.PI*2);
+ ctx.ellipse(x-19*s,y-8*s,17*s,16*s,0,0,Math.PI*2);
+ ctx.ellipse(x+3*s,y-14*s,21*s,20*s,0,0,Math.PI*2);
+ ctx.ellipse(x+23*s,y-4*s,19*s,14*s,0,0,Math.PI*2);ctx.fill();
+}
+function heart(x,y,s,color="#ff6f9f"){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=color;
+ ctx.beginPath();ctx.moveTo(0,8);ctx.bezierCurveTo(-21,-4,-12,-17,0,-7);ctx.bezierCurveTo(12,-17,21,-4,0,8);ctx.fill();ctx.restore();
+}
+function star(x,y,r,color){
+ ctx.fillStyle=color;ctx.beginPath();
+ for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.43:r;ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}
+ ctx.closePath();ctx.fill();
 }
 
-function updateFlightStats() {
-  document.getElementById("flightScore").textContent=Math.floor(game.score);
-  document.getElementById("flightCoins").textContent=game.coins;
-  document.getElementById("flightLives").textContent=game.lives;
+function background(){
+ const w=innerWidth,h=innerHeight,world=worlds[state.world];
+ let g=ctx.createLinearGradient(0,0,0,h);
+ g.addColorStop(0,world.sky[0]);g.addColorStop(1,world.sky[1]);
+ ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ if(state.world===4){
+   for(let i=0;i<65;i++)star((i*137+40)%w,(i*79+20)%(h*.8),2+(i%3), "#fff3c7");
+ }else{
+   for(let i=0;i<5;i++)cloud(((i*237+frame*.12)%(w+160))-70, h*(.14+(i%3)*.13),.6+(i%3)*.2);
+ }
+ // Faraway hills
+ ctx.fillStyle=world.ground;
+ ctx.beginPath();ctx.moveTo(0,h*.83);
+ for(let x=0;x<=w+40;x+=40)ctx.lineTo(x,h*(.75+Math.sin(x*.009+frame*.001)*.035));
+ ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+ if(mode==="care")drawCastle();
+}
+function drawCastle(){
+ const w=innerWidth,h=innerHeight;
+ const x=w*.09,y=h*.44,s=Math.min(w,h)/700;
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ // castle shadow
+ ellipse(110,245,165,16,"#486f7440");
+ // walls
+ roundedRect(12,80,190,145,8,"#fff0df");
+ // brick lines
+ ctx.strokeStyle="#e7b9a5";ctx.lineWidth=2;
+ for(let yy=103;yy<220;yy+=24){ctx.beginPath();ctx.moveTo(15,yy);ctx.lineTo(198,yy);ctx.stroke();}
+ // towers
+ for(const tx of [0,150]){
+   roundedRect(tx,28,48,190,6,"#ffdfcf");
+   roundedRect(tx-7,17,62,18,5,"#b88ae8");
+   ctx.fillStyle="#8c66c3";ctx.beginPath();ctx.moveTo(tx-5,17);ctx.lineTo(tx+24,-12);ctx.lineTo(tx+53,17);ctx.fill();
+   roundedRect(tx+14,52,20,31,10,"#8bd8ff");
+ }
+ roundedRect(75,122,45,103,24,"#8e5b9e");
+ ellipse(97,125,22,9,"#8e5b9e");
+ // windows
+ for(const wx of [45,135]){
+   roundedRect(wx,120,24,34,12,"#86d8ff");
+   line([[wx+12,122],[wx+12,152]],"#fff",2);
+   line([[wx+2,137],[wx+22,137]],"#fff",2);
+ }
+ text("CROWN JEWEL",102,253,14,"#fff");
+ ctx.restore();
 }
 
-function spawnParticle(x,y,color,size=4,vx=0,vy=0,life=1) {
-  game.particles.push({x,y,color,size,vx,vy,life,max:life});
+function drawDragon(x,y,s,fly=false){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ const c=state.dragonColor,wc=state.wingColor;
+ // tail
+ line([[35,8],[65,15],[84,4]],c,13);
+ ellipse(83,4,8,7,c);
+ // legs
+ for(const lx of [-22,22]){
+  roundedRect(lx-8,21,15,22,7,c);
+  for(let i=0;i<3;i++)ellipse(lx-9+i*7,41,3,3,"#ffe3a7");
+ }
+ // far wing flaps
+ const flap=Math.sin(dragon.wing)*.7;
+ ctx.save();ctx.translate(-4,-8);ctx.rotate(-.3+flap);
+ ctx.fillStyle=wc;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(-8,-58,-49,-62);
+ ctx.lineTo(-43,-28);ctx.lineTo(-66,-37);ctx.lineTo(-35,8);ctx.closePath();ctx.fill();
+ ctx.strokeStyle="#fff8";ctx.lineWidth=2;ctx.stroke();ctx.restore();
+ // body
+ ellipse(0,0,42,28,c);
+ ellipse(11,9,25,16,lighten(c));
+ // neck and head
+ line([[22,-9],[35,-22]],c,20);
+ ellipse(38,-28,23,20,c);
+ // snout
+ ellipse(53,-21,17,11,lighten(c));
+ // nostrils
+ ellipse(60,-24,2,2,"#533d69");ellipse(53,-26,2,2,"#533d69");
+ // ears/horns
+ ctx.fillStyle="#ffe3a7";
+ ctx.beginPath();ctx.moveTo(27,-40);ctx.lineTo(22,-56);ctx.lineTo(39,-43);ctx.fill();
+ ctx.beginPath();ctx.moveTo(43,-43);ctx.lineTo(47,-57);ctx.lineTo(53,-39);ctx.fill();
+ // eyes
+ ellipse(42,-32,7,8,"white");ellipse(44,-31,3.8,5,"#382454");
+ ellipse(45,-33,1.4,1.7,"white");
+ // blush
+ ellipse(54,-13,6,3,"#ff9cb7");
+ // smile
+ line([[48,-12],[54,-9],[59,-12]],"#593452",2);
+ // near wing
+ ctx.save();ctx.translate(-2,-9);ctx.rotate(.2-flap);
+ ctx.fillStyle=wc;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-5,-35);ctx.lineTo(21,-25);ctx.lineTo(39,-38);ctx.lineTo(34,0);ctx.closePath();ctx.fill();
+ ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();ctx.restore();
+ // decorative belly scales
+ for(let i=0;i<3;i++)ellipse(0+i*9,8+i*2,3,2,"#fff6");
+ // accessory
+ if(state.accessory===1){ellipse(37,-48,13,6,"#ffd66b");star(37,-52,7,"#fff3a0");}
+ if(state.accessory===2){line([[22,-44],[38,-52],[49,-44]],"#ffdf83",5);star(39,-51,5,"white");}
+ if(state.accessory===3){ellipse(40,-51,14,7,"#ff91ba");ellipse(35,-52,4,3,"#ffcfdf");}
+ ctx.restore();
+}
+function lighten(hex){
+ try{let n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+ r=Math.min(255,r+40);g=Math.min(255,g+40);b=Math.min(255,b+40);
+ return `rgb(${r},${g},${b})`;}catch(e){return "#d7baff";}
+}
+function drawPrincess(x,y,s,walking=false){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ const c=state.princessColor;
+ // shadow
+ ellipse(0,38,21,5,"#3a28512a");
+ // hair behind head
+ ellipse(0,-26,16,20,"#633b52");
+ // hair braid
+ ellipse(-13,-14,5,17,"#633b52");
+ // dress
+ ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(-8,-10);ctx.lineTo(-16,23);ctx.lineTo(17,23);ctx.lineTo(8,-10);ctx.closePath();ctx.fill();
+ ctx.fillStyle="#ffe4f0";ctx.beginPath();ctx.moveTo(-7,-8);ctx.lineTo(0,5);ctx.lineTo(7,-8);ctx.fill();
+ // arms animated
+ const swing=walking?Math.sin(princess.walk*10)*.55:0;
+ line([[-8,-5],[-17+swing*5,7]],"#f4bf9d",6);
+ line([[8,-5],[17-swing*5,7]],"#f4bf9d",6);
+ // legs
+ line([[-6,21],[-8+(walking?swing*5:0),35]],"#f4bf9d",6);
+ line([[6,21],[8-(walking?swing*5:0),35]],"#f4bf9d",6);
+ ellipse(-9,36,6,3,"#8b5eb8");ellipse(9,36,6,3,"#8b5eb8");
+ // face
+ ellipse(0,-17,12,14,"#ffd9b9");
+ // bangs
+ ctx.fillStyle="#633b52";ctx.beginPath();ctx.arc(0,-23,12,Math.PI,Math.PI*2);ctx.lineTo(10,-18);ctx.quadraticCurveTo(3,-23,-3,-18);ctx.lineTo(-10,-16);ctx.closePath();ctx.fill();
+ // eyes
+ ellipse(-4,-17,1.7,2.8,"#493052");ellipse(4,-17,1.7,2.8,"#493052");
+ ellipse(-3,-18,0.6,.8,"white");ellipse(5,-18,.6,.8,"white");
+ // smile
+ line([[-3,-10],[0,-8],[3,-10]],"#b85c71",1.5);
+ // crown
+ ctx.fillStyle="#ffd66b";ctx.beginPath();ctx.moveTo(-10,-30);ctx.lineTo(-8,-39);ctx.lineTo(-2,-33);ctx.lineTo(3,-41);ctx.lineTo(7,-32);ctx.lineTo(11,-36);ctx.lineTo(9,-28);ctx.closePath();ctx.fill();
+ // hair decoration
+ if(state.outfit===1){ellipse(12,-23,5,5,"#ff8cb9");}
+ if(state.outfit===2){line([[-12,-28],[0,-34],[12,-28]],"#91dfff",3);}
+ if(state.outfit===3){ellipse(0,-32,5,4,"#9a76ed");}
+ ctx.restore();
 }
 
-function floatText(x,y,text,color="#fff0a3") {
-  game.texts.push({x,y,text,color,life:1});
-}
-
-function spawnHazard() {
-  const diff=activeWorld().difficulty;
-  const roll=Math.random();
-  if(roll<.62) {
-    game.hazards.push({
-      type:"rock",x:GW+30,y:rand(55,GH-65),r:rand(20,34),
-      vy:rand(-40,40)*(Math.random()<.5?-1:1),speed:rand(205,270)+diff*24,
-      phase:rand(0,8),color:activeWorld().b
-    });
-  } else if(roll<.86) {
-    game.hazards.push({
-      type:"mine",x:GW+30,y:rand(65,GH-70),r:22,
-      vy:rand(-60,60),speed:rand(220,290)+diff*24,
-      phase:rand(0,8),color:"#ff527e"
-    });
-  } else {
-    game.hazards.push({
-      type:"gate",x:GW+40,y:rand(120,GH-120),r:32,
-      vy:rand(-35,35),speed:rand(220,280)+diff*22,
-      phase:rand(0,8),color:"#ffe36c"
-    });
+function drawCare(){
+ const w=innerWidth,h=innerHeight;
+ // flowers
+ for(let i=0;i<13;i++){
+  const x=(i*97+31)%w,y=h*.84+(i%3)*10;
+  line([[x,y+10],[x,y-2]],"#258b5a",2);
+  for(let a=0;a<5;a++){let ang=a*Math.PI*2/5;ellipse(x+Math.cos(ang)*4,y-4+Math.sin(ang)*4,3,3,["#ff90ba","#ffe879","#fff","#bca5ff"][i%4]);}
+ }
+ // care station
+ roundedRect(w*.38,h*.77,w*.51,h*.13,18,"#fff0d8");
+ text("✨ DRAGON CARE STATION ✨",w*.635,h*.80,Math.min(17,w*.025),"#8759aa");
+ // bath basin
+ roundedRect(w*.51,h*.85,w*.20,h*.05,12,"#7fdfff");
+ ellipse(w*.61,h*.85,w*.10,h*.025,"#b6f0ff");
+ // dragon
+ drawDragon(dragon.x*w,dragon.y*h,Math.min(w,h)/500);
+ // princess approaches dragon during care
+ drawPrincess(princess.x*w,princess.y*h,Math.min(w,h)/500,!!action);
+ // action effect
+ if(action){
+  const x=dragon.x*w,y=dragon.y*h-55;
+  if(action.kind==="wash"){
+   for(let i=0;i<9;i++)ellipse(x+Math.sin(frame*.12+i)*28,y+Math.cos(frame*.09+i)*19,3+(i%3),4,"#a9eaff");
+  }else if(action.kind==="feed"){
+   text("🥕",x-36,y+12,22,"#fff");
+   heart(x+26,y-22,.6);
+  }else if(action.kind==="pet"){
+   heart(x+25,y-45,.65);
+   star(x-28,y-34,7,"#ffe879");
+  }else if(action.kind==="hug"){
+   heart(x,y-56,1.1);
+   heart(x-30,y-35,.5);
+   heart(x+30,y-35,.5);
   }
+ }
+ // status cards
+ const y=h*.19;
+ const bar=(x,label,val,color)=>{
+  roundedRect(x,y,116,34,12,"#ffffffd9");
+  text(label,x+8,y+10,10,"#68488b","left");
+  roundedRect(x+8,y+19,100,7,4,"#eadcf4");
+  roundedRect(x+8,y+19,100*clamp(val/100,0,1),7,4,color);
+ };
+ bar(w*.34,"🍎 HUNGER",100-state.care.hunger,"#ffb17b");
+ bar(w*.34,"🫧 CLEAN",state.care.clean,"#70d9f8");
+ bar(w*.34,"💖 HAPPINESS",state.care.happy,"#ff7eaf");
+ bar(w*.34,"💚 HEALTH",state.care.health,"#78d89a");
 }
-
-function spawnPickup() {
-  const y=rand(70,GH-75);
-  game.pickups.push({x:GW+30,y,r:14,phase:rand(0,8),speed:230,type:Math.random()<.08?"chest":"coin"});
+function drawFlight(){
+ const w=innerWidth,h=innerHeight;
+ // parallax terrain
+ ctx.fillStyle=worlds[state.world].ground;
+ ctx.beginPath();ctx.moveTo(0,h);
+ for(let x=0;x<=w+30;x+=30){
+  const y=h*.94+Math.sin((x+distance*.35)*.018)*h*.035;
+  ctx.lineTo(x,y);
+ }
+ ctx.lineTo(w,h);ctx.closePath();ctx.fill();
+ // world scenery
+ for(let i=0;i<7;i++){
+  let x=((i*183-distance*.6)%(w+220)+w+220)%(w+220)-70;
+  const y=h*(.18+(i%4)*.16);
+  if(state.world===0){
+   // floating castle towers
+   roundedRect(x,y,36,75,5,"#fff0df");
+   ctx.fillStyle="#aa8ae0";ctx.beginPath();ctx.moveTo(x-5,y);ctx.lineTo(x+18,y-28);ctx.lineTo(x+41,y);ctx.fill();
+   roundedRect(x+10,y+16,14,22,7,"#9edfff");
+  }else if(state.world===1){
+   cloud(x,y,.8);text("🍭",x,y+10,32);
+  }else if(state.world===2){text("💎",x,y,47);}
+  else if(state.world===3){text("🌲",x,y+10,48);}
+  else if(state.world===4){star(x,y,18,"#fff1a6");}
+  else{text("🌈",x,y,50);}
+ }
+ // pickups
+ for(const p of pickups){
+  text(p.type==="coin"?"🪙":"⭐",p.x,p.y,26);
+  if(p.type==="coin")star(p.x,p.y,3,"#fff4a1");
+ }
+ // obstacles
+ for(const o of obstacles){
+  text(o.emoji,o.x,o.y,o.size);
+ }
+ // dragon and rider
+ const scale=Math.min(w,h)/500;
+ drawDragon(flight.x*w,flight.y*h,scale,true);
+ drawPrincess(flight.x*w-22*scale,flight.y*h+23*scale,scale,false);
+ // boost trails
+ if(boostTime>0){
+  for(let i=0;i<5;i++)ellipse(flight.x*w-70*scale-i*12,flight.y*h+rand(-13,13),rand(5,12),3,"#fff4a0");
+ }
+ // mission banner
+ roundedRect(w*.30,Math.max(90,h*.13),w*.40,35,14,"#ffffffd9");
+ text(`⭐ ${mission.type==="coins"?"Collect coins":mission.type==="dodge"?"Dodge obstacles":"Fly the distance"}: ${mission.progress}/${mission.target}`,w*.5,Math.max(107,h*.13+17),Math.min(13,w*.022),"#6946a3");
 }
-
-function useAbility(which) {
-  if(!game.running) { notify("Start a flight first!"); return; }
-  if(game.cooldown[which]>0) { notify("That ability is recharging."); return; }
-  const p=game.player;
-  if(which==="fire") {
-    game.cooldown.fire=3.2;
-    for(let i=0;i<9;i++)spawnParticle(p.x+50,p.y+rand(-20,20),"#ff974f",rand(4,10),rand(200,450),rand(-100,100),.55);
-    game.hazards=game.hazards.filter(h=>{
-      if(h.x>p.x&&h.x<p.x+360){floatText(h.x,h.y,"BURN!","#ffb06d");return false;}
-      return true;
-    });
-    game.score+=30;floatText(p.x+80,p.y-30,"FIRE BLAST!");
-    sound(180,.22,"sawtooth");
-  } else if(which==="roar") {
-    game.cooldown.roar=8;
-    game.hazards=game.hazards.filter(h=>{
-      if(h.x>p.x-30&&h.x<p.x+420){floatText(h.x,h.y,"ROAR!","#9ef9ff");return false;}
-      return true;
-    });
-    for(let i=0;i<22;i++)spawnParticle(p.x+rand(0,300),p.y+rand(-130,130),"#a5f9ff",rand(3,8),rand(30,170),rand(-80,80),.6);
-    game.score+=50;floatText(p.x+100,p.y-55,"DRAGON ROAR!");
-    sound(100,.4,"triangle");
-  } else if(which==="dash") {
-    game.cooldown.dash=6;
-    p.dash=1.1;p.shield=Math.max(p.shield,1.2);
-    game.score+=20;floatText(p.x,p.y-35,"SKY DASH!");
-    sound(880,.15,"sawtooth");
-  } else if(which==="stunt") {
-    game.cooldown.stunt=2;
-    game.score+=25;floatText(p.x,p.y-40,"+25 STUNT!");
-    for(let i=0;i<12;i++)spawnParticle(p.x,p.y,"#ffe58a",rand(3,7),rand(-90,90),rand(-90,90),.65);
-    sound(700,.1,"triangle");
-  }
-  updateFlightStats();
+function addParticles(x,y,color,n=8){
+ for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-100,100),vy:rand(-120,40),life:rand(.4,1),color,size:rand(2,6)});
 }
-
-function hitPlayer() {
-  const p=game.player;
-  if(p.blink>0)return;
-  if(p.shield>0||p.dash>0) {
-    floatText(p.x,p.y-35,"SHIELDED!","#9effdf");
-    p.shield=Math.max(0,p.shield-.45);
-    sound(550,.1);
-    return;
-  }
-  game.lives--;
-  p.blink=1.3;
-  p.shield=.3;
-  floatText(p.x,p.y-38,"OUCH! ❤️","#ff789f");
-  for(let i=0;i<12;i++)spawnParticle(p.x,p.y,"#ff789f",rand(3,7),rand(-100,100),rand(-100,100),.5);
-  sound(130,.22,"square");
-  updateFlightStats();
-  if(game.lives<=0)endGame(false);
+function drawParticles(dt){
+ for(let i=particles.length-1;i>=0;i--){
+  const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=90*dt;p.life-=dt;
+  if(p.life<=0){particles.splice(i,1);continue;}
+  ctx.globalAlpha=clamp(p.life,0,1);ellipse(p.x,p.y,p.size,p.size,p.color);ctx.globalAlpha=1;
+ }
 }
-
-function loop(now) {
-  if(!game.running)return;
-  const dt=Math.min(.035,(now-game.last)/1000||.016);
-  game.last=now;
-  updateGame(dt);
-  drawGame();
-  if(game.running)requestAnimationFrame(loop);
-}
-
-function updateGame(dt) {
-  game.time+=dt;game.frame++;
-  const p=game.player;
-  const diff=activeWorld().difficulty;
-  const speed=(game.world==="thunder"?1.4:1)+Math.min(1.2,game.time/90)+diff*.07;
-  p.blink=Math.max(0,p.blink-dt);
-  p.shield=Math.max(0,p.shield-dt);
-  p.dash=Math.max(0,p.dash-dt);
-  Object.keys(game.cooldown).forEach(k=>game.cooldown[k]=Math.max(0,game.cooldown[k]-dt));
-
-  const k=game.keys;
-  if(k.ArrowUp||k.w||k.W)p.y-=310*dt;
-  if(k.ArrowDown||k.s||k.S)p.y+=310*dt;
-  if(k.ArrowLeft||k.a||k.A)p.x-=260*dt;
-  if(k.ArrowRight||k.d||k.D)p.x+=260*dt;
-  p.x=clamp(p.x,65,430);p.y=clamp(p.y,55,GH-60);
-
-  game.spawn-=dt;
-  if(game.spawn<=0) {
-    spawnHazard();
-    if(Math.random()<.86)spawnPickup();
-    game.spawn=Math.max(.42,1.12-game.time*.006-rand(0,.24));
-  }
-
-  game.hazards.forEach(h=>{
-    h.x-=(h.speed*speed+(p.dash>0?120:0))*dt;
-    h.y+=Math.sin(game.time*2+h.phase)*h.vy*dt;
-    h.y=clamp(h.y,35,GH-35);
-    const d=Math.hypot(h.x-p.x,h.y-p.y);
-    if(d<h.r+22&&!h.hit) {h.hit=true;hitPlayer();}
-  });
-  game.hazards=game.hazards.filter(h=>h.x>-80&&!h.hit);
-
-  game.pickups.forEach(c=>{
-    c.x-=(c.speed*speed+(p.dash>0?100:0))*dt;
-    c.y+=Math.sin(game.time*3+c.phase)*18*dt;
-    const magnet=state.items.includes("magic_magnet")?80:0;
-    if(Math.hypot(c.x-p.x,c.y-p.y)<c.r+24+magnet) {
-      if(c.type==="chest") {
-        game.coins+=25;game.score+=150;state.treasures++;state.chestsOpened++;
-        floatText(c.x,c.y,"TREASURE +25 🪙","#ffe58a");
-        logEvent("Found a treasure chest during flight.");
-        sound(1000,.2,"triangle");
-      } else {
-        game.coins++;game.score+=10;
-        floatText(c.x,c.y,"+1","#ffe58a");
-        sound(650,.04);
-      }
-      c.collected=true;
-    }
-  });
-  game.pickups=game.pickups.filter(c=>c.x>-50&&!c.collected);
-
-  game.particles.forEach(a=>{a.x+=a.vx*dt;a.y+=a.vy*dt;a.life-=dt;a.vy+=12*dt;});
-  game.particles=game.particles.filter(a=>a.life>0);
-  game.texts.forEach(t=>{t.y-=25*dt;t.life-=dt;});
-  game.texts=game.texts.filter(t=>t.life>0);
-  game.score+=dt*(8+diff*2);
-  updateFlightStats();
-
-  if(game.time>=45+diff*7)endGame(true);
-}
-
-function endGame(survived) {
-  if(!game.running)return;
-  game.running=false;game.over=true;
-  const score=Math.floor(game.score);
+function setMode(next){
+ if(next==="flight"&&state.lives<=0){
+  say("Your dragon needs healing! Visit the Care Station and restore its health. 💚");
+  toast("🐉 Heal your dragon before flying again!");
+  setMode("care");return;
+ }
+ mode=next;action=null;
+ if(mode==="flight"){
+  obstacles=[];pickups=[];spawnTimer=.6;distance=0;flightCoins=0;
+  flight={x:.24,y:.48,vy:0,invincible:1.4};
   state.flights++;
-  state.bestScore=Math.max(state.bestScore,score);
-  state.totalCoins+=game.coins;
-  state.coins+=game.coins;
-  state.lives=Math.max(1,game.lives);
-  state.xp+=Math.floor(score/12);
-  state.health=clamp(state.health-(7-game.lives)*5);
-  state.energy=clamp(state.energy-12);
-  logEvent(`${survived?"Completed":"Ended"} a flight in ${activeWorld().name}: ${score} points, ${game.coins} coins.`);
-  document.getElementById("flightStatus").textContent=survived?"MISSION COMPLETE":"FLIGHT ENDED";
-  document.getElementById("startFlight").textContent="▶ Fly Again";
-  if(survived) {
-    notify(`🏆 Mission complete! ${score} points · ${game.coins} coins collected!`);
-    sound(950,.3,"triangle");
-  } else {
-    notify(`Flight ended. You scored ${score} points. Train and try again!`);
+  mission={type:["coins","dodge","distance"][state.flights%3],target:state.flights%3===0?300:state.flights%3===1?10:8,progress:0};
+  say("Elu: Stay alert, Princess! Collect treasures and watch for obstacles!");
+ }else if(mode==="care"){
+  say("Elu: Welcome to the Care Station! Your dragon deserves all the love in the kingdom.");
+ }
+ updateHUD();
+}
+function startCare(kind){
+ if(mode!=="care")setMode("care");
+ if(action){toast("Masa is already caring for her dragon!");return;}
+ if(state.care.health<=0&&kind!=="heal"){
+  toast("Your dragon needs healing first!");return;
+ }
+ action={kind,phase:"walk",time:0,startX:princess.x};
+ say(({feed:"Masa is bringing a delicious dragon snack! 🥕",wash:"Masa is preparing a bubbly dragon bath! 🫧",pet:"Masa is going to give her dragon some gentle pets! 💗",hug:"Masa is going to give her dragon the biggest hug! 🤗",heal:"Masa is caring for her dragon until it feels better! 💚"})[kind]||"Masa is caring for her dragon.");
+}
+function finishCare(kind){
+ const c=state.care;
+ if(kind==="feed"){c.hunger=clamp(c.hunger+38,0,100);c.energy=clamp(c.energy+8,0,100);c.health=clamp(c.health+6,0,100);}
+ if(kind==="wash"){c.clean=clamp(c.clean+48,0,100);c.happy=clamp(c.happy+7,0,100);}
+ if(kind==="pet"){c.happy=clamp(c.happy+25,0,100);c.health=clamp(c.health+3,0,100);}
+ if(kind==="hug"){c.happy=clamp(c.happy+32,0,100);c.energy=clamp(c.energy+10,0,100);c.health=clamp(c.health+8,0,100);}
+ if(kind==="heal"){
+  c.health=100;c.energy=100;c.happy=clamp(c.happy+20,0,100);
+  c.hunger=Math.max(c.hunger,75);c.clean=Math.max(c.clean,75);
+  state.lives=7;
+  toast("💚 Dragon fully healed! All 7 flying lives restored!");
+  say("Elu: Wonderful! Your dragon is healthy again and ready to fly!");
+ }else{
+  state.coins+=5;state.totalCoins+=5;
+  toast("💖 Care complete! +5 coins!");
+  say(({feed:"Yum! Your dragon loved that snack! +5 coins!",wash:"Splish splash! A sparkling clean dragon! +5 coins!",pet:"Your dragon is purring with happiness! +5 coins!",hug:"The sweetest dragon hug ever! +5 coins!"})[kind]);
+ }
+ addParticles(dragon.x*innerWidth,dragon.y*innerHeight-45,kind==="wash"?"#83dfff":"#ffb3d7",16);
+ action=null;save();updateHUD();
+}
+function startHeal(){
+ if(state.care.health>=100&&state.lives===7){toast("Your dragon is already in perfect health!");return;}
+ startCare("heal");
+}
+function updateCare(dt){
+ if(!action){
+  state.care.hunger=Math.max(0,state.care.hunger-dt*.10);
+  state.care.clean=Math.max(0,state.care.clean-dt*.07);
+  state.care.happy=Math.max(0,state.care.happy-dt*.045);
+  if(state.care.hunger<10)state.care.health=Math.max(0,state.care.health-dt*.12);
+  if(state.care.clean<8)state.care.health=Math.max(0,state.care.health-dt*.06);
+  princess.x+=(.19-princess.x)*Math.min(1,dt*3);
+  princess.y+=(.69-princess.y)*Math.min(1,dt*3);
+ }else{
+  action.time+=dt;princess.walk+=dt;
+  if(action.phase==="walk"){
+   princess.x+=(.49-princess.x)*Math.min(1,dt*2.8);
+   princess.y+=(.67-princess.y)*Math.min(1,dt*2.8);
+   if(Math.abs(princess.x-.49)<.012)action.phase="act";
+  }else if(action.phase==="act"){
+   if(action.time>(action.kind==="heal"?4:2.5))finishCare(action.kind);
   }
-  xpGain(Math.floor(score/12));
-  checkAchievements();
-  renderAll();
-  updateFlightStats();
-  drawGame();
+ }
+}
+function hit(a,b,margin=32){return Math.abs(a.x-b.x)<margin+a.size*.25&&Math.abs(a.y-b.y)<margin+a.size*.25;}
+function spawnFlight(){
+ const h=innerHeight,w=innerWidth;
+ const y=rand(h*.20,h*.75);
+ const world=worlds[state.world];
+ if(Math.random()<.57){
+  obstacles.push({x:w+60,y,emoji:world.hazard,size:rand(38,58),passed:false});
+ }else{
+  pickups.push({x:w+40,y:clamp(y+rand(-55,55),h*.16,h*.80),type:Math.random()<.12?"star":"coin"});
+ }
+}
+function loseLife(){
+ if(flight.invincible>0)return;
+ state.lives=Math.max(0,state.lives-1);
+ flight.invincible=1.7;
+ state.care.health=Math.max(0,state.care.health-12);
+ addParticles(flight.x*innerWidth,flight.y*innerHeight,"#ff9bba",15);
+ toast(`💥 Ouch! ${state.lives} flying lives left!`);
+ if(state.lives===0){
+  say("Elu: We must return to Crown Jewel! Your dragon needs loving care before flying again.");
+  setMode("care");save();return;
+ }
+}
+function completeMission(){
+ if(state.completed.includes(mission.type))return;
+ state.completed.push(mission.type);
+ state.coins+=25;state.totalCoins+=25;
+ toast("⭐ Mission complete! +25 bonus coins!");
+ say("Elu: Magnificent flying, Princess Masa! You've earned a mission bonus!");
+ mission.progress=0;
+ save();updateHUD();
+}
+function updateFlight(dt){
+ distance+=dt*(boostTime>0?210:135);
+ if(boostTime>0)boostTime=Math.max(0,boostTime-dt);
+ flight.invincible=Math.max(0,flight.invincible-dt);
+ const speed=boostTime>0?1.6:1;
+ flight.y=clamp(flight.y+flight.vy*dt*speed,.12,.84);
+ flight.vy*=Math.max(0,1-dt*3.2);
+ spawnTimer-=dt;
+ if(spawnTimer<=0){spawnFlight();spawnTimer=rand(.75,1.25)/(1+Math.min(distance/1800,.8));}
+ const w=innerWidth,h=innerHeight,scale=Math.min(w,h)/500;
+ for(let i=obstacles.length-1;i>=0;i--){
+  const o=obstacles[i];o.x-=dt*(235+distance*.012)*speed;
+  if(o.x<-100){obstacles.splice(i,1);continue;}
+  const dx=o.x-flight.x*w,dy=o.y-flight.y*h;
+  if(Math.hypot(dx,dy)<o.size*.45+24*scale){
+   if(!o.passed){o.passed=true;loseLife();if(mode!=="flight")return;}
+  }else if(!o.passed&&o.x<flight.x*w){
+   o.passed=true;
+   if(mission.type==="dodge"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
+  }
+ }
+ for(let i=pickups.length-1;i>=0;i--){
+  const p=pickups[i];p.x-=dt*(235+distance*.012)*speed;
+  if(p.x<-50){pickups.splice(i,1);continue;}
+  if(Math.hypot(p.x-flight.x*w,p.y-flight.y*h)<34*scale){
+   state.coins+=p.type==="star"?10:2;
+   state.totalCoins+=p.type==="star"?10:2;
+   flightCoins+=1;
+   addParticles(p.x,p.y,"#ffe477",8);
+   pickups.splice(i,1);
+   if(mission.type==="coins"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
+   updateHUD();
+  }
+ }
+ if(mission.type==="distance"){
+  mission.progress=Math.min(mission.target,Math.floor(distance/100));
+  if(mission.progress>=mission.target)completeMission();
+ }
+}
+function update(dt){
+ frame+=dt*60;elapsed+=dt;
+ dragon.wing+=dt*9;dragon.tail+=dt*4;
+ dragon.blink+=dt;
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$("toast").style.display="none";}
+ if(mode==="care")updateCare(dt);
+ if(mode==="flight")updateFlight(dt);
+ if(Math.floor(elapsed)%4===0&&Math.random()<dt*.2)save();
 }
 
-function drawGame() {
-  if(!ctx)return;
-  const w=GW,h=GH,world=activeWorld();
-  const t=game.time||0;
-  const grad=ctx.createLinearGradient(0,0,w,h);
-  grad.addColorStop(0,world.a);grad.addColorStop(1,world.b);
-  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
-
-  // Stars and glimmer
-  for(let i=0;i<70;i++) {
-    const x=((i*137.7-t*(8+i%4)*3)%w+w)%w;
-    const y=(i*71.3)%h;
-    ctx.globalAlpha=.25+.6*(.5+.5*Math.sin(t*2+i));
-    ctx.fillStyle="#fff";
-    ctx.beginPath();ctx.arc(x,y,i%9===0?2.5:1.2,0,Math.PI*2);ctx.fill();
-  }
-  ctx.globalAlpha=1;
-
-  // Moon / sun
-  ctx.fillStyle="#fff1c6";ctx.globalAlpha=.8;
-  ctx.beginPath();ctx.arc(760,95,42,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
-  ctx.fillStyle=world.a;ctx.beginPath();ctx.arc(778,83,40,0,Math.PI*2);ctx.fill();
-
-  // Layered fantasy mountains
-  for(let layer=0;layer<3;layer++) {
-    ctx.beginPath();ctx.moveTo(0,h);
-    for(let x=0;x<=w+50;x+=50) {
-      const y=290+layer*65+Math.sin(x*.018+layer*3-t*.2)*(45+layer*10);
-      ctx.lineTo(x,y);
-    }
-    ctx.lineTo(w,h);ctx.closePath();
-    ctx.fillStyle=["#2c245e","#211d4b","#171737"][layer];ctx.fill();
-  }
-
-  // Castle silhouette
-  const castleX=660-(t*12%120);
-  ctx.fillStyle="#171532";
-  ctx.fillRect(castleX,270,160,170);
-  ctx.fillRect(castleX+20,230,35,65);
-  ctx.fillRect(castleX+105,220,32,75);
-  ctx.fillRect(castleX+60,190,38,105);
-  for(let i=0;i<5;i++) {
-    const tx=castleX+i*32;
-    ctx.beginPath();ctx.moveTo(tx,270);ctx.lineTo(tx+15,235);ctx.lineTo(tx+30,270);ctx.fill();
-  }
-  ctx.fillStyle="#ffe4a3";
-  for(let y=0;y<4;y++)for(let x=0;x<4;x++) {
-    ctx.fillRect(castleX+13+x*35,300+y*32,8,13);
-  }
-  ctx.fillStyle="#d8c3ff";
-  ctx.fillRect(castleX+72,350,15,55);
-
-  // Floating magical platforms
-  for(let i=0;i<5;i++) {
-    const x=((i*230-t*55)%(w+180)+(w+180))%(w+180)-80;
-    const y=110+(i%3)*105;
-    ctx.fillStyle="#ffffff22";
-    ctx.beginPath();ctx.ellipse(x,y,58,12,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#a8f7ff99";
-    ctx.beginPath();ctx.ellipse(x,y-2,48,5,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#8f78cf";
-    ctx.beginPath();ctx.moveTo(x-25,y+6);ctx.lineTo(x+23,y+6);ctx.lineTo(x+9,y+29);ctx.lineTo(x-10,y+22);ctx.fill();
-  }
-
-  // Atmospheric swirls
-  for(let i=0;i<10;i++) {
-    const x=((i*121-t*95)%(w+80)+(w+80))%(w+80);
-    const y=70+(i*57)%400;
-    ctx.strokeStyle="#ffffff24";ctx.lineWidth=2;
-    ctx.beginPath();ctx.ellipse(x,y,25,6,Math.sin(t+i)*.5,0,Math.PI*1.6);ctx.stroke();
-  }
-
-  // Pickups
-  game.pickups.forEach(c=>{
-    ctx.save();ctx.translate(c.x,c.y+Math.sin(t*5+c.phase)*3);
-    if(c.type==="chest") {
-      ctx.shadowBlur=18;ctx.shadowColor="#ffe66d";
-      ctx.fillStyle="#a45c2c";ctx.fillRect(-15,-10,30,22);
-      ctx.fillStyle="#ffd35f";ctx.fillRect(-16,-12,32,7);ctx.fillRect(-3,-5,6,16);
-    } else {
-      ctx.shadowBlur=15;ctx.shadowColor="#ffec80";
-      ctx.fillStyle="#ffe16b";ctx.beginPath();
-      for(let i=0;i<10;i++) {
-        const a=i*Math.PI/5-Math.PI/2,r=i%2?7:14;
-        ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
-      }
-      ctx.closePath();ctx.fill();
-    }
-    ctx.restore();
-  });
-
-  // Hazards
-  game.hazards.forEach(o=>{
-    ctx.save();ctx.translate(o.x,o.y);ctx.rotate(t*1.2+o.phase);
-    if(o.type==="rock") {
-      ctx.fillStyle="#777f9c";ctx.strokeStyle="#c3cbe9";ctx.lineWidth=3;
-      ctx.beginPath();
-      for(let i=0;i<8;i++) {
-        const a=i*Math.PI/4,r=o.r*(i%2?.78:1.05);
-        if(i===0)ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);
-        else ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
-      }
-      ctx.closePath();ctx.fill();ctx.stroke();
-      ctx.fillStyle="#ffffff38";ctx.fillRect(-5,-o.r/2,7,12);
-    } else if(o.type==="mine") {
-      ctx.shadowBlur=18;ctx.shadowColor="#ff4b8d";
-      ctx.fillStyle="#d92d68";ctx.beginPath();ctx.arc(0,0,o.r*.75,0,Math.PI*2);ctx.fill();
-      ctx.strokeStyle="#ff9dbd";ctx.lineWidth=3;
-      for(let i=0;i<8;i++) {
-        const a=i*Math.PI/4;
-        ctx.beginPath();ctx.moveTo(Math.cos(a)*12,Math.sin(a)*12);ctx.lineTo(Math.cos(a)*o.r,Math.sin(a)*o.r);ctx.stroke();
-      }
-      ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-5,-5,4,0,Math.PI*2);ctx.fill();
-    } else {
-      ctx.strokeStyle="#fff1a2";ctx.lineWidth=8;ctx.shadowBlur=20;ctx.shadowColor="#ffe36c";
-      ctx.beginPath();ctx.arc(0,0,o.r,0,Math.PI*2);ctx.stroke();
-      ctx.strokeStyle="#ffffff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,o.r-7,0,Math.PI*2);ctx.stroke();
-    }
-    ctx.restore();
-  });
-
-  // Player dragon — custom vector artwork
-  drawDragon(game.player,t);
-
-  // Particles and floating score text
-  game.particles.forEach(a=>{
-    ctx.globalAlpha=clamp(a.life/a.max,0,1);
-    ctx.fillStyle=a.color;ctx.beginPath();ctx.arc(a.x,a.y,a.size,0,Math.PI*2);ctx.fill();
-  });
-  ctx.globalAlpha=1;
-  game.texts.forEach(o=>{
-    ctx.globalAlpha=clamp(o.life,0,1);
-    ctx.fillStyle=o.color;ctx.font="bold 18px system-ui";ctx.textAlign="center";
-    ctx.fillText(o.text,o.x,o.y);
-  });
-  ctx.globalAlpha=1;
-
-  // HUD
-  ctx.fillStyle="#120b32b8";roundedRect(18,16,250,45,12);ctx.fill();
-  ctx.fillStyle="#fff";ctx.font="bold 17px system-ui";ctx.textAlign="left";
-  ctx.fillText("🏆 "+Math.floor(game.score)+"    ❤️ "+game.lives,32,44);
-  ctx.font="12px system-ui";ctx.fillStyle="#fff9d6";
-  ctx.fillText(world.name+" · Difficulty "+world.difficulty+"/5",22,h-18);
-
-  if(!game.running) {
-    ctx.fillStyle="#100b28a8";ctx.fillRect(0,0,w,h);
-    ctx.textAlign="center";
-    ctx.fillStyle="#ffe8a5";ctx.font="900 36px system-ui";
-    ctx.fillText(game.over?"FLIGHT COMPLETE":"READY TO FLY?",w/2,h/2-24);
-    ctx.fillStyle="#fff";ctx.font="17px system-ui";
-    ctx.fillText(game.over?"Start another mission to beat your record.":"Press Start / Restart to launch your adventure.",w/2,h/2+17);
-    ctx.font="14px system-ui";ctx.fillStyle="#d9ceff";
-    ctx.fillText("Collect gold · Avoid hazards · Master the skies",w/2,h/2+48);
-  }
+function draw(){
+ const w=innerWidth,h=innerHeight;
+ ctx.clearRect(0,0,w,h);
+ background();
+ if(mode==="care")drawCare();
+ else drawFlight();
+ drawParticles(0);
+}
+function loop(now){
+ const dt=Math.min(.04,Math.max(0,(now-last)/1000||0));
+ last=now;
+ update(dt);
+ draw();
+ requestAnimationFrame(loop);
 }
 
-function roundedRect(x,y,w,h,r) {
-  ctx.beginPath();ctx.roundRect(x,y,w,h,r);
+function openModal(title,desc,items,actions=[]){
+ $("modalTitle").textContent=title;$("modalDesc").textContent=desc;
+ const area=$("modalContent");area.innerHTML="";
+ for(const item of items){
+  const card=document.createElement("div");card.className="option";
+  const strong=document.createElement("strong");strong.textContent=item.title;card.append(strong);
+  const p=document.createElement("p");p.textContent=item.desc;card.append(p);
+  const b=document.createElement("button");b.textContent=item.button||"Choose";
+  if(item.disabled)b.disabled=true;
+  b.addEventListener("click",()=>item.run());card.append(b);area.append(card);
+ }
+ const aa=$("modalActions");aa.innerHTML="";
+ actions.forEach(a=>{const b=document.createElement("button");b.textContent=a.label;b.className=a.primary?"primary":"";b.addEventListener("click",a.run);aa.append(b);});
+ const close=document.createElement("button");close.textContent="Close";close.addEventListener("click",closeModal);aa.append(close);
+ $("modal").classList.add("show");
 }
+function closeModal(){$("modal").classList.remove("show");}
+$("closeModal").addEventListener("click",closeModal);
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal();});
 
-function drawDragon(p,t) {
-  ctx.save();
-  ctx.translate(p.x,p.y);
-  if(p.blink>0&&Math.floor(t*18)%2===0)ctx.globalAlpha=.35;
-  if(p.dash>0) {
-    ctx.fillStyle="#8dffda33";
-    ctx.beginPath();ctx.ellipse(-45,0,65,27,0,0,Math.PI*2);ctx.fill();
+$("care").addEventListener("click",()=>setMode("care"));
+$("fly").addEventListener("click",()=>{
+ if(state.care.health<=0){startHeal();return;}
+ setMode("flight");
+});
+$("worlds").addEventListener("click",()=>{
+ openModal("🌎 Explore the Kingdom","Unlock magical worlds with the coins you collect while flying.",
+ worlds.map((w,i)=>({
+  title:w.emoji+" "+w.name,
+  desc:(state.unlocked.includes(i)?"UNLOCKED · ":`🔒 ${w.cost} coins · `)+w.desc,
+  button:state.unlocked.includes(i)?"Travel here":`Unlock ${w.cost} 🪙`,
+  disabled:!state.unlocked.includes(i)&&state.coins<w.cost,
+  run:()=>{
+   if(!state.unlocked.includes(i)){
+    if(state.coins<w.cost){toast("You need more coins!");return;}
+    state.coins-=w.cost;state.unlocked.push(i);
+    toast("🌟 New world unlocked!");
+   }
+   state.world=i;closeModal();setMode("care");save();updateHUD();
+   say("Elu: Welcome to "+w.name+"! "+w.desc);
   }
-  if(p.shield>0) {
-    ctx.strokeStyle="#a4ffe4bb";ctx.lineWidth=4;
-    ctx.beginPath();ctx.ellipse(0,0,47,39,0,0,Math.PI*2);ctx.stroke();
-  }
+ })));
+});
+$("custom").addEventListener("click",()=>{
+ const dragonColors=["#a56df0","#67c6e8","#ff8eb4","#8bdc9a","#ffb54f","#6c7cff","#f5f1ff"];
+ const wingColors=["#ff9dcc","#83e4ff","#ffdf83","#b6f7c5","#c7b4ff","#ffad83"];
+ const princessColors=["#ff80ba","#8a7cff","#67c9e8","#f5a65c","#7acb96"];
+ const accessories=["None","Golden Star Crown","Royal Tiara","Pink Bow"];
+ const outfits=["Royal Pink","Flower Princess","Ice Princess","Lavender Royal"];
+ const items=[
+  {title:"🐉 Dragon Color",desc:"Current: "+state.dragonColor,button:"Change color",run:()=>{state.dragonColor=dragonColors[(dragonColors.indexOf(state.dragonColor)+1)%dragonColors.length];save();closeModal();$("custom").click();}},
+  {title:"🪽 Wing Color",desc:"Current: "+state.wingColor,button:"Change wings",run:()=>{state.wingColor=wingColors[(wingColors.indexOf(state.wingColor)+1)%wingColors.length];save();closeModal();$("custom").click();}},
+  {title:"👗 Princess Dress",desc:outfits[state.outfit],button:"Change dress",run:()=>{state.outfit=(state.outfit+1)%outfits.length;state.princessColor=princessColors[state.outfit%princessColors.length];save();closeModal();$("custom").click();}},
+  {title:"👑 Dragon Accessory",desc:accessories[state.accessory],button:"Change accessory",run:()=>{state.accessory=(state.accessory+1)%accessories.length;save();closeModal();$("custom").click();}}
+ ];
+ openModal("✨ Royal Customization","Make Princess Masa and her dragon your own! Changes save automatically.",items);
+});
+$("missions").addEventListener("click",()=>{
+ openModal("⭐ Royal Mission Board","Earn coins by flying safely, collecting treasure, and taking care of your dragon.",[
+  {title:"🪙 Treasure Hunter",desc:"Collect coins during flight. Every coin brings new adventures closer.",button:"Start flying",run:()=>{closeModal();setMode("flight");}},
+  {title:"🪽 Sky Explorer",desc:"Travel 800 meters in the air to complete a distance mission.",button:"Explore",run:()=>{closeModal();setMode("flight");}},
+  {title:"💖 Dragon Care",desc:"Feed, wash, pet and hug your dragon. Each completed activity earns 5 coins.",button:"Care for dragon",run:()=>{closeModal();setMode("care");}},
+  {title:"🏆 Personal Best",desc:`Best coins in one saved run: ${state.highScore}. Total coins collected: ${state.totalCoins}.`,button:"Wonderful!",run:closeModal}
+ ]);
+});
+$("help").addEventListener("click",()=>{
+ openModal("💬 Elu — Royal Concierge",
+ "Hello, Princess Masa! I'm Elu, your always-helpful concierge. Here's my royal advice.",[
+  {title:"🐉 Dragon Care",desc:"Visit Care and select Feed, Wash, Pet, or Hug. Masa walks over before the activity starts.",button:"Let's care!",run:()=>{closeModal();setMode("care");}},
+  {title:"✈️ Flying",desc:"Use the up/down buttons, arrow keys, or W/S to steer. Collect coins and avoid obstacles. The boost button gives you a speed burst.",button:"Let's fly!",run:()=>{closeModal();setMode("flight");}},
+  {title:"❤️ Seven Lives",desc:"You start with 7 lives. Collisions cost lives and damage your dragon. When you run out, visit the care station and heal your dragon to restore all 7.",button:"Understood!",run:closeModal}},
+  {title:"🌎 New Worlds",desc:"Collect coins to unlock worlds. Each world has a different background and obstacle theme.",button:"Explore worlds",run:()=>{$("worlds").click();}}
+ ]);
+});
 
-  // Tail
-  ctx.strokeStyle="#3bd7c1";ctx.lineWidth=12;ctx.lineCap="round";
-  ctx.beginPath();ctx.moveTo(-24,10);ctx.quadraticCurveTo(-51,30,-64,10+Math.sin(t*5)*8);ctx.stroke();
-  ctx.fillStyle="#ffe59a";ctx.beginPath();ctx.moveTo(-65,10);ctx.lineTo(-78,2);ctx.lineTo(-74,18);ctx.fill();
-
-  // Back wing
-  ctx.fillStyle="#9d75ff";ctx.strokeStyle="#e4caff";ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(-15,-7);ctx.quadraticCurveTo(-53,-57,-29,-68);
-  ctx.quadraticCurveTo(-6,-58,2,-32);ctx.quadraticCurveTo(24,-47,29,-34);
-  ctx.lineTo(16,-6);ctx.closePath();ctx.fill();ctx.stroke();
-
-  // Body
-  const body=ctx.createLinearGradient(-25,-20,25,25);
-  body.addColorStop(0,"#a2ffe5");body.addColorStop(1,"#21b6aa");
-  ctx.fillStyle=body;ctx.strokeStyle="#d5fff3";ctx.lineWidth=2;
-  ctx.beginPath();ctx.ellipse(-3,6,33,24,-.12,0,Math.PI*2);ctx.fill();ctx.stroke();
-
-  // Belly
-  ctx.fillStyle="#ffe3ad";ctx.beginPath();ctx.ellipse(8,13,18,14,-.15,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle="#dfaa88";ctx.lineWidth=1;
-  for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(-2,5+i*7);ctx.quadraticCurveTo(8,8+i*7,18,5+i*7);ctx.stroke();}
-
-  // Front wing
-  ctx.fillStyle="#65e9d5";ctx.strokeStyle="#e3fff8";ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(-8,-5);ctx.quadraticCurveTo(-18,-45,7,-51);
-  ctx.quadraticCurveTo(25,-47,28,-27);ctx.lineTo(14,-3);ctx.closePath();ctx.fill();ctx.stroke();
-
-  // Head
-  ctx.fillStyle="#4ee0c7";ctx.strokeStyle="#e3fff8";ctx.lineWidth=2;
-  ctx.beginPath();ctx.ellipse(24,-15,22,19,-.2,0,Math.PI*2);ctx.fill();ctx.stroke();
-  // Snout
-  ctx.fillStyle="#8bffe9";ctx.beginPath();ctx.ellipse(41,-7,15,10,.1,0,Math.PI*2);ctx.fill();ctx.stroke();
-  // Horns
-  ctx.fillStyle="#ffe8a6";
-  ctx.beginPath();ctx.moveTo(12,-28);ctx.lineTo(5,-44);ctx.lineTo(20,-33);ctx.fill();
-  ctx.beginPath();ctx.moveTo(29,-31);ctx.lineTo(32,-46);ctx.lineTo(38,-28);ctx.fill();
-  // Eye
-  ctx.fillStyle="#fff";ctx.beginPath();ctx.ellipse(30,-19,7,8,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#2b1b51";ctx.beginPath();ctx.arc(33,-18,3.5,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(34,-20,1.3,0,Math.PI*2);ctx.fill();
-  // Nostrils and smile
-  ctx.fillStyle="#287f79";ctx.beginPath();ctx.arc(49,-9,1.8,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle="#287f79";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(43,-3,5,.2,1.5);ctx.stroke();
-
-  // Princess Masa riding on top
-  ctx.fillStyle="#ffbbd9";ctx.beginPath();ctx.ellipse(-1,-32,14,15,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#f4d3ad";ctx.beginPath();ctx.arc(0,-43,10,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#5a2a62";ctx.beginPath();ctx.arc(0,-47,10,Math.PI,Math.PI*2);ctx.fill();
-  ctx.fillRect(-10,-47,5,15);
-  // Crown
-  ctx.fillStyle="#ffe16b";ctx.beginPath();ctx.moveTo(-8,-50);ctx.lineTo(-8,-59);ctx.lineTo(-2,-54);ctx.lineTo(2,-61);ctx.lineTo(6,-54);ctx.lineTo(9,-58);ctx.lineTo(8,-50);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,-54,1.5,0,Math.PI*2);ctx.fill();
-
-  // Sparkles
-  for(let i=0;i<3;i++) {
-    const sx=-25+i*25,sy=-43-Math.sin(t*5+i)*6;
-    ctx.fillStyle="#fff4a8";ctx.beginPath();ctx.arc(sx,sy,2,0,Math.PI*2);ctx.fill();
-  }
-  ctx.restore();
+const careActions=[
+ ["🥕 Feed","feed"],["🫧 Wash","wash"],["💗 Pet","pet"],["🤗 Hug","hug"],["💚 Heal","heal"]
+];
+for(const [label,kind] of careActions){
+ const b=document.createElement("button");b.textContent=label;
+ b.className=kind==="heal"?"gold":"pink";
+ b.addEventListener("click",()=>kind==="heal"?startHeal():startCare(kind));
+ $("nav").appendChild(b);
 }
-
-function keyDown(e) {
-  const keys=["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," ","Space"];
-  if(keys.includes(e.key))e.preventDefault();
-  game.keys[e.key]=true;
-  if(e.repeat)return;
-  const key=e.key.toLowerCase();
-  if(key==="f")useAbility("fire");
-  if(key==="r")useAbility("roar");
-  if(key==="e")useAbility("dash");
-  if(e.key===" "||e.key==="Space")useAbility("stunt");
+function moveUp(){if(mode==="flight")flight.vy=-1.5;}
+function moveDown(){if(mode==="flight")flight.vy=1.5;}
+function boost(){if(mode==="flight")boostTime=1.2;}
+function bindHold(id,fn){
+ const el=$(id);
+ el.addEventListener("pointerdown",e=>{e.preventDefault();el.setPointerCapture?.(e.pointerId);fn();});
+ el.addEventListener("pointerup",()=>{if(id==="up"||id==="down")flight.vy=0;});
+ el.addEventListener("pointercancel",()=>{flight.vy=0;});
 }
-function keyUp(e){game.keys[e.key]=false;}
-window.addEventListener("keydown",keyDown);
-window.addEventListener("keyup",keyUp);
-window.addEventListener("blur",()=>{game.keys={};});
+bindHold("up",moveUp);bindHold("down",moveDown);bindHold("boost",boost);
 
-let dragging=false;
-function canvasPosition(e) {
-  const rect=canvas.getBoundingClientRect();
-  return {x:(e.clientX-rect.left)*GW/rect.width,y:(e.clientY-rect.top)*GH/rect.height};
-}
+window.addEventListener("keydown",e=>{
+ if(["ArrowUp","ArrowDown"," ","w","W","s","S"].includes(e.key))e.preventDefault();
+ if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")moveUp();
+ if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")moveDown();
+ if(e.key===" "||e.key==="Shift")boost();
+});
+window.addEventListener("keyup",e=>{
+ if(["ArrowUp","ArrowDown","w","W","s","S"].includes(e.key))flight.vy=0;
+});
 canvas.addEventListener("pointerdown",e=>{
-  if(!game.running)return;
-  dragging=true;canvas.setPointerCapture?.(e.pointerId);
-  const pos=canvasPosition(e);game.player.x=clamp(pos.x,65,430);game.player.y=clamp(pos.y,55,GH-60);
+ if(mode!=="flight")return;
+ pointerDown=true;steerTo(e);
 });
-canvas.addEventListener("pointermove",e=>{
-  if(!dragging||!game.running)return;
-  const pos=canvasPosition(e);game.player.x=clamp(pos.x,65,430);game.player.y=clamp(pos.y,55,GH-60);
-});
-canvas.addEventListener("pointerup",()=>dragging=false);
-canvas.addEventListener("pointercancel",()=>dragging=false);
-
-function toggleSound() {
-  state.sound=!state.sound;
-  updateUI();
-  notify(state.sound?"Sound effects enabled.":"Sound effects muted.");
+canvas.addEventListener("pointermove",e=>{if(pointerDown&&mode==="flight")steerTo(e);});
+window.addEventListener("pointerup",()=>pointerDown=false);
+function steerTo(e){
+ const r=canvas.getBoundingClientRect();
+ flight.y=clamp((e.clientY-r.top)/r.height,.12,.84);
 }
+window.addEventListener("pagehide",save);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)save();});
 
-function exportSave() {
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="masa-dragon-save.json";a.click();
-  URL.revokeObjectURL(url);
-  notify("Save export started.");
+function init(){
+ updateHUD();
+ say("Elu: Welcome to Crown Jewel! Your adventure starts with a happy dragon and seven flying lives.");
+ requestAnimationFrame(loop);
 }
-
-function importSave(event) {
-  const file=event.target.files?.[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try {
-      const data=JSON.parse(reader.result);
-      if(typeof data.coins!=="number"||!Array.isArray(data.unlockedWorlds)||!Array.isArray(data.tricks))throw new Error("Invalid save");
-      state=Object.assign(defaultState(),data);
-      save();renderAll();go("home");
-      notify("Save imported successfully!");
-    } catch(e) { notify("That save file is invalid."); }
-    event.target.value="";
-  };
-  reader.readAsText(file);
-}
-
-function resetGame() {
-  if(!confirm("Reset all Princess Masa and Elu progress in this browser? Export a backup first if needed."))return;
-  localStorage.removeItem(SAVE_KEY);
-  state=defaultState();
-  game.running=false;game.over=false;
-  renderAll();go("home");
-  notify("A brand-new royal adventure begins!");
-}
-
-function init() {
-  // Normalize saves from future or older edits.
-  state.unlockedWorlds=[...new Set(["crown",...(state.unlockedWorlds||[])])];
-  state.owned=[...new Set(["skin_default",...(state.owned||[])])];
-  if(!WORLDS.some(w=>w.id===state.world))state.world="crown";
-  updateUI();
-  renderAll();
-  drawGame();
-}
-
 init();
+})();
 </script>
 </body>
 </html>
