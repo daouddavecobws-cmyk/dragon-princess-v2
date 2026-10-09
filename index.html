@@ -1,1109 +1,326 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess Masa: World Quest Edition</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0c0414">
-
-  <style>
-    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
-    body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #0c0414; color: #fff; }
-    
-    #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
-    
-    nav { height: 55px; background: rgba(0,0,0,0.85); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; flex-shrink: 0; }
-    nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; cursor: pointer; }
-    nav button.active { background: #ffd700; color: #1a0933; }
-
-    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 12px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 13px; z-index: 15; display: flex; gap: 10px; }
-
-    .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow: hidden; }
-    .screen.active { display: flex; }
-
-    /* CARE SCREEN */
-    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; padding-bottom: 35px; overflow-y: auto; }
-    .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px solid #9333ea; margin-top: 8px; z-index: 2; }
-    .bar-row { margin-bottom: 4px; }
-    .bar-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; font-weight: bold; }
-    .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
-    .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
-
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 260px; overflow: visible; }
-    
-    .dragon-render { width: 180px; height: 180px; filter: drop-shadow(0 0 25px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 14%; animation: dragonFloat 3s ease-in-out infinite alternate; }
-    @keyframes dragonFloat { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(-12px) rotate(2deg); } }
-
-    .princess-render { width: 120px; height: 140px; position: absolute; bottom: 25px; right: 8%; z-index: 5; transition: all 0.5s ease-in-out; }
-
-    .princess-render.interact { right: 36%; transform: translateY(-10px) scale(1.1); }
-    .princess-render.hugging { right: 38%; transform: translateY(-5px) scale(1.2) rotate(-8deg); }
-
-    .action-tool { position: absolute; font-size: 40px; z-index: 6; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-    .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
-    @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.3) translateY(-8px); } }
-
-    .floating-text { position: absolute; font-size: 32px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-80px) scale(1.4); } }
-
-    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 92%; max-width: 420px; margin-bottom: 25px; z-index: 5; }
-    .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 2px solid #a855f7; color: white; padding: 12px 4px; border-radius: 16px; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-    .act-btn span { color: #ffd700; text-shadow: 0 1px 2px #000; }
-
-    /* CASTLE & 500+ SHOP SCREEN */
-    #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; padding: 8px 12px; }
-    .title { font-size: 18px; color: #ffd700; margin-top: 4px; text-shadow: 0 0 8px #ffd700; flex-shrink: 0; }
-    .elu-card { width: 100%; max-width: 420px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 12px; padding: 6px 10px; margin: 6px 0; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-    .elu-avatar { font-size: 26px; background: #26094d; padding: 4px; border-radius: 50%; border: 1px solid #ffd700; }
-    .elu-text { flex: 1; text-align: left; font-size: 11px; line-height: 1.2; color: #e9d5ff; }
-
-    .gacha-btn { width: 100%; max-width: 420px; background: linear-gradient(90deg, #b91c1c, #d97706, #6d28d9); border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 8px; flex-shrink: 0; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-
-    .shop-tabs { display: flex; gap: 6px; width: 100%; max-width: 420px; margin-bottom: 8px; overflow-x: auto; flex-shrink: 0; padding-bottom: 4px; }
-    .tab-btn { background: #26094d; border: 1.5px solid #a855f7; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; cursor: pointer; font-weight: bold; }
-    .tab-btn.active { background: #ffd700; color: #1a0933; border-color: #ffd700; }
-
-    .catalog-scrollbox { width: 100%; max-width: 420px; flex: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #6b21a8; border-radius: 12px; padding: 8px; margin-bottom: 8px; }
-    .catalog-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .item-card { background: rgba(255,255,255,0.05); border: 1px solid #a855f7; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 4px; }
-    .item-card button { background: #d97706; border: none; color: white; padding: 6px 8px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; width: 100%; }
-
-    .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 420px; font-size: 11px; flex-shrink: 0; margin-bottom: 6px; }
-    .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-
-    /* FLIGHT CONTROLS & HUD */
-    #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
-    canvas { display: block; width: 100%; height: 100%; }
-    
-    .fly-hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; z-index: 20; align-items: center; }
-    .hud-box { font-size: 13px; font-weight: bold; color: #ffd700; background: rgba(0,0,0,0.75); padding: 5px 10px; border-radius: 12px; border: 1.5px solid #ffd700; text-shadow: 0 0 6px #000; }
-    .mission-box { position: absolute; top: 52px; left: 12px; right: 12px; background: rgba(15, 7, 40, 0.85); border: 1.5px solid #a855f7; border-radius: 10px; padding: 6px 12px; font-size: 12px; color: #e9d5ff; font-weight: bold; text-align: center; z-index: 20; text-shadow: 0 1px 2px #000; backdrop-filter: blur(4px); }
-    .mode-toggle-btn { font-size: 12px; font-weight: bold; color: #fff; background: linear-gradient(135deg, #a855f7, #6d28d9); border: 1.5px solid #ffd700; padding: 5px 10px; border-radius: 12px; cursor: pointer; backdrop-filter: blur(4px); }
-
-    .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 20; pointer-events: none; }
-    .fly-controls.drag-active { justify-content: flex-end; }
-    
-    .d-pad-grid { display: grid; grid-template-columns: repeat(3, 62px); grid-template-rows: repeat(2, 62px); gap: 12px; pointer-events: auto; }
-    .ctrl-btn { width: 62px; height: 62px; border-radius: 50%; background: rgba(59, 130, 246, 0.45); border: 2.5px solid #60a5fa; color: #ffffff; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); box-shadow: 0 0 12px rgba(59,130,246,0.6); pointer-events: auto; }
-    .ctrl-btn:active { background: rgba(59, 130, 246, 0.85); transform: scale(0.92); }
-    
-    .fire-btn { width: 85px; height: 85px; border-radius: 50%; background: radial-gradient(circle, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%); border: 3px solid #fef08a; color: #ffffff; font-weight: 900; font-size: 15px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), inset 0 0 10px #fef08a; display: flex; align-items: center; justify-content: center; pointer-events: auto; align-self: flex-end; }
-    .fire-btn:active { transform: scale(0.92); background: radial-gradient(circle, #f87171 0%, #dc2626 100%); }
-
-    /* IN-GAME MISSION POPUP OVERLAY */
-    .popup-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-    .popup-overlay.active { display: flex; }
-    .popup-card { background: linear-gradient(135deg, #1e0936, #3b1566); border: 2px solid #ffd700; border-radius: 20px; width: 88%; max-width: 360px; padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    .popup-card h3 { color: #ffd700; font-size: 20px; margin-bottom: 10px; text-shadow: 0 0 8px #ffd700; }
-    .popup-card p { font-size: 13px; color: #e9d5ff; line-height: 1.4; margin-bottom: 18px; }
-    .popup-card button { background: linear-gradient(90deg, #d97706, #ffd700); border: none; color: #1a0933; padding: 10px 24px; border-radius: 12px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-  </style>
-</head>
-<body>
-
-<div id="app">
-  <div class="hud-header">
-    <span>❤️ <span id="lives-header">5/5</span></span>
-    <span>🪙 <span id="coin-txt">100</span></span>
-  </div>
-
-  <nav>
-    <button id="nav-care" class="active" onclick="switchTab('care')">🐉 Care</button>
-    <button id="nav-castle" onclick="switchTab('castle')">🏰 500+ Vault</button>
-    <button id="nav-fly" onclick="switchTab('fly')">🚀 Flight</button>
-  </nav>
-
-  <!-- CARE SCREEN -->
-  <div id="care-screen" class="screen active">
-    <div class="status-box">
-      <div class="bar-row">
-        <div class="bar-label"><span>DRAGON VITALITY</span><span id="hp-val">0%</span></div>
-        <div class="bar-track"><div id="hp-fill" class="bar-fill" style="background:#ef4444;"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>HUNGER</span><span id="f-val">0%</span></div>
-        <div class="bar-track"><div id="f-fill" class="bar-fill" style="background:#f59e0b;"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>HYGIENE</span><span id="c-val">0%</span></div>
-        <div class="bar-track"><div id="c-fill" class="bar-fill" style="background:#3b82f6;"></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label"><span>AFFECTION</span><span id="l-val">0%</span></div>
-        <div class="bar-track"><div id="l-fill" class="bar-fill" style="background:#ec4899;"></div></div>
-      </div>
-    </div>
-
-    <div class="viewport" id="viewport">
-      <div id="dragon-node" class="dragon-render"></div>
-      <div id="princess-node" class="princess-render"></div>
-      <div id="action-tool" class="action-tool">🍎</div>
-    </div>
-
-    <div class="action-grid">
-      <button class="act-btn" onclick="doCare('feed')"><span style="font-size:22px;">🍎</span><span>Feed</span></button>
-      <button class="act-btn" onclick="doCare('wash')"><span style="font-size:22px;">🧼</span><span>Wash</span></button>
-      <button class="act-btn" onclick="doCare('pet')"><span style="font-size:22px;">🖐️</span><span>Pet</span></button>
-      <button class="act-btn" onclick="doCare('hug')"><span style="font-size:22px;">🤗</span><span>Hug</span></button>
-    </div>
-  </div>
-
-  <!-- CROWN JEWEL 500+ SHOP SCREEN -->
-  <div id="castle-screen" class="screen">
-    <h2 class="title">Crown Jewel Realm</h2>
-
-    <div class="elu-card">
-      <div class="elu-avatar">🎩</div>
-      <div class="elu-text" id="elu-msg">
-        <strong>Elu:</strong> "Welcome Princess Masa! Select a category below to browse through our 500+ items!"
-      </div>
-    </div>
-
-    <button class="gacha-btn" onclick="rollGacha()">🎲 Mystery Spin (30 🪙)</button>
-
-    <div class="shop-tabs">
-      <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons</button>
-      <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits</button>
-      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Flamethrower</button>
-      <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds</button>
-      <button class="tab-btn" id="tab-sizes" onclick="setCategory('sizes')">👸 Sizes</button>
-    </div>
-
-    <div class="catalog-scrollbox">
-      <div class="catalog-list" id="catalog-container"></div>
-    </div>
-
-    <div class="pagination">
-      <button class="page-btn" onclick="changePage(-1)">◀ Prev</button>
-      <span id="page-txt">Page 1 / 50</span>
-      <button class="page-btn" onclick="changePage(1)">Next ▶</button>
-    </div>
-  </div>
-
-  <!-- FLIGHT SCREEN -->
-  <div id="fly-screen" class="screen">
-    <div class="fly-hud">
-      <div class="hud-box">Lives: <span id="lives-txt">❤️❤️❤️❤️❤️</span></div>
-      <div class="hud-box">Score: <span id="score-txt">0</span></div>
-      <button class="mode-toggle-btn" id="control-toggle-btn" onclick="toggleControlMode()">🎮 Mode: Buttons</button>
-    </div>
-
-    <div class="mission-box" id="mission-hud-box">
-      🎯 Mission: Collect 10 Ice Eggs! Progress: <span id="mission-progress">0/10</span>
-    </div>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <div class="fly-controls" id="fly-controls-container">
-      <div class="d-pad-grid" id="dpad-wrapper">
-        <div></div>
-        <div class="ctrl-btn" id="btn-up">▲</div>
-        <div></div>
-        <div class="ctrl-btn" id="btn-left">◀</div>
-        <div class="ctrl-btn" id="btn-down">▼</div>
-        <div class="ctrl-btn" id="btn-right">▶</div>
-      </div>
-      <button class="fire-btn" id="btn-fire">🔥 FIRE</button>
-    </div>
-  </div>
-
-  <!-- IN-GAME POPUP DIALOG -->
-  <div class="popup-overlay" id="popup-dialog">
-    <div class="popup-card">
-      <h3 id="popup-title">🎉 Mission Complete!</h3>
-      <p id="popup-msg">Princess Masa conquered the realm!</p>
-      <button onclick="closePopupAndContinueFlying()">Keep Flying 🚀</button>
-    </div>
-  </div>
-</div>
-
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#2b1b4a"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Ember &amp; the Princess</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2b1b4a;--rose:#ff7aa8;--gold:#ffd36b;--mint:#7fe3c4;--card:#fff8ee}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family:Fredoka,"Trebuchet MS",system-ui,sans-serif;color:var(--ink)}
+canvas#c{position:fixed;inset:0;width:100%;height:100%}
+.top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 0;display:flex;gap:8px;align-items:center;justify-content:space-between;pointer-events:none}
+.pill{background:var(--card);border-radius:20px;padding:6px 12px;font-weight:600;display:flex;gap:6px;align-items:center;font-size:15px}
+.bar{width:54px;height:8px;background:#0002;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%}
+.dock{position:fixed;left:0;right:0;bottom:0;padding:8px 8px calc(env(safe-area-inset-bottom,0px) + 8px);display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+button{font:600 15px Fredoka,system-ui,sans-serif;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:9px 13px;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+button:active{transform:translateY(3px);box-shadow:none}
+button.on{background:var(--gold)}button.go{background:var(--rose)}
+#fire{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);width:92px;height:92px;border-radius:50%;font-size:38px;background:#ff8a3d;padding:0}
+.panel{position:fixed;inset:0;background:#2b1b4acc;display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}
+.box{background:var(--card);border-radius:24px;padding:18px;max-width:560px;width:100%;max-height:100%;overflow:auto;text-align:center}
+h1{margin:0 0 4px;font-size:30px}h2{margin:10px 0 6px;font-size:19px}p{margin:4px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px}
+.it{border:3px solid var(--ink);border-radius:16px;padding:6px;background:#fff}.it.sel{background:var(--gold)}.it canvas{width:100%;height:64px;display:block}
+.it small{display:block;font-weight:600}.it button{margin-top:4px;padding:4px 8px;font-size:13px;box-shadow:none}
+input{user-select:text;-webkit-user-select:text;touch-action:auto}
+#elu{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);max-width:540px;margin:auto;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:10px 12px;font-size:15px;box-shadow:0 4px 0 var(--ink)}
+#elu .ch{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;margin:6px 0;touch-action:pan-x}#elu .ch button{padding:5px 9px;font-size:13px;box-shadow:none;white-space:nowrap;flex:none}
+#elu input{width:66%;font:15px Fredoka,system-ui;padding:6px 10px;border:3px solid var(--ink);border-radius:14px}
+#pad{position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:4px}
+#pad button{width:58px;height:58px;padding:0;font-size:24px;border-radius:50%;background:#fff}#pad .u{grid-column:2;grid-row:1}#pad .l{grid-column:1;grid-row:2}#pad .r{grid-column:3;grid-row:2}#pad .d{grid-column:2;grid-row:3}
+#ctl{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 56px);padding:5px 10px;font-size:13px}
+.hide{display:none!important}@media(max-width:450px){.bar{width:34px}.pill{padding:6px 9px;font-size:14px}}
+</style></head><body>
+<canvas id="c"></canvas>
+<div class="top" id="hud"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill" id="stats"></div><button onclick="Snd.on=!Snd.on;this.textContent=Snd.on?'🔊':'🔇'" style="pointer-events:auto;padding:4px 10px">🔊</button></div>
+<div id="elu" class="hide"><button onclick="$('elu').classList.add('hide')" style="float:right;padding:2px 9px;box-shadow:none">✕</button><b>🎩 Elu:</b> <span id="et"></span><div class="ch" id="eb"></div><input id="ei" placeholder="Ask Elu anything..." onkeydown="if(event.key=='Enter')ask()"> <button onclick="ask()">Ask</button></div>
+<div class="dock" id="dock"></div>
+<button id="fire" class="hide">🔥</button>
+<button id="ctl" class="hide" onclick="S.ctl=S.ctl=='btn'?'drag':'btn';save();ctlUI()">👆 Drag</button>
+<div id="pad" class="hide"><button class="u" data-k="u">▲</button><button class="l" data-k="l">◀</button><button class="r" data-k="r">▶</button><button class="d" data-k="d">▼</button></div>
+<div class="panel" id="menu"></div>
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR WITH WORLD-SPECIFIC MISSIONS */
-  const ELEMENTS = ["Inferno", "Frost", "Void", "Storm", "Golden", "Emerald", "Solar", "Galactic", "Lava", "Nebula", "Titanium", "Neon", "Crystal", "Shadow", "Celestial"];
-  const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
-
-  const WORLD_THEMES = [
-    { type: 'frost', bg1: '#0c2340', bg2: '#1d4ed8', obs: ['🧊', '❄️', '🏔️'], pColor: '#93c5fd', mission: "Collect 10 Frozen Eggs!", targetType: 'item', targetIcon: '🥚', targetGoal: 10 },
-    { type: 'lava', bg1: '#2a0800', bg2: '#991b1b', obs: ['☄️', '🔥', '🌋'], pColor: '#f97316', mission: "Destroy 12 Magma Rocks!", targetType: 'destroy', targetIcon: '☄️', targetGoal: 12 },
-    { type: 'void', bg1: '#110022', bg2: '#581c87', obs: ['🌌', '💥', '👾'], pColor: '#c084fc', mission: "Collect 15 Star Orbs!", targetType: 'item', targetIcon: '🔮', targetGoal: 15 },
-    { type: 'storm', bg1: '#0f172a', bg2: '#1e3a8a', obs: ['⚡', '🌩️', '🌪️'], pColor: '#38bdf8', mission: "Collect 10 Spark Energy!", targetType: 'item', targetIcon: '⚡', targetGoal: 10 },
-    { type: 'golden', bg1: '#2e1c02', bg2: '#854d0e', obs: ['☀️', '✨', '👑'], pColor: '#fde047', mission: "Collect 12 Golden Crowns!", targetType: 'item', targetIcon: '👑', targetGoal: 12 }
-  ];
-
-  function generateCatalog(type) {
-    let items = [];
-    for (let i = 1; i <= 500; i++) {
-      let elem = ELEMENTS[i % ELEMENTS.length];
-      let hue = (i * 137.5) % 360;
-
-      if (type === 'dragons') {
-        items.push({ id: `dragon_${i}`, name: `#${i} ${elem} Puff`, color: `hsl(${hue}, 85%, 55%)`, belly: `hsl(${hue}, 90%, 80%)`, glow: `hsl(${hue}, 80%, 50%)`, cost: i * 15 });
-      } else if (type === 'outfits') {
-        let base = OUTFIT_BASES[i % OUTFIT_BASES.length];
-        items.push({ id: `outfit_${i}`, name: `#${i} ${elem} Dress`, icon: base, hue: hue, cost: i * 10 });
-      } else if (type === 'fire') {
-        items.push({ id: `fire_${i}`, name: `#${i} ${elem} Flame`, hue: hue, cost: i * 12 });
-      } else if (type === 'worlds') {
-        let wTheme = WORLD_THEMES[i % WORLD_THEMES.length];
-        items.push({ id: `world_${i}`, name: `#${i} ${elem} Realm`, bg1: wTheme.bg1, bg2: wTheme.bg2, type: wTheme.type, obs: wTheme.obs, pColor: wTheme.pColor, mission: wTheme.mission, targetType: wTheme.targetType, targetIcon: wTheme.targetIcon, targetGoal: wTheme.targetGoal, cost: i * 20 });
-      } else if (type === 'sizes') {
-        let sizeMult = (1 + (i * 0.05)).toFixed(2);
-        items.push({ id: `size_${i}`, name: `Level ${i} Size (${sizeMult}x)`, mult: parseFloat(sizeMult), cost: i * 25 });
-      }
-    }
-    return items;
-  }
-
-  const CATALOGS = {
-    dragons: generateCatalog('dragons'),
-    outfits: generateCatalog('outfits'),
-    fire: generateCatalog('fire'),
-    worlds: generateCatalog('worlds'),
-    sizes: generateCatalog('sizes')
-  };
-
-  /* 2. GAME STATE */
-  let state = {
-    coins: 100,
-    hunger: 80,
-    clean: 80,
-    love: 80,
-    health: 80,
-    lives: 5,
-    controlMode: 'buttons',
-    equipped: {
-      dragon: CATALOGS.dragons[0],
-      outfit: CATALOGS.outfits[0],
-      fire: CATALOGS.fire[0],
-      world: CATALOGS.worlds[0],
-      size: CATALOGS.sizes[0]
-    },
-    unlockedIds: ['dragon_1', 'outfit_1', 'fire_1', 'world_1', 'size_1']
-  };
-
-  let dressHue = 0;
-  let currentCarePose = 'idle';
-  let missionCount = 0;
-  let missionCompletedInRun = false;
-
-  setInterval(() => {
-    dressHue = (dressHue + 2) % 360;
-    const pNode = document.getElementById('princess-node');
-    if (pNode) {
-      pNode.innerHTML = getPrincessMasaSVG(`hsl(${dressHue}, 90%, 60%)`, `hsl(${(dressHue+40)%360}, 95%, 75%)`, currentCarePose);
-    }
-  }, 50);
-
-  const saved = localStorage.getItem('dp_500_state');
-  if (saved) {
-    try {
-      let parsed = JSON.parse(saved);
-      state.coins = parsed.coins || 100;
-      state.hunger = parsed.hunger || 80;
-      state.clean = parsed.clean || 80;
-      state.love = parsed.love || 80;
-      state.lives = parsed.lives !== undefined ? parsed.lives : 5;
-      state.controlMode = parsed.controlMode || 'buttons';
-      state.unlockedIds = parsed.unlockedIds || state.unlockedIds;
-      
-      ['dragons','outfits','fire','worlds','sizes'].forEach(cat => {
-        let key = cat.slice(0, -1);
-        if (parsed.equipped && parsed.equipped[key]) {
-          let found = CATALOGS[cat].find(x => x.id === parsed.equipped[key].id);
-          if (found) state.equipped[key] = found;
-        }
-      });
-    } catch(e){}
-  }
-
-  function saveState() {
-    localStorage.setItem('dp_500_state', JSON.stringify(state));
-  }
-
-  /* HIGH-DETAIL ULTRA CUTE DRAGON SVG RENDER */
-  function getChubbyDragonSVG(color, belly, glow) {
-    return `<svg viewBox="0 0 120 120" width="100%" height="100%">
-      <path d="M 30 85 Q 10 100 8 112 Q 18 118 32 95 Z" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <path d="M 6 112 Q 0 106 6 100 Q 12 106 6 112 Q 0 118 6 112 Z" fill="#f43f5e"/>
-
-      <g>
-        <path d="M 38 48 Q 15 20 28 10 Q 42 22 48 45 Z" fill="${glow}" stroke="#fff" stroke-width="2.2"/>
-        <path d="M 30 46 Q 10 30 20 18 Q 32 28 38 45 Z" fill="${glow}" opacity="0.6"/>
-        <path d="M 28 52 Q 8 36 18 24 Q 28 34 32 50 Z" fill="${glow}" opacity="0.4"/>
-      </g>
-
-      <ellipse cx="55" cy="72" rx="36" ry="30" fill="${color}" stroke="#fff" stroke-width="2.8"/>
-      <ellipse cx="64" cy="76" rx="22" ry="20" fill="${belly}"/>
-      <path d="M 52 70 Q 64 65 76 70 M 50 78 Q 64 73 78 78 M 52 86 Q 64 81 76 86" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none"/>
-
-      <path d="M 25 58 Q 22 50 28 54 Z M 20 68 Q 16 60 22 64 Z M 16 78 Q 12 70 18 74 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
-
-      <ellipse cx="38" cy="92" rx="14" ry="10" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <circle cx="30" cy="95" r="2.5" fill="#fff"/>
-      <circle cx="36" cy="98" r="2.5" fill="#fff"/>
-      <circle cx="42" cy="97" r="2.5" fill="#fff"/>
-
-      <ellipse cx="78" cy="80" rx="9" ry="7" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <circle cx="84" cy="78" r="1.8" fill="#fff"/>
-      <circle cx="85" cy="82" r="1.8" fill="#fff"/>
-
-      <circle cx="78" cy="42" r="26" fill="${color}" stroke="#fff" stroke-width="2.8"/>
-
-      <path d="M 68 20 Q 62 4 72 10 Q 75 20 72 22 Z" fill="#ffd700" stroke="#fff" stroke-width="1.8"/>
-      <path d="M 68 14 Q 70 12 73 16" stroke="#b45309" stroke-width="1.2" fill="none"/>
-      
-      <path d="M 78 19 Q 78 2 86 8 Q 83 19 80 21 Z" fill="#ffd700" stroke="#fff" stroke-width="1.8"/>
-      <path d="M 79 12 Q 81 10 84 14" stroke="#b45309" stroke-width="1.2" fill="none"/>
-
-      <ellipse cx="88" cy="38" rx="8" ry="11" fill="#1e1b4b" stroke="#fff" stroke-width="1.2"/>
-      <ellipse cx="88" cy="38" rx="6.5" ry="9" fill="${glow}"/>
-      <circle cx="86" cy="34" r="3.5" fill="#ffffff"/>
-      <circle cx="91" cy="42" r="1.8" fill="#ffffff"/>
-
-      <path d="M 84 27 Q 88 24 92 26 M 90 26 L 94 24" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-
-      <ellipse cx="82" cy="48" rx="5" ry="3" fill="#f43f5e" opacity="0.75"/>
-
-      <ellipse cx="98" cy="46" rx="11" ry="8" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <circle cx="96" cy="43" r="1.2" fill="#4c0519"/>
-      <circle cx="101" cy="43" r="1.2" fill="#4c0519"/>
-      
-      <path d="M 92 48 Q 98 56 104 48 Z" fill="#be123c" stroke="#fff" stroke-width="1.2"/>
-      <polygon points="95,48 97,51 99,48" fill="#fff"/>
-      <polygon points="99,48 101,51 103,48" fill="#fff"/>
-    </svg>`;
-  }
-
-  function getPrincessMasaSVG(dressColor, accentColor, pose = 'idle') {
-    let handsSVG = '';
-
-    if (pose === 'feed') {
-      handsSVG = `
-        <path d="M 38 52 Q 22 42 16 32" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        <path d="M 62 52 Q 32 45 20 34" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        <circle cx="16" cy="32" r="3.5" fill="#fbcfe8"/>
-        <circle cx="20" cy="34" r="3.5" fill="#fbcfe8"/>
-      `;
-    } else if (pose === 'wash') {
-      handsSVG = `
-        <path d="M 38 52 Q 22 40 18 28" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        <path d="M 62 52 Q 30 42 22 28" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        <circle cx="18" cy="28" r="3.5" fill="#fbcfe8"/>
-        <circle cx="22" cy="28" r="3.5" fill="#fbcfe8"/>
-      `;
-    } else if (pose === 'pet') {
-      handsSVG = `
-        <path d="M 38 50 Q 20 38 14 26" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        <circle cx="14" cy="26" r="3.5" fill="#fbcfe8"/>
-      `;
-    } else if (pose === 'hug') {
-      handsSVG = `
-        <path d="M 38 50 Q 12 36 10 20" stroke="#fbcfe8" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M 62 50 Q 30 32 20 18" stroke="#fbcfe8" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="10" cy="20" r="4" fill="#fbcfe8"/>
-        <circle cx="20" cy="18" r="4" fill="#fbcfe8"/>
-      `;
-    } else {
-      handsSVG = `
-        <path d="M 38 52 Q 44 60 50 60" stroke="#fbcfe8" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <path d="M 62 52 Q 56 60 50 60" stroke="#fbcfe8" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <circle cx="50" cy="60" r="3.5" fill="#fbcfe8"/>
-      `;
-    }
-
-    return `<svg viewBox="0 0 100 120" width="100%" height="100%">
-      <circle cx="50" cy="60" r="45" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.5"/>
-      <path d="M 32 30 Q 20 60 30 85 Q 50 90 70 85 Q 80 60 68 30 Z" fill="#4a2c11"/>
-      <path d="M 35 60 Q 15 110 50 112 Q 85 110 65 60 Z" fill="${dressColor}" stroke="#ffffff" stroke-width="2"/>
-      <path d="M 42 60 Q 30 110 50 112 Q 70 110 58 60 Z" fill="${accentColor}" opacity="0.6"/>
-      <text x="50" y="92" font-family="'Segoe UI', bold, sans-serif" font-weight="900" font-size="14" fill="#ffd700" stroke="#000" stroke-width="0.8" text-anchor="middle" letter-spacing="1">MASA</text>
-      <path d="M 40 46 L 60 46 L 56 62 L 44 62 Z" fill="${dressColor}" stroke="#ffffff" stroke-width="1.5"/>
-      <circle cx="50" cy="35" r="15" fill="#fbcfe8"/>
-      <circle cx="43" cy="38" r="3" fill="#f43f5e" opacity="0.6"/>
-      <circle cx="57" cy="38" r="3" fill="#f43f5e" opacity="0.6"/>
-      <circle cx="44" cy="33" r="2.5" fill="#1e1b4b"/>
-      <circle cx="56" cy="33" r="2.5" fill="#1e1b4b"/>
-      <circle cx="45" cy="32" r="1" fill="#fff"/>
-      <circle cx="57" cy="32" r="1" fill="#fff"/>
-      <path d="M 46 41 Q 50 45 54 41" fill="none" stroke="#be123c" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M 35 30 Q 50 20 65 30 Q 60 22 50 22 Q 40 22 35 30 Z" fill="#4a2c11"/>
-      
-      ${handsSVG}
-
-      <path d="M 38 22 L 42 12 L 50 18 L 58 12 L 62 22 Z" fill="#ffd700" stroke="#ffffff" stroke-width="1"/>
-      <circle cx="42" cy="12" r="1.5" fill="#ef4444"/>
-      <circle cx="50" cy="18" r="1.5" fill="#3b82f6"/>
-      <circle cx="58" cy="12" r="1.5" fill="#ef4444"/>
-    </svg>`;
-  }
-
-  function updateUI() {
-    state.health = Math.round((state.hunger + state.clean + state.love) / 3);
-    
-    if (state.health >= 50 && state.lives === 0) {
-      state.lives = 5;
-    }
-
-    document.getElementById('coin-txt').innerText = state.coins;
-    document.getElementById('lives-header').innerText = `${state.lives}/5`;
-    document.getElementById('lives-txt').innerText = '❤️'.repeat(state.lives) + '🖤'.repeat(5 - state.lives);
-
-    document.getElementById('hp-val').innerText = state.health + '%';
-    document.getElementById('f-val').innerText = state.hunger + '%';
-    document.getElementById('c-val').innerText = state.clean + '%';
-    document.getElementById('l-val').innerText = state.love + '%';
-
-    document.getElementById('hp-fill').style.width = state.health + '%';
-    document.getElementById('f-fill').style.width = state.hunger + '%';
-    document.getElementById('c-fill').style.width = state.clean + '%';
-    document.getElementById('l-fill').style.width = state.love + '%';
-
-    const d = document.getElementById('dragon-node');
-    d.innerHTML = getChubbyDragonSVG(state.equipped.dragon.color, state.equipped.dragon.belly, state.equipped.dragon.glow);
-    d.style.setProperty('--dragon-glow', state.equipped.dragon.glow);
-
-    const dpadWrap = document.getElementById('dpad-wrapper');
-    const ctrlToggleBtn = document.getElementById('control-toggle-btn');
-    const flyControlsContainer = document.getElementById('fly-controls-container');
-
-    if (state.controlMode === 'drag') {
-      dpadWrap.style.display = 'none';
-      ctrlToggleBtn.innerText = '👆 Mode: Drag';
-      flyControlsContainer.classList.add('drag-active');
-    } else {
-      dpadWrap.style.display = 'grid';
-      ctrlToggleBtn.innerText = '🎮 Mode: Buttons';
-      flyControlsContainer.classList.remove('drag-active');
-    }
-
-    let w = state.equipped.world;
-    document.getElementById('mission-hud-box').innerHTML = `🎯 Mission: ${w.mission} Progress: <span id="mission-progress">${missionCount}/${w.targetGoal}</span>`;
-
-    saveState();
-  }
-
-  function toggleControlMode() {
-    state.controlMode = state.controlMode === 'buttons' ? 'drag' : 'buttons';
-    updateUI();
-  }
-
-  /* CARE ACTIONS */
-  let isAnimatingCare = false;
-  function doCare(type) {
-    if (isAnimatingCare) return;
-    isAnimatingCare = true;
-
-    currentCarePose = type;
-
-    let floatIcons = '';
-    let toolIcon = '';
-
-    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 30); floatIcons = '🍎🍏✨ Masa Fed Dragon!'; toolIcon = '🍎'; }
-    if (type === 'wash') { state.clean = Math.min(100, state.clean + 30); floatIcons = '🧼🫧✨ Masa Washed Dragon!'; toolIcon = '🧽'; }
-    if (type === 'pet') { state.love = Math.min(100, state.love + 20); floatIcons = '✨🖐️💖 Masa Petted Dragon!'; toolIcon = '🖐️'; }
-    if (type === 'hug') { state.love = Math.min(100, state.love + 35); floatIcons = '💖🤗🥰 Masa Hugged Dragon!'; toolIcon = '💖'; }
-    
-    state.coins += 3;
-
-    if (state.hunger > 40 && state.clean > 40 && state.love > 40) {
-      state.lives = 5;
-    }
-
-    const p = document.getElementById('princess-node');
-    const tool = document.getElementById('action-tool');
-    const vp = document.getElementById('viewport');
-
-    if (type === 'hug') {
-      p.className = 'princess-render hugging';
-    } else {
-      p.className = 'princess-render interact';
-    }
-
-    tool.innerText = toolIcon;
-    tool.style.left = '32%';
-    tool.style.top = '35%';
-    tool.classList.add('active');
-
-    setTimeout(() => {
-      const floatEl = document.createElement('div');
-      floatEl.className = 'floating-text';
-      floatEl.innerText = floatIcons;
-      floatEl.style.left = '20%';
-      floatEl.style.top = '15%';
-      vp.appendChild(floatEl);
-
-      setTimeout(() => floatEl.remove(), 1200);
-    }, 300);
-
-    setTimeout(() => {
-      p.className = 'princess-render';
-      tool.classList.remove('active');
-      currentCarePose = 'idle';
-      isAnimatingCare = false;
-      updateUI();
-    }, 1300);
-
-    updateUI();
-  }
-
-  /* 3. SHOP LOGIC */
-  let currentCategory = 'dragons';
-  let currentPage = 1;
-  const ITEMS_PER_PAGE = 10;
-
-  function setCategory(cat) {
-    currentCategory = cat;
-    currentPage = 1;
-    document.querySelectorAll('.shop-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + cat).classList.add('active');
-    renderCatalog();
-  }
-
-  function changePage(delta) {
-    let maxPages = Math.ceil(CATALOGS[currentCategory].length / ITEMS_PER_PAGE);
-    currentPage = Math.max(1, Math.min(maxPages, currentPage + delta));
-    renderCatalog();
-  }
-
-  function renderCatalog() {
-    const container = document.getElementById('catalog-container');
-    container.innerHTML = '';
-
-    let list = CATALOGS[currentCategory];
-    let start = (currentPage - 1) * ITEMS_PER_PAGE;
-    let pageItems = list.slice(start, start + ITEMS_PER_PAGE);
-
-    let maxPages = Math.ceil(list.length / ITEMS_PER_PAGE);
-    document.getElementById('page-txt').innerText = `Page ${currentPage} / ${maxPages}`;
-
-    pageItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card';
-
-      let isUnlocked = state.unlockedIds.includes(item.id);
-      let isEquipped = state.equipped[currentCategory.slice(0, -1)]?.id === item.id;
-
-      let preview = item.icon || '🐉';
-      if (currentCategory === 'fire') preview = '🔥';
-      if (currentCategory === 'worlds') preview = '🌌';
-      if (currentCategory === 'sizes') preview = '📏';
-
-      card.innerHTML = `
-        <span style="font-size:22px;">${preview}</span>
-        <strong>${item.name}</strong>
-        <span>${isUnlocked ? 'Unlocked' : item.cost + ' 🪙'}</span>
-        <button onclick="handleItemAction('${currentCategory}', '${item.id}')">
-          ${isEquipped ? 'Equipped' : isUnlocked ? 'Equip' : 'Buy'}
-        </button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function handleItemAction(cat, itemId) {
-    let item = CATALOGS[cat].find(x => x.id === itemId);
-    let key = cat.slice(0, -1);
-
-    if (state.unlockedIds.includes(itemId)) {
-      state.equipped[key] = item;
-      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Equipped ${item.name}!"`;
-    } else if (state.coins >= item.cost) {
-      state.coins -= item.cost;
-      state.unlockedIds.push(itemId);
-      state.equipped[key] = item;
-      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Unlocked & Equipped ${item.name}!"`;
-    } else {
-      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "You need ${item.cost - state.coins} more coins!"`;
-    }
-
-    updateUI();
-    renderCatalog();
-  }
-
-  function rollGacha() {
-    if (state.coins < 30) {
-      document.getElementById('elu-msg').innerHTML = `<strong>Elu:</strong> "Mystery Spin costs 30 coins!"`;
-      return;
-    }
-
-    state.coins -= 30;
-    let categories = ['dragons', 'outfits', 'fire', 'worlds', 'sizes'];
-    let randomCat = categories[Math.floor(Math.random() * categories.length)];
-    let list = CATALOGS[randomCat];
-    let randomItem = list[Math.floor(Math.random() * list.length)];
-
-    if (!state.unlockedIds.includes(randomItem.id)) {
-      state.unlockedIds.push(randomItem.id);
-    }
-    state.equipped[randomCat.slice(0,-1)] = randomItem;
-
-    document.getElementById('elu-msg').innerHTML = `<strong>Elu (Gacha):</strong> "🎉 Jackpot! You won ${randomItem.name}!"`;
-    updateUI();
-    renderCatalog();
-  }
-
-  function switchTab(screenName) {
-    if (screenName === 'fly' && state.lives <= 0) {
-      alert("Masa's dragon is out of energy! Nurse it back to health in the Care screen to fly again! ❤️");
-      screenName = 'care';
-    }
-
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-
-    document.getElementById(screenName + '-screen').classList.add('active');
-    document.getElementById('nav-' + screenName).classList.add('active');
-
-    if (screenName === 'castle') renderCatalog();
-    if (screenName === 'fly') startFlyGame();
-    else stopFlyGame();
-  }
-
-  /* 4. FLIGHT ENGINE WITH DETAILED CANVAS DRAGON RENDER */
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  let gameLoopId = null;
-  let dragonX = 80;
-  let dragonY = 150;
-  let isFiring = false;
-  let obstacles = [];
-  let coinPickups = [];
-  let missionPickups = [];
-  let flameParticles = [];
-  let worldWeatherParticles = [];
-  let score = 0;
-
-  let isDragging = false;
-  let dragOffsetX = 0;
-  let dragOffsetY = 0;
-
-  let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
-
-  function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
-  }
-
-  function startFlyGame() {
-    resizeCanvas();
-    dragonX = 80;
-    dragonY = canvas.height / 2;
-    obstacles = [];
-    coinPickups = [];
-    missionPickups = [];
-    flameParticles = [];
-    worldWeatherParticles = [];
-    score = 0;
-    missionCount = 0;
-    missionCompletedInRun = false;
-    
-    for (let i = 0; i < 35; i++) {
-      worldWeatherParticles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: 1 + Math.random() * 3,
-        speedX: Math.random() * 2 - 1,
-        speedY: 1 + Math.random() * 2
-      });
-    }
-
-    updateUI();
-    if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
-  }
-
-  function stopFlyGame() {
-    if (gameLoopId) {
-      cancelAnimationFrame(gameLoopId);
-      gameLoopId = null;
-    }
-  }
-
-  const addTouch = (elem, startFn, endFn) => {
-    if (!elem) return;
-    elem.addEventListener('touchstart', (e) => { e.preventDefault(); startFn(); });
-    elem.addEventListener('touchend', (e) => { e.preventDefault(); endFn(); });
-    elem.addEventListener('mousedown', startFn);
-    elem.addEventListener('mouseup', endFn);
-  };
-
-  addTouch(document.getElementById('btn-up'), () => moveUp = true, () => moveUp = false);
-  addTouch(document.getElementById('btn-down'), () => moveDown = true, () => moveDown = false);
-  addTouch(document.getElementById('btn-left'), () => moveLeft = true, () => moveLeft = false);
-  addTouch(document.getElementById('btn-right'), () => moveRight = true, () => moveRight = false);
-  addTouch(document.getElementById('btn-fire'), () => isFiring = true, () => isFiring = false);
-
-  function getCanvasPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: clientX - rect.left, y: clientY - rect.top };
-  }
-
-  function handleDragStart(e) {
-    if (state.controlMode !== 'drag') return;
-    const pos = getCanvasPos(e);
-    if (Math.abs(pos.x - dragonX) < 70 && Math.abs(pos.y - dragonY) < 70) {
-      isDragging = true;
-      dragOffsetX = pos.x - dragonX;
-      dragOffsetY = pos.y - dragonY;
-    }
-  }
-
-  function handleDragMove(e) {
-    if (state.controlMode !== 'drag' || !isDragging) return;
-    const pos = getCanvasPos(e);
-    dragonX = pos.x - dragOffsetX;
-    dragonY = pos.y - dragOffsetY;
-  }
-
-  function handleDragEnd() {
-    isDragging = false;
-  }
-
-  canvas.addEventListener('touchstart', handleDragStart, { passive: false });
-  canvas.addEventListener('touchmove', handleDragMove, { passive: false });
-  canvas.addEventListener('touchend', handleDragEnd);
-  canvas.addEventListener('mousedown', handleDragStart);
-  canvas.addEventListener('mousemove', handleDragMove);
-  canvas.addEventListener('mouseup', handleDragEnd);
-
-  /* HIGH-DETAIL CANVAS DRAGON RENDER FOR FLIGHT */
-  function drawChubbyDragonCanvas(x, y, d) {
-    ctx.save();
-    ctx.translate(x, y);
-
-    ctx.shadowColor = d.glow;
-    ctx.shadowBlur = 15;
-
-    ctx.fillStyle = d.color;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.moveTo(-18, 15);
-    ctx.quadraticCurveTo(-38, 28, -42, 38);
-    ctx.quadraticCurveTo(-30, 42, -18, 24);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#f43f5e';
-    ctx.font = '16px serif';
-    ctx.fillText('💖', -48, 48);
-
-    ctx.fillStyle = d.glow;
-    ctx.beginPath();
-    ctx.moveTo(-10, -5);
-    ctx.quadraticCurveTo(-32, -35, -8, -42);
-    ctx.quadraticCurveTo(-2, -20, -2, -5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = d.color;
-    ctx.beginPath();
-    ctx.ellipse(0, 8, 28, 22, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = d.belly;
-    ctx.beginPath();
-    ctx.ellipse(8, 12, 16, 14, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = d.color;
-    ctx.beginPath();
-    ctx.arc(22, -12, 20, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#ffd700';
-    ctx.beginPath();
-    ctx.moveTo(14, -28);
-    ctx.quadraticCurveTo(8, -42, 18, -38);
-    ctx.quadraticCurveTo(20, -30, 22, -28);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#1e1b4b';
-    ctx.beginPath();
-    ctx.ellipse(30, -15, 6, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = d.glow;
-    ctx.beginPath();
-    ctx.ellipse(30, -15, 4.5, 6.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(28, -18, 2.5, 0, Math.PI * 2);
-    ctx.arc(32, -12, 1.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#f43f5e';
-    ctx.globalAlpha = 0.75;
-    ctx.beginPath();
-    ctx.ellipse(26, -6, 4, 2.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1.0;
-
-    ctx.fillStyle = d.color;
-    ctx.beginPath();
-    ctx.ellipse(36, -8, 8, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#4c0519';
-    ctx.beginPath();
-    ctx.arc(38, -10, 1, 0, Math.PI * 2);
-    ctx.arc(41, -10, 1, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  function drawPrincessMasaRiding(x, y) {
-    ctx.save();
-    ctx.translate(x - 5, y - 22);
-
-    let scale = Math.min(1.2, Math.max(0.8, 0.8 * state.equipped.size.mult));
-    ctx.scale(scale, scale);
-
-    ctx.strokeStyle = '#fbcfe8';
-    ctx.lineWidth = 3.5;
-    ctx.lineCap = 'round';
-
-    ctx.beginPath();
-    ctx.moveTo(0, 8);
-    ctx.quadraticCurveTo(-6, 18, 2, 22);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(6, 8);
-    ctx.quadraticCurveTo(14, 16, 18, 18);
-    ctx.stroke();
-
-    ctx.fillStyle = '#fbcfe8';
-    ctx.beginPath();
-    ctx.arc(2, 22, 2.5, 0, Math.PI * 2);
-    ctx.arc(18, 18, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = 8;
-    ctx.font = '22px serif';
-    ctx.fillText("👑👧🏻", -10, 8);
-
-    ctx.restore();
-  }
-
-  function spawnFlameParticles(originX, originY, baseHue) {
-    for (let i = 0; i < 12; i++) {
-      let speed = 9 + Math.random() * 7;
-      let angle = (Math.random() - 0.5) * 0.45; 
-      flameParticles.push({
-        x: originX,
-        y: originY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 10 + Math.random() * 12,
-        life: 1.0,
-        decay: 0.03 + Math.random() * 0.03,
-        hue: baseHue + (Math.random() * 30 - 15)
-      });
-    }
-  }
-
-  function updateFlyGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    let w = state.equipped.world;
-    let bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    bgGrad.addColorStop(0, w.bg1 || '#0c0414');
-    bgGrad.addColorStop(1, w.bg2 || '#26094d');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = w.pColor || '#ffffff';
-    worldWeatherParticles.forEach(p => {
-      p.x -= 1.5;
-      p.y += p.speedY;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.y > canvas.height) p.y = 0;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    if (state.controlMode === 'buttons') {
-      if (moveUp) dragonY -= 6;
-      if (moveDown) dragonY += 6;
-      if (moveLeft) dragonX -= 6;
-      if (moveRight) dragonX += 6;
-    }
-
-    dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
-    dragonX = Math.max(40, Math.min(canvas.width - 120, dragonX));
-
-    if (isFiring) {
-      let mouthX = dragonX + 42;
-      let mouthY = dragonY - 8;
-      let equippedHue = state.equipped.fire.hue !== undefined ? state.equipped.fire.hue : 20;
-      spawnFlameParticles(mouthX, mouthY, equippedHue);
-    }
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    for (let i = flameParticles.length - 1; i >= 0; i--) {
-      let p = flameParticles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.size += 0.8;
-      p.life -= p.decay;
-
-      if (p.life <= 0) {
-        flameParticles.splice(i, 1);
-        continue;
-      }
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      let alpha = p.life;
-      let lightness = 50 + (1 - p.life) * 30;
-      ctx.fillStyle = `hsla(${p.hue}, 100%, ${lightness}%, ${alpha})`;
-      ctx.shadowColor = `hsl(${p.hue}, 100%, 50%)`;
-      ctx.shadowBlur = 15;
-      ctx.fill();
-
-      for (let j = obstacles.length - 1; j >= 0; j--) {
-        let obs = obstacles[j];
-        if (Math.abs(p.x - obs.x) < obs.size && Math.abs(p.y - obs.y) < obs.size) {
-          if (w.targetType === 'destroy' && obs.icon === w.targetIcon && !missionCompletedInRun) {
-            missionCount++;
-            checkMissionVictory();
-          }
-          obstacles.splice(j, 1);
-          score += 10;
-          state.coins += 1;
-          updateUI();
-          break;
-        }
-      }
-    }
-    ctx.restore();
-
-    drawChubbyDragonCanvas(dragonX, dragonY, state.equipped.dragon);
-    drawPrincessMasaRiding(dragonX, dragonY);
-
-    if (Math.random() < 0.03) {
-      let obsList = w.obs || ['🪨', '☄️', '⚡'];
-      let chosenIcon = obsList[Math.floor(Math.random() * obsList.length)];
-      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, size: 38, icon: chosenIcon, speed: 3 + Math.random() * 3 });
-    }
-    if (Math.random() < 0.02) {
-      coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
-    }
-
-    if (w.targetType === 'item' && Math.random() < 0.02) {
-      missionPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
-    }
-
-    for (let i = coinPickups.length - 1; i >= 0; i--) {
-      let c = coinPickups[i];
-      c.x -= c.speed;
-      ctx.save();
-      ctx.shadowColor = '#ffd700';
-      ctx.shadowBlur = 10;
-      ctx.font = '26px serif';
-      ctx.fillText('🪙', c.x, c.y);
-      ctx.restore();
-
-      if (Math.abs(c.x - dragonX) < 35 && Math.abs(c.y - dragonY) < 35) {
-        coinPickups.splice(i, 1);
-        state.coins += 5;
-        updateUI();
-      }
-    }
-
-    for (let i = missionPickups.length - 1; i >= 0; i--) {
-      let mp = missionPickups[i];
-      mp.x -= mp.speed;
-      ctx.save();
-      ctx.shadowColor = '#a855f7';
-      ctx.shadowBlur = 12;
-      ctx.font = '30px serif';
-      ctx.fillText(w.targetIcon, mp.x, mp.y);
-      ctx.restore();
-
-      if (Math.abs(mp.x - dragonX) < 35 && Math.abs(mp.y - dragonY) < 35) {
-        missionPickups.splice(i, 1);
-        if (!missionCompletedInRun) {
-          missionCount++;
-          score += 20;
-          state.coins += 3;
-          checkMissionVictory();
-          updateUI();
-        }
-      }
-    }
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-      let obs = obstacles[i];
-      obs.x -= obs.speed;
-      ctx.save();
-      ctx.shadowColor = w.pColor || '#ef4444';
-      ctx.shadowBlur = 8;
-      ctx.font = obs.size + 'px serif';
-      ctx.fillText(obs.icon || '🪨', obs.x, obs.y);
-      ctx.restore();
-
-      if (Math.abs(obs.x - dragonX) < 30 && Math.abs(obs.y - dragonY) < 30) {
-        obstacles.splice(i, 1);
-        state.lives = Math.max(0, state.lives - 1);
-        state.hunger = Math.max(0, state.hunger - 15);
-        state.clean = Math.max(0, state.clean - 15);
-        state.love = Math.max(0, state.love - 15);
-        updateUI();
-
-        if (state.lives <= 0) {
-          stopFlyGame();
-          alert("Masa's dragon ran out of energy! Time to nurse it back to health in the Care screen! ❤️");
-          switchTab('care');
-          return;
-        }
-      }
-    }
-
-    document.getElementById('score-txt').innerText = score;
-    gameLoopId = requestAnimationFrame(updateFlyGame);
-  }
-
-  function checkMissionVictory() {
-    let w = state.equipped.world;
-    if (missionCount >= w.targetGoal && !missionCompletedInRun) {
-      missionCompletedInRun = true;
-      state.coins += 50;
-      state.lives = 5;
-      
-      document.getElementById('popup-title').innerText = "🎉 Mission Complete!";
-      document.getElementById('popup-msg').innerText = `Princess Masa & Her Dragon conquered the ${w.name}!\n\n+50 Bonus Coins & Full Hearts Restored!`;
-      document.getElementById('popup-dialog').classList.add('active');
-    }
-  }
-
-  function closePopupAndContinueFlying() {
-    document.getElementById('popup-dialog').classList.remove('active');
-    missionCount = 0;
-    missionCompletedInRun = false;
-    updateUI();
-  }
-
-  updateUI();
-  window.addEventListener('resize', resizeCanvas);
-</script>
-</body>
-</html>
+const $=id=>document.getElementById(id),cv=$('c'),g=cv.getContext('2d');
+const DR=[{n:'Ember',c:0,b:'#e4572e',l:'#f7c77e',w:'#b3341a',h:'#ffd36b'},{n:'Jade',c:100,b:'#2fa36b',l:'#d6f5a0',w:'#1b7a4c',h:'#fff3a8'},{n:'Frost',c:250,b:'#5aa9e6',l:'#eaf6ff',w:'#3a6fb0',h:'#ffffff'},{n:'Starlight',c:450,b:'#7a4bd6',l:'#ffd1f0',w:'#4b2a9a',h:'#7fe3ff'},{n:'Golden Sun',c:800,b:'#f2b632',l:'#fff1c0',w:'#d9822b',h:'#ff6b6b'},{n:'Obsidian',c:1200,b:'#2a2a3a',l:'#6a6a8a',w:'#ff3d5a',h:'#ff3d5a'},{n:'Crystal',c:1800,b:'#9be7ff',l:'#ffffff',w:'#c59bff',h:'#ff9be7'}];
+const WO=[{n:'Sunny Meadow',c:0,t:'#8fd3ff',m:'#eaf8ff',h:['#9bd98a','#5fb36a']},{n:'Sunset Canyon',c:150,t:'#ff8f5a',m:'#ffe0a0',h:['#c8553a','#8a3328'],sharp:1},{n:'Starry Night',c:300,t:'#0b1040',m:'#4a3a8a',h:['#2a2760','#17153f'],stars:1},{n:'Frozen Aurora',c:500,t:'#0a2a4a',m:'#6fe0c8',h:['#cfe9f5','#8fbcd6'],sharp:1,stars:1,aur:1},{n:'Candy Sky',c:700,t:'#ffb3d9',m:'#fff0b3',h:['#ff8ac4','#c76bd6']},{n:'Volcano Realm',c:1000,t:'#2b0a0a',m:'#ff6a2a',h:['#4a1a14','#220a08'],sharp:1},
+{n:'Crystal Caverns',c:500,t:'#1a0b3a',m:'#6a3fc0',h:['#3a2a7a','#1d1450'],sharp:1,stars:1,fx:'cry',sk:{r:'💎',b:'🦇',s:'🕸️',th:['#9a6bff','#5a3ac0']}},
+{n:'Coral Reef',c:800,t:'#0b4a7a',m:'#4fe0d0',h:['#ff8aa0','#c04a7a'],fx:'bub',sk:{r:'🐡',b:'🦑',s:'🪼',th:['#ff7a9a','#d04a6a']}},
+{n:'Haunted Moor',c:1100,t:'#1a1030',m:'#5a4a7a',h:['#2f2a45','#171326'],stars:1,fx:'fog',sk:{r:'🎃',b:'👻',s:'🪦',th:['#4a3a5a','#2a2038']}},
+{n:'Golden Desert',c:1500,t:'#ffb347',m:'#fff0b0',h:['#e8b45a','#c98a3a'],fx:'dune',sk:{r:'🏺',b:'🦅',s:'🌪️',th:['#4aa05a','#2f7a3f']}},
+{n:'Starfall Galaxy',c:2000,t:'#05051a',m:'#2a1a6a',h:['#2a2a6a','#14143a'],stars:1,fx:'gal',sk:{r:'☄️',b:'👾',s:'🌀',th:['#6a8aff','#3a4ac0']}}];
+let S={coins:0,dr:[0],wo:[0],sd:0,sw:0,best:0,hun:80,cle:80,lov:80};
+try{Object.assign(S,JSON.parse(localStorage.getItem('dp1')||'{}'))}catch(e){}
+S.ot=S.ot||[0];S.so=S.so||0;S.cu=S.cu||{};
+const save=()=>{try{localStorage.setItem('dp1',JSON.stringify(S))}catch(e){}};
+let W,H,mode='menu',t=0,tool='feed',last=0;
+function rs(){const d=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;g.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',rs);rs();
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+/* ---------- world ---------- */
+const clouds=[...Array(7)].map((_,i)=>({x:i*180,y:40+Math.random()*200,s:.6+Math.random()}));
+const stars=[...Array(60)].map(()=>({x:Math.random(),y:Math.random()*.6,p:Math.random()*6}));
+const curDragon=()=>{const d=Object.assign({},DR[S.sd]),c=S.cu;if(c.db)d.b=c.db;if(c.dl)d.l=c.dl;if(c.dw)d.w=c.dw;if(c.dh)d.h=c.dh;d.ey=c.de;d.ac=c.ac||0;return d};
+const curOu=()=>{const c=S.cu;return Object.assign({},OU[S.so||0],c.hr?{hr:c.hr}:{},c.cr?{cr:c.cr}:{},c.dd?{d:c.dd}:{},c.sk?{sk:c.sk}:{})};
+const magic=(c,T)=>{const h=(T*70)%360,g=c.createLinearGradient(-24,-22,22,8);g.addColorStop(0,`hsl(${h},85%,68%)`);g.addColorStop(.5,`hsl(${(h+70)%360},85%,76%)`);g.addColorStop(1,`hsl(${(h+150)%360},85%,66%)`);return g};
+const INK='#2a2038';
+function sh(h,a){const n=parseInt(h.slice(1,7),16),f=a<0?0:255,q=Math.abs(a),r=n>>16,g=n>>8&255,b=n&255;return`rgb(${Math.round(r+(f-r)*q)},${Math.round(g+(f-g)*q)},${Math.round(b+(f-b)*q)})`}
+function ol(c,w=4){c.lineWidth=w*.6;c.strokeStyle=INK;c.lineJoin='round';c.stroke()}
+function bg(c,w,Wd,Ht,sc,tm){
+ const gr=c.createLinearGradient(0,0,0,Ht);gr.addColorStop(0,w.t);gr.addColorStop(1,w.m);c.fillStyle=gr;c.fillRect(0,0,Wd,Ht);
+ if(w.stars){c.fillStyle='#fff';stars.forEach(s=>{c.globalAlpha=.5+.5*Math.sin(tm*2+s.p);c.beginPath();c.arc(s.x*Wd,s.y*Ht,1.6,0,7);c.fill()});c.globalAlpha=1}
+ if(w.aur){for(let i=0;i<3;i++){c.fillStyle=['#7fffd4','#a78bfa','#5eead4'][i]+'33';c.beginPath();c.moveTo(0,Ht*.5);for(let x=0;x<=Wd;x+=20)c.lineTo(x,Ht*(.2+.08*i)+Math.sin(x/90+tm+i)*30);c.lineTo(Wd,Ht*.5);c.fill()}}
+ const sx=Wd*.78,sy=Ht*.2;
+ if(w.stars&&!w.aur&&w.n!='Volcano Realm'){c.fillStyle='#fff6d0';c.beginPath();c.arc(sx,sy,Ht*.06,0,7);c.fill();c.fillStyle='#e8dcae';c.beginPath();c.arc(sx-Ht*.02,sy+Ht*.01,Ht*.012,0,7);c.fill()}
+ if(!w.stars){const rg=c.createRadialGradient(sx,sy,0,sx,sy,Ht*.4);rg.addColorStop(0,'#fffbd0ee');rg.addColorStop(.2,'#fff3a066');rg.addColorStop(1,'#fff3a000');c.fillStyle=rg;c.fillRect(0,0,Wd,Ht);c.fillStyle='#fffbe0';c.beginPath();c.arc(sx,sy,Ht*.05,0,7);c.fill();
+  clouds.forEach(o=>{const x=((o.x-sc*.15*o.s)%(Wd+200)+Wd+200)%(Wd+200)-100,y=o.y*Ht/600,r=22*o.s*Ht/600;c.fillStyle='#ffffffcc';c.beginPath();c.ellipse(x+r*.5,y+r*.55,r*2.6,r*.6,0,0,7);c.fill();c.fillStyle='#fff';[[0,0,1],[r,-r*.3,.8],[-r,-r*.2,.7],[r*1.8,0,.6]].forEach(q=>{c.beginPath();c.arc(x+q[0],y+q[1],r*q[2],0,7);c.fill()});c.fillStyle='#d7ecfa';c.beginPath();c.ellipse(x+r*.5,y+r*.62,r*2.2,r*.32,0,0,7);c.fill()})}
+ const cx=((1100-sc*.1)%(Wd+500)+Wd+500)%(Wd+500)-150,ch=Ht/600;c.fillStyle=w.stars?'#1d1a48':'#9fb4d9';[[0,50,34,80],[40,14,24,120],[-34,30,22,90],[68,36,22,76]].forEach(q=>{const x=cx+q[0]*ch,tw=q[2]*ch,h=q[3]*ch,b=Ht*.72;c.fillRect(x-tw/2,b-h,tw,h);c.beginPath();c.moveTo(x-tw/2-4*ch,b-h);c.lineTo(x,b-h-34*ch);c.lineTo(x+tw/2+4*ch,b-h);c.fill()});
+ const hh=(x,by,fq)=>{let v=Math.sin(x*fq*3)+.5*Math.sin(x*fq*7);if(w.sharp)v=Math.abs(v)*1.2-.3;return Ht*by-v*Ht*.09};
+ [[.5,.25,.0011,w.h[0],.6],[.6,.45,.0017,sh(w.h[0],-.12),1],[.74,.7,.0024,w.h[1],1]].forEach(([by,sp,fq,col,al],li)=>{c.globalAlpha=al;c.fillStyle=col;c.beginPath();c.moveTo(0,Ht);for(let x=0;x<=Wd;x+=8)c.lineTo(x,hh(x+sc*sp,by,fq));c.lineTo(Wd,Ht);c.fill();c.globalAlpha=1;
+  c.strokeStyle='#ffffff55';c.lineWidth=3;c.beginPath();for(let x=0;x<=Wd;x+=8){const y=hh(x+sc*sp,by,fq);x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();
+  if(li==2&&!w.sharp&&!w.stars){for(let k=Math.floor(sc*sp/150);k<(sc*sp+Wd)/150+1;k++){const wx=k*150+(k%3)*30,x=wx-sc*sp,y=hh(wx,by,fq),z=Ht/600;c.fillStyle='#7a4a2a';c.fillRect(x-4*z,y-18*z,8*z,20*z);c.fillStyle=sh(w.h[0],-.2);c.beginPath();c.arc(x,y-34*z,22*z,0,7);c.fill();ol(c,3);c.fillStyle=sh(w.h[0],.15);c.beginPath();c.arc(x-7*z,y-40*z,9*z,0,7);c.fill()}}});fxd(c,w,Wd,Ht,sc,tm)}
+function fxd(c,w,Wd,Ht,sc,tm){const f=w.fx;
+ if(f=='bub'){c.strokeStyle='#ffffff99';c.lineWidth=2;for(let i=0;i<14;i++){const x=(i*97+sc*.05)%Wd,y=Ht-((tm*40+i*83)%Ht);c.beginPath();c.arc(x,y,4+i%4*2,0,7);c.stroke()}}
+ if(f=='cry'){for(let i=0;i<10;i++){const x=((i*131-sc*.3)%Wd+Wd)%Wd,y=Ht*(.6+.3*((i*37)%10)/10);c.fillStyle=['#b48cff','#7fe3ff','#ff9be7'][i%3]+'dd';c.beginPath();c.moveTo(x,y-18);c.lineTo(x+9,y);c.lineTo(x,y+18);c.lineTo(x-9,y);c.fill();ol(c,2)}}
+ if(f=='fog'){c.fillStyle='#c8b8ff22';for(let i=0;i<4;i++){c.beginPath();c.ellipse(((i*300-sc*.2)%(Wd+300)+Wd+300)%(Wd+300)-150,Ht*(.7+i*.05),260,36,0,0,7);c.fill()}}
+ if(f=='dune'){c.fillStyle='#fff3c0aa';for(let i=0;i<30;i++)c.fillRect(((i*53-sc*.6)%Wd+Wd)%Wd,(i*71+tm*20)%Ht,2,2)}
+ if(f=='gal'){[[.2,.3,40,'#ff9b6b'],[.75,.65,26,'#6bd6ff']].forEach(([a,b,r,col])=>{const x=((Wd*a-sc*.05)%Wd+Wd)%Wd,y=Ht*b,q=r*Ht/600;c.fillStyle=col;c.beginPath();c.arc(x,y,q,0,7);c.fill();ol(c,3);c.strokeStyle='#ffffff88';c.lineWidth=3;c.beginPath();c.ellipse(x,y,q*1.7,q*.4,-.4,0,7);c.stroke()})}}
+/* ---------- drawing the dragon & princess ---------- */
+function ell(c,x,y,rx,ry,col,rot=0,o){c.fillStyle=col;c.beginPath();c.ellipse(x,y,rx,ry,rot,0,7);c.fill();if(o)ol(c,o)}
+function dragon(c,x,y,s,d,o){
+ o=o||{};const T=o.t||0,fl=Math.sin(T*(o.fast?14:4)),bob=Math.sin(T*2)*3;
+ c.save();c.translate(x,y+bob);c.scale(s,s);c.lineCap='round';c.lineJoin='round';
+ const tx=-215,ty=-10+Math.sin(T*3)*25;
+ c.beginPath();c.moveTo(-60,15);c.quadraticCurveTo(-150,30+fl*10,tx,ty);c.strokeStyle=INK;c.lineWidth=36;c.stroke();c.strokeStyle=d.b;c.lineWidth=28;c.stroke();
+ c.beginPath();c.moveTo(tx,ty);c.quadraticCurveTo(tx-20,ty-42,tx-50,ty-32);c.quadraticCurveTo(tx-34,ty-6,tx-52,ty+28);c.quadraticCurveTo(tx-20,ty+32,tx,ty);c.fillStyle=d.h;c.fill();ol(c,4);
+ const wing=k=>{const f=fl*42*(k?1:.8),P1=[-125,-135-f],P2=[-88,-92-f*.7],P3=[-38,-56-f*.3],Sd=[-8,-36];
+  c.beginPath();c.moveTo(...Sd);c.lineTo(...P1);c.quadraticCurveTo(-128,-96-f*.8,...P2);c.quadraticCurveTo(-86,-58-f*.5,...P3);c.quadraticCurveTo(-26,-44,...Sd);
+  const gw=c.createLinearGradient(-130,-100-f,0,-20);gw.addColorStop(0,sh(d.w,k?.35:.05));gw.addColorStop(1,sh(d.w,k?0:-.3));c.fillStyle=gw;c.fill();ol(c,4);
+  c.beginPath();[P1,P2,P3].forEach(q=>{c.moveTo(...Sd);c.lineTo(...q)});c.strokeStyle=sh(d.w,-.45);c.lineWidth=4;c.stroke()};
+ wing(0);
+ for(let i=0;i<6;i++){c.beginPath();c.moveTo(-70+i*22,-44+Math.abs(i-2.5)*2);c.lineTo(-61+i*22,-66);c.lineTo(-50+i*22,-44);c.fillStyle=d.h;c.fill();ol(c,3)}
+ [[-48,-.18],[48,0]].forEach(([lx,a])=>{c.beginPath();c.ellipse(lx,48,19,27,0,0,7);c.fillStyle=sh(d.b,a);c.fill();ol(c,4);[-8,0,8].forEach(q=>ell(c,lx+q,70,3.5,4.5,'#fff',0,2))});
+ const gb=c.createRadialGradient(-25,-30,8,0,0,100);gb.addColorStop(0,sh(d.b,.4));gb.addColorStop(.55,d.b);gb.addColorStop(1,sh(d.b,-.3));
+ c.beginPath();c.ellipse(0,0,90,52,0,0,7);c.fillStyle=gb;c.fill();ol(c,4.5);
+ c.save();c.clip();c.strokeStyle=sh(d.b,-.4);c.globalAlpha=.45;c.lineWidth=1.6;for(let r=-3;r<=3;r++)for(let q=-5;q<=5;q++){c.beginPath();c.arc(q*20+(r%2)*10,r*16,10,.1,Math.PI-.1);c.stroke()}c.restore();
+ ell(c,10,22,66,26,d.l);c.strokeStyle=sh(d.l,-.25);c.lineWidth=3;for(let i=0;i<5;i++){c.beginPath();c.arc(-36+i*20,10,14,.25,Math.PI-.25);c.stroke()}
+ c.fillStyle='#ffffff40';c.beginPath();c.ellipse(-12,-30,48,10,-.12,0,7);c.fill();
+ if(o.dirt>.1){c.fillStyle='rgba(90,60,30,'+o.dirt*.7+')';[[-50,-20,12],[20,-30,9],[60,10,11],[-20,25,8]].forEach(q=>{c.beginPath();c.arc(q[0],q[1],q[2],0,7);c.fill()})}
+ c.beginPath();c.moveTo(58,-12);c.lineTo(98,-52);c.strokeStyle=INK;c.lineWidth=48;c.stroke();c.strokeStyle=d.b;c.lineWidth=40;c.stroke();
+ const hx=102,hy=-58,hd=[[hx,hy,38,34],[hx+36,hy+12,32,22]];
+ c.strokeStyle=INK;c.lineWidth=9;hd.forEach(q=>{c.beginPath();c.ellipse(q[0],q[1],q[2],q[3],0,0,7);c.stroke()});
+ const gh=c.createRadialGradient(hx-10,hy-16,4,hx+10,hy,60);gh.addColorStop(0,sh(d.b,.35));gh.addColorStop(1,d.b);c.fillStyle=gh;hd.forEach(q=>{c.beginPath();c.ellipse(q[0],q[1],q[2],q[3],0,0,7);c.fill()});
+ const m=o.mouth||0;
+ if(m>.2){ell(c,hx+40,hy+24,22,6+m*9,'#6b1a2b',0,3);ell(c,hx+38,hy+30,12,5+m*3,'#ff8aa8');c.fillStyle='#fff';[0,1,2].forEach(i=>{c.beginPath();c.moveTo(hx+24+i*10,hy+19);c.lineTo(hx+29+i*10,hy+19);c.lineTo(hx+27+i*10,hy+26);c.fill()})}
+ else{c.beginPath();c.arc(hx+40,hy+12,17,.2,Math.PI*.72);c.strokeStyle=INK;c.lineWidth=3.5;c.stroke()}
+ ell(c,hx+62,hy+5,3.5,2.5,INK);
+ c.beginPath();c.moveTo(hx-2,hy-17);c.quadraticCurveTo(hx+18,hy-28,hx+36,hy-14);c.strokeStyle=INK;c.lineWidth=5;c.stroke();
+ [[hx-14,hy-24,hx-40,hy-50,hx-46,hy-74,hx-20,hy-52,hx+4,hy-30],[hx+6,hy-28,hx-6,hy-58,hx-14,hy-70,hx+10,hy-52,hx+24,hy-26]].forEach(q=>{c.beginPath();c.moveTo(q[0],q[1]);c.quadraticCurveTo(q[2],q[3],q[4],q[5]);c.quadraticCurveTo(q[6],q[7],q[8],q[9]);c.fillStyle=d.h;c.fill();ol(c,3.5)});
+ if(o.eyes){c.beginPath();c.arc(hx+17,hy-4,10,.1*Math.PI,.9*Math.PI);c.strokeStyle=INK;c.lineWidth=4;c.stroke()}
+ else{ell(c,hx+16,hy-6,12,14,'#fff',0,3);ell(c,hx+19,hy-5,8,10,d.ey||'#2fb5f0');ell(c,hx+20,hy-5,4.5,6.5,INK);ell(c,hx+23,hy-10,3,3,'#fff');ell(c,hx+17,hy,1.6,1.6,'#fff');c.beginPath();c.arc(hx+16,hy-6,12,Math.PI*1.05,Math.PI*1.95);c.strokeStyle=INK;c.lineWidth=4;c.stroke()}
+ if(o.blush)ell(c,hx+36,hy+8,9,5,'#ff7aa8aa');
+ const ac=d.ac;
+ if(ac==1){c.beginPath();c.moveTo(66,-20);c.quadraticCurveTo(80,-4,96,-28);c.strokeStyle=INK;c.lineWidth=19;c.stroke();c.strokeStyle='#e0334f';c.lineWidth=12;c.stroke();c.beginPath();c.moveTo(70,-10);c.quadraticCurveTo(50,8+fl*8,28,30+fl*10);c.strokeStyle=INK;c.lineWidth=16;c.stroke();c.strokeStyle='#e0334f';c.lineWidth=10;c.stroke()}
+ if(ac==2){c.fillStyle='#ff4d9a';[[1],[-1]].forEach(([k])=>{c.beginPath();c.moveTo(80,-14);c.lineTo(80+k*24,-30);c.lineTo(80+k*24,2);c.closePath();c.fill();ol(c,3)});ell(c,80,-14,6,6,'#ffd36b',0,3)}
+ if(ac==3){c.beginPath();c.moveTo(hx+2,hy-8);c.lineTo(hx-28,hy-16);c.strokeStyle='#111';c.lineWidth=4;c.stroke();ell(c,hx+16,hy-6,15,12,'#16161e',0,3);ell(c,hx+11,hy-10,4,2,'#ffffff99')}
+ if(ac==4){for(let i=0;i<5;i++){const fx=hx-26+i*13,fy=hy-32+Math.abs(i-2)*5;ell(c,fx,fy,7,7,['#ff7aa8','#fff','#ffd36b'][i%3],0,2);ell(c,fx,fy,2.5,2.5,'#f2b632')}}
+ wing(1);
+ princess(c,o.hug?(1):0,fl,T,o.fast,0,o.magic);
+ c.restore()}
+const OU=[{n:'Rose Gown',c:0,d:'#ff7aa8',tr:'#ffc2d6',hr:'#f5b83c',cr:'#ffd36b'},{n:'Sky Dress',c:80,d:'#5aa9e6',tr:'#bfe3ff',hr:'#8a5a2b',cr:'#e8f4ff'},{n:'Forest Ranger',c:200,d:'#3f9b5f',tr:'#c9e86a',hr:'#c0502a',cr:'#7fe3a0',cape:'#2a6a45'},{n:'Star Queen',c:400,d:'#7a4bd6',tr:'#ffd36b',hr:'#2b1b4a',cr:'#7fe3ff',cape:'#4b2a9a',star:1},{n:'Golden Empress',c:700,d:'#f2b632',tr:'#fff1c0',hr:'#5a2a1a',cr:'#ff6b6b',cape:'#d9822b'},{n:'Dragon Knight',c:1000,d:'#aab4c8',tr:'#ff4d6d',hr:'#f5b83c',cr:'#c8d0e0',cape:'#c0304d',kn:1}];
+function princess(c,hug,fl,T,fast,ou,mg){ou=ou||curOu();
+ const px=hug?78:-10,py=hug?-14:-62,hd=hug?10:0;c.save();c.translate(px,py);
+ if(ou.cape){c.fillStyle=ou.cape;c.beginPath();c.moveTo(-6,-22);c.quadraticCurveTo(-24-(fast?30:6),-8+fl*6,-32-(fast?36:8),10+fl*8+hd);c.lineTo(-16,6+hd);c.fill();ol(c,2.2)}
+ c.fillStyle=mg?magic(c,T):ou.d;c.beginPath();c.moveTo(-6,-22);c.lineTo(-24,8+hd);c.lineTo(22,8+hd);c.lineTo(8,-22);c.fill();ol(c,2.2);
+ c.fillStyle=ou.tr;c.beginPath();c.moveTo(-24,4+hd);c.lineTo(-24,8+hd);c.lineTo(22,8+hd);c.lineTo(22,4+hd);c.fill();ol(c,2.2);
+ if(ou.kn){c.fillStyle='#e6ebf5';c.fillRect(-7,-21,14,12);c.fillStyle=ou.tr;c.fillRect(-7,-10,14,3)}
+ if(mg){c.save();c.font='700 8.5px Fredoka,sans-serif';c.textAlign='center';c.lineWidth=2;c.strokeStyle='#6a2fc0';c.strokeText('MASA',-1,2);c.fillStyle='#fff';c.fillText('MASA',-1,2);c.font='9px sans-serif';for(let i=0;i<4;i++){c.globalAlpha=.5+.5*Math.sin(T*4+i*2);c.fillText('✨',-30+i*20,-24+Math.sin(T*2+i)*10)}c.restore()}
+ if(ou.star){c.font='11px sans-serif';c.textAlign='center';c.fillText('✨',0,-6)}
+ ell(c,0,-32,13,13,(ou.sk||'#ffd9b8'),0,2.2);
+ c.fillStyle=ou.hr;c.beginPath();c.arc(-2,-36,14,Math.PI*.95,Math.PI*2.05);c.fill();ol(c,2.2);
+ c.beginPath();c.moveTo(-14,-34);const hl=fast?36:16;c.quadraticCurveTo(-24-hl*.5,-26+fl*4,-16-hl,-14+fl*6);c.lineTo(-10,-26);c.fill();ol(c,2.2);
+ c.fillStyle=ou.cr;c.beginPath();c.moveTo(-9,-44);c.lineTo(-8,-54);c.lineTo(-3,-47);c.lineTo(2,-55);c.lineTo(7,-47);c.lineTo(12,-54);c.lineTo(11,-44);c.fill();ol(c,2.2);
+ if(ou.kn){c.fillStyle=ou.tr;c.beginPath();c.moveTo(2,-55);c.quadraticCurveTo(-4+fl*3,-70,-14+fl*5,-62);c.lineTo(0,-52);c.fill();ol(c,2.2)}
+ ell(c,5,-32,2,2.5,'#2b1b4a');ell(c,8,-27,5,2,'#ff7aa855');
+ c.strokeStyle=(ou.sk||'#ffd9b8');c.lineWidth=6;c.lineCap='round';c.beginPath();
+ if(hug){c.moveTo(6,-12);c.lineTo(34,-22);c.moveTo(-4,-12);c.lineTo(26,-6)}else{c.moveTo(8,-14);c.lineTo(30,-20+fl*2)}c.strokeStyle=INK;c.lineWidth=9;c.stroke();c.strokeStyle=(ou.sk||'#ffd9b8');c.lineWidth=6;c.stroke();c.restore()}
+function flame(c,x,y,len,tm){const gr=c.createLinearGradient(x,0,x+len,0);gr.addColorStop(0,'#fff7b0');gr.addColorStop(.35,'#ffb23d');gr.addColorStop(1,'#ff3d1a00');c.fillStyle=gr;c.beginPath();c.moveTo(x,y-6);for(let i=0;i<=10;i++){const k=i/10;c.lineTo(x+k*len,y-6-k*(34+Math.sin(tm*30+i*2)*10))}for(let i=10;i>=0;i--){const k=i/10;c.lineTo(x+k*len,y+6+k*(34+Math.sin(tm*27+i*3)*10))}c.shadowColor='#ff8a3d';c.shadowBlur=22;c.fill();c.shadowBlur=0}
+/* ---------- particles ---------- */
+let P=[];const pf=(x,y,e,col,n=1,sp=60)=>{for(let i=0;i<n;i++)P.push({x,y,vx:(Math.random()-.5)*sp,vy:-Math.random()*sp-10,l:1,e,col})};
+function drawP(dt){P=P.filter(p=>(p.l-=dt)>0);P.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.e=='💥'||p.e=='•'?120:-10)*dt;g.globalAlpha=cl(p.l,0,1);g.font='22px sans-serif';g.textAlign='center';g.fillStyle=p.col||'#fff';g.fillText(p.e,p.x,p.y)});g.globalAlpha=1}
+/* ---------- care mode ---------- */
+let care={apple:null,munch:0,hug:0,mx:0,my:0,down:0,acc:0};
+const D=()=>({x:W/2-W*.02,y:H*.62,s:Math.min(W/560,H/420)});
+const HINT={feed:'Tap anywhere to throw an apple 🍎',wash:'Drag over the dragon to scrub 🧽',pet:'Drag over the dragon to stroke 🖐️',hug:'Tap the dragon for a hug 🤗'};
+function careStep(dt){
+ S.hun=cl(S.hun-.35*dt,0,100);S.cle=cl(S.cle-.25*dt,0,100);S.lov=cl(S.lov-.25*dt,0,100);
+ bg(g,WO[S.sw],W,H,t*20,t);{const gg=g.createLinearGradient(0,H*.78,0,H);gg.addColorStop(0,sh(WO[S.sw].h[1],.15));gg.addColorStop(1,sh(WO[S.sw].h[1],-.2));g.fillStyle=gg;g.fillRect(0,H*.78,W,H*.22)}g.fillStyle='#0002';g.fillRect(0,H*.78,W,6);
+ const d=D(),dr=curDragon();care.munch=Math.max(0,care.munch-dt);care.hug=Math.max(0,care.hug-dt);
+ ell(g,d.x-10*d.s,d.y+86*d.s,115*d.s,14*d.s,'#0003');const happy=care.hug>0||(care.down&&tool=='pet')||S.lov>85;
+ dragon(g,d.x+(care.down&&tool=='wash'?Math.sin(t*45)*4:0),d.y,d.s*(1+(care.hug>0?.04*Math.sin(t*10):0)),dr,{magic:1,t,eyes:care.hug>0||(care.down&&tool=='pet'),mouth:care.munch>0?Math.abs(Math.sin(t*14)):care.apple?.8:0,hug:care.hug>0,dirt:1-S.cle/100,blush:happy});
+ if(care.apple){const a=care.apple;a.k+=dt*1.3;const mx=d.x+(138)*d.s,my=d.y+(-34)*d.s;a.x+=(mx-a.x)*Math.min(1,dt*6);a.y+=(my-a.y)*Math.min(1,dt*6);g.font=(34*d.s)+'px sans-serif';g.textAlign='center';g.fillText('🍎',a.x,a.y);
+  if(Math.hypot(mx-a.x,my-a.y)<14){care.apple=null;care.munch=.9;[0,140,280].forEach(ms=>setTimeout(()=>Snd.n(.09,1800,.14,3),ms));setTimeout(()=>Snd.sl(240,110,.22,'sine',.09),480);pf(mx,my-30,'+14 🍎',0,1,20);S.hun=cl(S.hun+14,0,100);if(S.hun<97)S.coins+=2;pf(mx,my,'💚',0,3);save()}}
+ if(care.down&&(tool=='wash'||tool=='pet')){g.font='40px sans-serif';g.textAlign='center';g.fillText(tool=='wash'?'🧽':'🖐️',care.mx,care.my)}
+ drawP(dt);
+ g.font='600 15px Fredoka,sans-serif';g.textAlign='center';g.fillStyle='#fff';
+ const msg=S.hun<25?'Ember is hungry! 🍎':S.cle<25?'Ember needs a bath! 🧼':S.lov<25?'Ember wants cuddles 💗':'';const tx=msg||HINT[tool];g.font='600 16px Fredoka,sans-serif';const tw=g.measureText(tx).width+24,ty=Math.max(64,H*.12);g.fillStyle='#2b1b4acc';g.fillRect(W/2-tw/2,ty,tw,30);g.fillStyle='#fff';g.fillText(tx,W/2,ty+21)}
+function careDo(x,y,move){
+ const d=D(),near=Math.hypot(x-d.x,y-d.y)<210*d.s,up=d.y-130*d.s;
+ if(tool=='feed'){if(move||care.apple||care.munch>0)return;if(S.hun>=99){pf(d.x,up,'😋 Full!',0,1,20);Snd.sl(500,300,.2,'triangle');return}care.apple={x,y,k:0};Snd.sl(300,900,.25,'sine',.05);Snd.n(.25,1500,.06);return}
+ if(!near)return;
+ if(tool=='wash'&&move){S.cle=cl(S.cle+2,0,100);care.acc++;if(Snd.th('w',90))Snd.n(.13,2600,.08,2);if(Snd.th('wb',230))Snd.sl(700+Math.random()*600,1600,.09,'sine',.05);pf(x,y,'🫧',0,2,70);if(care.acc%25==0)pf(x,up,'+🧼',0,1,20);if(care.acc%10==0&&S.cle<97){S.coins++;save()}}
+ if(tool=='pet'&&move){S.lov=cl(S.lov+1.5,0,100);care.acc++;if(Snd.th('p',110))Snd.sl(75,62,.14,'sawtooth',.05);if(Snd.th('pc',650))Snd.sl(520,820,.28,'sine',.04);if(care.acc%4==0)pf(x,y,'💗',0,1,50);if(care.acc%25==0)pf(x,up,'+💗',0,1,20);if(care.acc%12==0&&S.lov<97){S.coins++;save()}}
+ if(tool=='hug'&&!move&&care.hug<=0){care.hug=2.6;S.lov=cl(S.lov+22,0,100);if(S.lov<97)S.coins+=3;for(let i=0;i<8;i++)pf(d.x+60*d.s,d.y-80*d.s,'💖',0,1,120);pf(d.x,up,'+22 💗',0,1,20);[523,659,784].forEach((f,i)=>setTimeout(()=>Snd.p(f,.9,'sine',.06),i*120));Snd.n(.15,600,.07);save()}}
+const Snd={a:null,on:true,init(){if(!this.a)try{this.a=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}if(this.a&&this.a.state=='suspended')this.a.resume()},
+p(f,d,ty='square',v=.06){if(!this.a||!this.on)return;const o=this.a.createOscillator(),n=this.a.createGain(),T=this.a.currentTime;o.type=ty;o.frequency.value=f;n.gain.setValueAtTime(v,T);n.gain.exponentialRampToValueAtTime(.001,T+d);o.connect(n);n.connect(this.a.destination);o.start();o.stop(T+d)},
+n(d,f,v=.08,q=1){if(!this.a||!this.on)return;const a=this.a,L=Math.floor(a.sampleRate*d),b=a.createBuffer(1,L,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<L;i++)x[i]=(Math.random()*2-1)*(1-i/L);const o=a.createBufferSource(),fl=a.createBiquadFilter(),n=a.createGain();o.buffer=b;fl.type='bandpass';fl.frequency.value=f;fl.Q.value=q;n.gain.value=v;o.connect(fl);fl.connect(n);n.connect(a.destination);o.start()},
+sl(f1,f2,d,ty='sine',v=.07){if(!this.a||!this.on)return;const a=this.a,o=a.createOscillator(),n=a.createGain(),T=a.currentTime;o.type=ty;o.frequency.setValueAtTime(f1,T);o.frequency.exponentialRampToValueAtTime(f2,T+d);n.gain.setValueAtTime(v,T);n.gain.exponentialRampToValueAtTime(.001,T+d);o.connect(n);n.connect(a.destination);o.start();o.stop(T+d)},
+th(k,ms){const t=performance.now();this._t=this._t||{};if(this._t[k]>t-ms)return false;this._t[k]=t;return true},
+music(){if(this.mt||!this.a)return;const sc=[0,3,5,7,10,12,10,7],base=[220,196,175,196];let i=0;this.mt=setInterval(()=>{if(!this.on||mode=='menu')return;const b=base[Math.floor(i/8)%4];this.p(b*Math.pow(2,sc[i%8]/12),.35,'triangle',.04);if(i%4==0)this.p(b/2,.5,'sine',.05);i++},300)}};
+function hurt(){F.lives--;F.inv=1.5;pf(F.x,F.y,'💫',0,5,120);Snd.p(110,.3,'sawtooth',.08);if(F.lives<=0)over()}
+function boss(dt,dx,s,mx,my){const z=H/560;
+ if(!F.boss&&F.t>=F.nb){F.boss={x:W+150,y:H/2,hp:18,sh:1.5};Snd.p(90,.6,'sawtooth',.1)}
+ const b=F.boss;if(!b)return;
+ b.x+=((W-130*z)-b.x)*Math.min(1,dt*1.5);b.y=H/2+Math.sin(t*1.3)*H*.3;b.sh-=dt;
+ if(b.sh<=0){b.sh=1.4;F.obs.push({k:'rock',x:b.x-60*z,y:b.y,r:22*z,ph:0})}
+ if(F.fire&&b.x>mx&&Math.abs(b.y-my)<80*z){b.hp-=4*dt;if(Math.random()<.3)pf(b.x-40*z,b.y,'💥',0,1,100)}
+ g.font=(170*z)+'px sans-serif';g.textAlign='center';g.fillText('🐲',b.x,b.y+55*z);
+ g.fillStyle='#0006';g.fillRect(W/2-80,H-26,160,10);g.fillStyle='#ff4d7d';g.fillRect(W/2-80,H-26,160*Math.max(0,b.hp)/18,10);
+ if(!F.inv&&Math.hypot(b.x-dx,b.y-F.y)<70*z+40*s){hurt();if(mode!='fly')return}
+ if(b.hp<=0){S.coins+=25;F.sco+=100;for(let i=0;i<14;i++)pf(b.x,b.y,'🪙',0,1,200);Snd.p(520,.4,'triangle');F.boss=null;F.nb=F.t+45;save()}}
+/* ---------- castle ---------- */
+let cs={talk:0,tw:0};
+let CWc=null,CWk='';
+function hallLayer(){const key=W+'x'+H;if(CWc&&CWk==key)return CWc;CWk=key;const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),k=Math.min(W/700,H/520),fy=H*.58;
+ const gr=x.createLinearGradient(0,0,0,fy);gr.addColorStop(0,'#6a5898');gr.addColorStop(1,'#2e2248');x.fillStyle=gr;x.fillRect(0,0,W,fy);
+ const bh=26*k,bw=64*k;x.strokeStyle='#0000002e';x.lineWidth=1.5;x.beginPath();for(let r=0;r*bh<fy;r++){x.moveTo(0,r*bh);x.lineTo(W,r*bh);for(let q=(r%2)*bw/2;q<W;q+=bw){x.moveTo(q,r*bh);x.lineTo(q,r*bh+bh)}}x.stroke();
+ x.fillStyle='#ffffff10';for(let i=0;i<70;i++){const r=(i*7)%Math.floor(fy/bh),q=((i*53)%Math.floor(W/bw))*bw+(r%2)*bw/2;x.fillRect(q+2,r*bh+2,bw-4,bh-4)}
+ [.12,.88].forEach(a=>{const cx=W*a,w=84*k,y=H*.1,h=H*.42,sg=x.createLinearGradient(0,y,0,y+h);sg.addColorStop(0,'#9fdcff');sg.addColorStop(1,'#ffe9b4');
+  x.beginPath();x.moveTo(cx-w/2,y+h);x.lineTo(cx-w/2,y+w/2);x.arc(cx,y+w/2,w/2,Math.PI,0);x.lineTo(cx+w/2,y+h);x.closePath();x.fillStyle=sg;x.fill();ol(x,9);
+  x.strokeStyle='#e8b84a';x.lineWidth=3*k+1;x.beginPath();x.moveTo(cx,y);x.lineTo(cx,y+h);x.moveTo(cx-w/2,y+h*.5);x.lineTo(cx+w/2,y+h*.5);x.stroke();
+  [['#ff7aa8',-1],['#7fe3ff',1]].forEach(([col,sd])=>{x.fillStyle=col+'88';x.fillRect(cx+(sd<0?-w/2+4:4),y+w/2,w/2-8,h*.18)})});
+ [.34,.66].forEach(a=>{const cx=W*a,w=20*k,h=H*.28;x.beginPath();x.moveTo(cx-w,0);x.lineTo(cx+w,0);x.lineTo(cx+w,h);x.lineTo(cx,h+22*k);x.lineTo(cx-w,h);x.closePath();x.fillStyle='#b8243f';x.fill();ol(x,4);x.strokeStyle='#ffd36b';x.lineWidth=3;x.stroke();x.font=(28*k)+'px sans-serif';x.textAlign='center';x.fillText('💎',cx,h*.55)});
+ const cxm=W/2,cy=H*.2,cr=44*k;x.fillStyle='#d9a93a';x.beginPath();x.moveTo(cxm-cr,cy-cr);x.lineTo(cxm+cr,cy-cr);x.lineTo(cxm+cr,cy+cr*.3);x.quadraticCurveTo(cxm+cr,cy+cr*1.2,cxm,cy+cr*1.5);x.quadraticCurveTo(cxm-cr,cy+cr*1.2,cxm-cr,cy+cr*.3);x.closePath();x.fill();ol(x,6);
+ x.fillStyle='#b8243f';x.beginPath();x.moveTo(cxm-cr*.8,cy-cr*.8);x.lineTo(cxm+cr*.8,cy-cr*.8);x.lineTo(cxm+cr*.8,cy+cr*.25);x.quadraticCurveTo(cxm+cr*.8,cy+cr*.95,cxm,cy+cr*1.2);x.quadraticCurveTo(cxm-cr*.8,cy+cr*.95,cxm-cr*.8,cy+cr*.25);x.closePath();x.fill();
+ x.textAlign='center';x.font=(34*k)+'px sans-serif';x.fillText('👑',cxm,cy-cr*.1);x.font=(24*k)+'px sans-serif';x.fillText('💎',cxm,cy+cr*.75);
+ x.fillStyle='#ffd36b';x.fillRect(W/2-96*k,cy+cr*1.7,192*k,26*k);x.strokeStyle=INK;x.lineWidth=3;x.strokeRect(W/2-96*k,cy+cr*1.7,192*k,26*k);x.fillStyle=INK;x.font='700 '+(15*k)+'px Fredoka,sans-serif';x.fillText('👑 CROWN JEWEL',W/2,cy+cr*1.7+18*k);
+ const fl=x.createLinearGradient(0,fy,0,H);fl.addColorStop(0,'#3a2a58');fl.addColorStop(1,'#1c1230');x.fillStyle=fl;x.fillRect(0,fy,W,H-fy);
+ let yy=fy;for(let r=0;r<7;r++){const hh=(H-fy)*(r+1)/28;for(let q=-1;q<13;q++){x.fillStyle=(q+r)%2?'#ffffff12':'#00000022';x.fillRect(q*W/12+(r%2)*W/24,yy,W/12,hh)}yy+=hh}
+ x.fillStyle='#b8243f';x.beginPath();x.moveTo(W*.44,fy);x.lineTo(W*.56,fy);x.lineTo(W*.74,H);x.lineTo(W*.26,H);x.fill();x.strokeStyle='#ffd36b';x.lineWidth=3;x.stroke();
+ CWc=c;return c}
+function eluD(c,x,y,s,T,talk){c.save();c.translate(x,y);c.scale(s,s);c.lineJoin='round';c.lineCap='round';const b=Math.sin(T*2.2)*2;
+ c.fillStyle='#22305e';c.fillRect(-18,-44,14,44);c.fillRect(4,-44,14,44);ol(c,3);
+ c.beginPath();c.moveTo(-30,-40);c.lineTo(-25,-112+b);c.lineTo(25,-112+b);c.lineTo(30,-40);c.closePath();c.fillStyle='#2e4a9a';c.fill();ol(c,4);
+ c.beginPath();c.moveTo(-8,-112+b);c.lineTo(0,-70);c.lineTo(8,-112+b);c.fillStyle='#fff';c.fill();ol(c,2.5);
+ [-90,-72,-54].forEach(q=>ell(c,0,q+b,3,3,'#ffd36b',0,1.5));
+ c.beginPath();c.moveTo(24,-102+b);c.lineTo(50,-124+Math.sin(T*5)*10);c.strokeStyle=INK;c.lineWidth=16;c.stroke();c.strokeStyle='#2e4a9a';c.lineWidth=10;c.stroke();ell(c,52,-128+Math.sin(T*5)*10,7,7,'#fff',0,2.5);
+ c.beginPath();c.moveTo(-24,-102+b);c.lineTo(-40,-70);c.strokeStyle=INK;c.lineWidth=16;c.stroke();c.strokeStyle='#2e4a9a';c.lineWidth=10;c.stroke();ell(c,-40,-68,7,7,'#fff',0,2.5);
+ c.fillStyle='#e0334f';c.beginPath();c.moveTo(0,-108+b);c.lineTo(-11,-114+b);c.lineTo(-11,-102+b);c.closePath();c.moveTo(0,-108+b);c.lineTo(11,-114+b);c.lineTo(11,-102+b);c.closePath();c.fill();ol(c,2);
+ c.fillStyle='#ffd36b';c.fillRect(6,-98+b,20,10);ol(c,1.5);c.fillStyle=INK;c.font='700 8px Fredoka,sans-serif';c.textAlign='center';c.fillText('Elu',16,-90+b);
+ ell(c,0,-134+b,26,28,'#f1c9a5',0,3.5);ell(c,-26,-132+b,6,11,'#e8e8f0',0,2.5);ell(c,26,-132+b,6,11,'#e8e8f0',0,2.5);
+ c.fillStyle='#2e4a9a';c.beginPath();c.ellipse(0,-157+b,30,8,0,0,7);c.fill();ol(c,3);c.fillRect(-20,-178+b,40,22);ol(c,3);c.fillStyle='#ffd36b';c.fillRect(-20,-164+b,40,6);
+ [-9,9].forEach(q=>{ell(c,q,-138+b,5,6,'#fff',0,2);ell(c,q+1,-138+b,2.4,3,INK);c.beginPath();c.moveTo(q-6,-148+b);c.lineTo(q+6,-146+b);c.strokeStyle='#bbb';c.lineWidth=3;c.stroke()});
+ ell(c,0,-130+b,5,4,'#e8a98a',0,2);
+ const m=talk>0?Math.abs(Math.sin(T*12))*5:0;ell(c,0,-118+b,6,2+m,'#6b1a2b',0,2);
+ c.fillStyle='#5a3a22';[-1,1].forEach(k=>{c.beginPath();c.moveTo(0,-124+b);c.quadraticCurveTo(k*14,-120+b,k*20,-128+b);c.quadraticCurveTo(k*12,-114+b,0,-121+b);c.fill();ol(c,1.5)});
+ c.restore()}
+function castleStep(dt){const k=Math.min(W/700,H/520);cs.talk=Math.max(0,cs.talk-dt);cs.tw=Math.max(0,cs.tw-dt);
+ g.drawImage(hallLayer(),0,0,W,H);
+ [.12,.88].forEach(a=>{const x=W*a,sd=a<.5?1:-1,al=.1+.05*Math.sin(t*1.3+a*5),rg=g.createLinearGradient(x,H*.15,x+sd*W*.2,H);rg.addColorStop(0,`rgba(255,240,180,${al*2})`);rg.addColorStop(1,'rgba(255,240,180,0)');g.fillStyle=rg;g.beginPath();g.moveTo(x-30*k,H*.15);g.lineTo(x+30*k,H*.15);g.lineTo(x+sd*W*.3+70*k,H);g.lineTo(x+sd*W*.3-70*k,H);g.fill()});
+ g.fillStyle='#fff6c8';for(let i=0;i<20;i++){g.globalAlpha=.25+.2*Math.sin(t*2+i);g.fillRect((i*97+t*9)%W,(i*61+Math.sin(t+i)*24)%(H*.8)+H*.1,2,2)}g.globalAlpha=1;
+ const pxx=W*.74,pyy=H*.68,ps=k*2.3,sp=cs.tw>0?Math.cos(cs.tw*7):1;
+ const rg=g.createRadialGradient(pxx,pyy-60*ps,5,pxx,pyy-60*ps,110*ps);rg.addColorStop(0,'#ffe8ff99');rg.addColorStop(1,'#ffe8ff00');g.fillStyle=rg;g.fillRect(pxx-120*ps,pyy-180*ps,240*ps,200*ps);
+ ell(g,pxx,pyy+4*ps,40*ps,7*ps,'#0004');
+ g.save();g.translate(pxx,pyy);g.scale(ps*sp,ps);g.translate(10,54);princess(g,0,Math.sin(t*3),t,0,0,1);g.restore();
+ eluD(g,W*.24,pyy,k*1.4,t,cs.talk);
+ g.fillStyle='#8a5a2e';g.fillRect(W*.1,pyy-26*k*1.4,W*.28,40*k*1.4);ol(g,4);g.fillStyle='#ffd36b';g.fillRect(W*.17,pyy-14*k*1.4,W*.14,12*k*1.4);ol(g,2.5);g.font='700 '+(9*k*1.4)+'px Fredoka,sans-serif';g.fillStyle=INK;g.fillText('CONCIERGE',W*.24,pyy-4*k*1.4);g.font=(26*k*1.4)+'px sans-serif';g.fillText('🛎️',W*.34,pyy-30*k*1.4);
+ const vg=g.createRadialGradient(W/2,H*.5,Math.min(W,H)*.35,W/2,H*.5,Math.max(W,H)*.75);vg.addColorStop(0,'#0000');vg.addColorStop(1,'#000000aa');g.fillStyle=vg;g.fillRect(0,0,W,H);
+ drawP(dt)}
+function castleTap(x){if(x<W*.5){eluOpen();Snd.p(1320,.5,'sine',.05)}else{cs.tw=1.2;Snd.sl(800,1800,.45,'sine',.06);for(let i=0;i<8;i++)pf(W*.74,H*.55,'✨',0,1,140)}}
+function castle(){Snd.init();Snd.music();mode='castle';$('menu').classList.add('hide');ui();eluOpen(1);Snd.p(1320,.5,'sine',.05)}
+const EQ=[[/masa/,'masa'],[/coin|earn|money|point|rich/,'coins'],[/style|custom|colou?r|dress|hair|outfit|look|wear/,'style'],[/shop|buy|unlock|dragon/,'shop'],[/world|level|where|map/,'worlds'],[/care|feed|wash|pet|hug|hungry|dirty/,'care'],[/fly|play|race|go/,'fly'],[/gift|free|present/,'gift'],[/hello|hi\b|hey/,'hi'],[/thank/,'thx']];
+function say(t){cs.talk=2.5;$('et').textContent=t;$('elu').classList.remove('hide');Snd.sl(500,650,.1,'triangle',.05)}
+function eluOpen(g){const h=new Date().getHours();say((g?(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', Your Highness! Welcome to Crown Jewel Castle! I am Elu, your concierge. ':'')+'How may I help you today?');$('eb').innerHTML=[['coins','🪙 Earn coins'],['style','🎨 Style Studio'],['worlds','🌍 Worlds'],['care','🍎 Care tips'],['fly','✈️ Go flying'],['gift','🎁 Daily gift'],['shop','🛍️ Shop']].map(([k,n])=>`<button onclick="eluAct('${k}')">${n}</button>`).join('')}
+function eluAct(k){const td=new Date().toDateString();
+ if(k=='coins')say('You earn 🪙 by flying: burn rocks and bats, grab coins, and defeat the boss dragon! Feeding, washing, petting and hugging Ember earns coins too, and a happy dragon pays bonus coins.');
+ else if(k=='style'){say('Right away, Your Highness!');studio()}
+ else if(k=='shop'){say('The royal shop awaits!');shop()}
+ else if(k=='fly'){say('Off you go! Burn the rocks, dodge the lightning and thorns!');setTimeout(startFly,700)}
+ else if(k=='care')say('Ember gets hungry, dirty and lonely over time. Tap Feed, Wash, Pet or Hug in the home to keep the three hearts bars full.');
+ else if(k=='worlds'){const nx=WO.findIndex((w,i)=>!S.wo.includes(i));say(`You own ${S.wo.length} of ${WO.length} worlds, and every world has its own dangers! `+(nx>=0?`Next up: ${WO[nx].n} for ${WO[nx].c} 🪙.`:'You have them all!'))}
+ else if(k=='gift'){if(S.gift!=td){S.gift=td;S.coins+=25;save();ui();say('A royal gift of 25 🪙 for you! Come back tomorrow for more.');[660,880,1100].forEach((f,i)=>setTimeout(()=>Snd.p(f,.2,'sine',.07),i*100))}else say('You already took today\'s gift. Come back tomorrow!')}
+ else if(k=='masa')say('Her shimmering gown spells MASA in magic thread, and it glows whenever she is home or in the castle.');
+ else if(k=='hi')say('Hello hello! What can I do for you?');
+ else if(k=='thx')say('My pleasure, Your Highness!');}
+function ask(){const q=$('ei').value.toLowerCase();$('ei').value='';if(!q)return;const m=EQ.find(e=>e[0].test(q));m?eluAct(m[1]):say('Hmm, I am not sure, but I can help with coins, styling, worlds, care tips or flying. Just tap a button!')}
+function back(){clearInterval(window.pv);if(mode=='castle'){$('menu').classList.add('hide');ui()}else home()}
+function studio(){mode=mode=='over'?'care':mode;const m=$('menu');m.classList.remove('hide');const d=DR[S.sd],o=OU[S.so||0],c=S.cu;
+ const ci=(l,k,def)=>`<label style="display:inline-flex;flex-direction:column;font-size:12px;font-weight:600;margin:4px 6px">${l}<input type=color value="${c[k]||def}" oninput="cus('${k}',this.value)" style="width:56px;height:34px;border:3px solid var(--ink);border-radius:10px;padding:0"></label>`;
+ m.innerHTML=`<div class=box><h1>Style Studio 🎨</h1><canvas id=pv width=320 height=190 style="width:100%;max-width:340px;border:3px solid var(--ink);border-radius:18px"></canvas><h2>Dragon colors</h2>${ci('Body','db',d.b)}${ci('Belly','dl',d.l)}${ci('Wings','dw',d.w)}${ci('Horns','dh',d.h)}${ci('Eyes','de','#2fb5f0')}<h2>Dragon extras</h2>${['None','🧣 Scarf','🎀 Bow','😎 Shades','🌸 Flowers'].map((n,i)=>`<button class="${(c.ac||0)==i?'on':''}" onclick="cus('ac',${i});studio()">${n}</button>`).join(' ')}<h2>Princess</h2>${ci('Hair','hr',o.hr)}${ci('Crown','cr',o.cr)}${ci('Skin','sk','#ffd9b8')}${ci('Dress (flying)','dd',o.d)}<p><button onclick="S.cu={};save();studio()">Reset all</button> <button class=go onclick="back()">Done</button></p></div>`;
+ clearInterval(window.pv);window.pv=setInterval(prev,60)}
+function cus(k,v){S.cu[k]=v;save();prev()}
+function prev(){const c=$('pv');if(!c)return;const x=c.getContext('2d');bg(x,WO[S.sw],320,190,0,0);dragon(x,175,125,.6,curDragon(),{t:performance.now()/1000,magic:1})}
+/* ---------- fly mode ---------- */
+let F;const hearts=n=>'❤️'.repeat(n)+'🖤'.repeat(3-n);
+function startFly(){$('menu').classList.add('hide');Snd.init();Snd.music();F={x:Math.max(90,W*.2),y:H/2,ty:H/2,lives:3,en:100,fire:0,obs:[],sp:230,sc:0,sco:0,inv:0,spawn:1,keys:{},t:0,boss:null,nb:40};mode='fly';ui()}
+const fs=()=>Math.min(1.1,H/560*.4);
+function flyStep(dt){
+ F.t+=dt;const SK=WO[S.sw].sk;F.sp=230+F.t*4;F.sc+=F.sp*dt;F.sco+=F.sp*dt/12;S.hun=cl(S.hun-.5*dt,0,100);S.cle=cl(S.cle-.3*dt,0,100);
+ if(F.keys.u)F.ty-=420*dt;if(F.keys.d)F.ty+=420*dt;F.ty=cl(F.ty,60,H-60);F.y+=(F.ty-F.y)*Math.min(1,dt*8);
+ if(F.keys.l)F.x-=260*dt;if(F.keys.r)F.x+=260*dt;F.x=cl(F.x,50,W*.72);const s=fs(),dx=F.x,want=F.keys.f||F.btn;
+ if(want&&(F.en>8||F.fire))F.fire=1;else F.fire=0;F.en=cl(F.en+(F.fire?-38:22)*dt,0,100);if(!F.en)F.fire=0;
+ F.inv=Math.max(0,F.inv-dt);F.spawn-=dt;
+ if(F.spawn<=0){F.spawn=cl(1.3-F.t/120,.5,1.3)*(.7+Math.random()*.6);const r=Math.random(),k=r<.28?'rock':r<.5?'bat':r<.68?'storm':r<.8?'thorn':r<.92?'coin':'heart',z=H/560;
+  if(!(F.boss&&k!='coin'&&k!='heart'))F.obs.push({k,x:W+60,y:60+Math.random()*(H-120),r:(k=='storm'?42:k=='rock'?28:20)*z,ph:Math.random()*6,up:Math.random()<.5,len:H*(.25+Math.random()*.25)})}
+ bg(g,WO[S.sw],W,H,F.sc,t);
+ const mx=dx+138*s,my=F.y-34*s;
+ F.obs=F.obs.filter(o=>{o.x-=(F.sp+(o.k=='bat'?60:0))*dt;if(o.k=='bat')o.y+=Math.sin(t*5+o.ph)*60*dt;const fx=WO[S.sw].fx;if(o.k=='storm'&&(fx=='bub'||fx=='fog'))o.y+=Math.sin(t*2+o.ph)*70*dt;if(o.k=='rock'&&fx=='gal')o.x-=110*dt;
+  if(F.fire&&(o.k=='rock'||o.k=='bat')&&o.x>mx&&o.x<mx+250*s+o.r&&Math.abs(o.y-my)<o.r+22*s){F.sco+=o.k=='bat'?8:5;pf(o.x,o.y,'💥',0,4,160);Snd.p(300,.12);return false}
+  const hit=o.k=='thorn'?(Math.abs(o.x-dx)<26*s+16&&(o.up?F.y<o.len+45*s:F.y>H-o.len-45*s)):Math.hypot(o.x-(dx+10*s),o.y-F.y)<o.r+55*s;
+  if(hit){if(o.k=='coin'){S.coins++;Snd.p(880,.08,'sine');pf(o.x,o.y,'✨',0,3,60);return false}if(o.k=='heart'){F.lives=Math.min(3,F.lives+1);Snd.p(660,.15,'sine');pf(o.x,o.y,'💗',0,4,80);return false}if(!F.inv){hurt();if(mode!='fly')return false}}
+  if(SK&&(o.k=='rock'||o.k=='bat'||o.k=='storm')){g.font=(o.r*(o.k=='storm'?2.6:2.2))+'px sans-serif';g.textAlign='center';g.fillText(SK[o.k=='rock'?'r':o.k=='bat'?'b':'s'],o.x,o.y+o.r*.7)}
+  else if(o.k=='thorn'){const b=o.up?0:H,sg=o.up?1:-1,w=34*s+14;g.fillStyle=SK?SK.th[0]:'#4a7a3a';g.beginPath();g.moveTo(o.x-w,b);g.lineTo(o.x,b+sg*o.len);g.lineTo(o.x+w,b);g.fill();g.fillStyle=SK?SK.th[1]:'#2f5a2a';g.beginPath();g.moveTo(o.x,b);g.lineTo(o.x,b+sg*o.len);g.lineTo(o.x+w,b);g.fill()}
+  else if(o.k=='coin'||o.k=='heart'){g.font=(o.r*1.6)+'px sans-serif';g.textAlign='center';g.fillText(o.k=='coin'?'🪙':'💗',o.x,o.y+o.r*.5)}
+  else if(o.k=='rock'){ell(g,o.x,o.y,o.r,o.r*.85,'#8a7a6a',0,3);ell(g,o.x-o.r*.25,o.y-o.r*.25,o.r*.4,o.r*.3,'#a09080')}
+  else if(o.k=='bat'){g.font=(o.r*2)+'px sans-serif';g.textAlign='center';g.fillText('🦇',o.x,o.y+o.r*.6)}
+  else{const cs=[[0,0,1],[.8,.2,.75],[-.8,.2,.7]];g.strokeStyle=INK;g.lineWidth=6;cs.forEach(q=>{g.beginPath();g.arc(o.x+q[0]*o.r,o.y+q[1]*o.r,o.r*q[2],0,7);g.stroke()});g.fillStyle='#4a4468';cs.forEach(q=>{g.beginPath();g.arc(o.x+q[0]*o.r,o.y+q[1]*o.r,o.r*q[2],0,7);g.fill()});g.font=o.r+'px sans-serif';g.textAlign='center';g.fillText('⚡',o.x,o.y+o.r*.6)}
+  return o.x>-80});
+ if(mode!='fly')return;if(Math.random()<.3)pf(dx-70*s,F.y+10,'✨',0,1,30);boss(dt,dx,s,mx,my);if(mode!='fly')return;
+ if(F.fire){if(Math.random()<.25)Snd.p(70+Math.random()*50,.08,'sawtooth',.03);flame(g,mx,my,250*s,t);if(Math.random()<.4)pf(mx+Math.random()*200*s,my,'•',(Math.random()<.5?'#ffb23d':'#ff6b3d'),1,40)}
+ g.globalAlpha=F.inv&&Math.floor(t*12)%2?.4:1;dragon(g,dx,F.y,s,curDragon(),{t:t,fast:1,mouth:F.fire?1:0});g.globalAlpha=1;drawP(dt);
+ $('stats').innerHTML=hearts(F.lives)+' &nbsp;⭐ '+Math.floor(F.sco)+' <span class=bar><i style="width:'+F.en+'%;background:#ff8a3d"></i></span>'}
+function over(){const mult=1+(S.hun+S.cle+S.lov)/600,earn=Math.floor(F.sco/6*mult);S.coins+=earn;S.best=Math.max(S.best,Math.floor(F.sco));save();mode='over';ui();
+ $('menu').innerHTML=`<div class=box><h1>Landed safely 🏰</h1><p>Distance and fire score: <b>${Math.floor(F.sco)}</b> (best ${S.best})</p><p>You earned <b>🪙 ${earn}</b>${mult>1.2?' — a happy dragon gave a bonus!':''}</p><button class=go onclick="startFly()">Fly again</button> <button onclick="home()">Go home</button> <button onclick="shop()">Shop</button></div>`;$('menu').classList.remove('hide')}
+/* ---------- UI ---------- */
+function home(){Snd.init();Snd.music();mode='care';$('menu').classList.add('hide');ui()}
+function ctlUI(){const f=mode=='fly';$('ctl').classList.toggle('hide',!f);$('pad').classList.toggle('hide',!(f&&S.ctl=='btn'));$('ctl').textContent=S.ctl=='btn'?'🎮 Buttons ⇄':'👆 Drag ⇄'}
+function ui(){ctlUI();
+ $('coins').textContent=S.coins;$('fire').classList.toggle('hide',mode!='fly');
+ if(mode=='care'){$('stats').innerHTML=`🍎<span class=bar><i id=bh style="background:#ff7aa8"></i></span> 🧼<span class=bar><i id=bc style="background:#5aa9e6"></i></span> 💗<span class=bar><i id=bl style="background:#ff4d7d"></i></span>`;
+  $('dock').innerHTML=['feed:🍎 Feed','wash:🧽 Wash','pet:🖐️ Pet','hug:🤗 Hug'].map(x=>{const[a,b]=x.split(':');return`<button class="${tool==a?'on':''}" onclick="tool='${a}';Snd.init();Snd.p(520,.07,'triangle');ui()">${b}</button>`}).join('')+'<button class=go onclick="startFly()">✈️ Fly</button><button onclick="castle()">👑 Crown Jewel</button><button onclick="shop()">🛍️ Shop</button>'}
+ else if(mode=='castle'){$('stats').innerHTML='👑 Crown Jewel Castle';$('dock').innerHTML='<button onclick="eluOpen()">💬 Elu</button><button onclick="studio()">🎨 Style</button><button onclick="shop()">🛍️ Shop</button><button onclick="home()">🏡 Home</button><button class=go onclick="startFly()">✈️ Fly</button>'}else $('dock').innerHTML='';if(mode!='castle')$('elu').classList.add('hide')}
+const K={d:[DR,'dr','sd'],w:[WO,'wo','sw'],o:[OU,'ot','so']};
+function shop(){if(mode=='fly')return;if(mode=='over'||mode=='menu'){mode='care';ui()}const m=$('menu');m.classList.remove('hide');
+ const card=k=>{const[a,ow,sl]=K[k];return a.map((x,i)=>`<div class="it ${S[sl]==i?'sel':''}"><canvas data-k="${k}" data-i="${i}" width=240 height=128></canvas><small>${x.n}</small>${S[ow].includes(i)?`<button onclick="pick('${k}',${i})">${S[sl]==i?'In use':'Use'}</button>`:`<button class=go onclick="buy('${k}',${i})">🪙 ${x.c}</button>`}</div>`).join('')};
+ m.innerHTML=`<div class=box><h1>Shop 🛍️</h1><p>You have 🪙 ${S.coins}. Care for Ember and fly to earn more.</p><h2>Princess outfits</h2><div class=grid>${card('o')}</div><h2>Dragons</h2><div class=grid>${card('d')}</div><h2>Worlds</h2><div class=grid>${card('w')}</div><p><button class=go onclick="back()">Back</button></p></div>`;
+ m.querySelectorAll('canvas').forEach(c=>{const x=c.getContext('2d'),i=+c.dataset.i,k=c.dataset.k;if(k=='d'){bg(x,WO[S.sw],240,128,0,0);dragon(x,120,78,.38,DR[i],{t:0})}else if(k=='w')bg(x,WO[i],240,128,0,0);else{bg(x,WO[S.sw],240,128,0,0);x.save();x.translate(138,212);x.scale(1.8,1.8);princess(x,0,0,0,0,OU[i]);x.restore()}})}
+function buy(k,i){const[a,ow,sl]=K[k];if(S.coins>=a[i].c){S.coins-=a[i].c;S[ow].push(i);S[sl]=i;save();ui();shop();Snd.init();[660,880,1100].forEach((f,j)=>setTimeout(()=>Snd.p(f,.2,'sine',.07),j*90))}else{Snd.p(150,.25,'sawtooth',.06);alert('Not enough coins yet. Feed, wash, pet and fly to earn more!')}}
+function pick(k,i){S[K[k][2]]=i;save();shop();Snd.p(600,.08,'triangle')}
+/* ---------- input ---------- */
+cv.addEventListener('pointerdown',e=>{Snd.init();if(mode=='castle')castleTap(e.clientX);if(mode=='care'){care.down=1;care.mx=e.clientX;care.my=e.clientY;careDo(e.clientX,e.clientY,false)}if(mode=='fly'&&S.ctl!='btn')F.ty=e.clientY;cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(mode=='care'&&care.down){care.mx=e.clientX;care.my=e.clientY;careDo(e.clientX,e.clientY,true)}if(mode=='fly'&&S.ctl!='btn'&&(e.buttons||e.pointerType=='mouse'))F.ty=e.clientY});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>care.down=0));
+const fb=$('fire');fb.addEventListener('pointerdown',e=>{if(F)F.btn=1;e.stopPropagation()});['pointerup','pointercancel','pointerleave'].forEach(n=>fb.addEventListener(n,()=>{if(F)F.btn=0}));
+document.querySelectorAll('#pad button').forEach(b=>{const k=b.dataset.k;b.addEventListener('pointerdown',e=>{if(F)F.keys[k]=1;e.preventDefault()});['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,()=>{if(F)F.keys[k]=0}))});
+const km={ArrowUp:'u',w:'u',ArrowDown:'d',s:'d',ArrowLeft:'l',a:'l',ArrowRight:'r',d:'r',' ':'f'};
+addEventListener('keydown',e=>{if(F&&km[e.key]){F.keys[km[e.key]]=1;e.preventDefault()}});addEventListener('keyup',e=>{if(F&&km[e.key])F.keys[km[e.key]]=0});
+/* ---------- loop ---------- */
+function loop(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;t+=dt;
+ if(mode=='care'||mode=='menu'||mode=='over'){if(mode=='care')careStep(dt);else{bg(g,WO[S.sw],W,H,t*30,t);dragon(g,W*.5,H*.8,Math.min(W/560,H/420)*.9,curDragon(),{t})}
+  if(mode=='care'){if($('bh')){$('bh').style.width=S.hun+'%';$('bc').style.width=S.cle+'%';$('bl').style.width=S.lov+'%'}$('coins').textContent=S.coins}}
+ else if(mode=='fly')flyStep(dt);else if(mode=='castle')castleStep(dt);
+ requestAnimationFrame(loop)}
+$('menu').innerHTML=`<div class=box><h1>Ember &amp; the Princess 🐉👑</h1><p>Fly through storms, rocks and bats. Dodge them, or burn them with dragon fire. Then land, feed, wash, pet and hug your dragon to earn coins for new dragons and worlds.</p><p><small>Drag up and down (or use the arrow keys or WASD) to steer, or tap the control button during a flight to switch to on-screen ▲ ▼ ◀ ▶ buttons. Hold the 🔥 button (or Space) to breathe fire. Lightning clouds and thorn spikes can't be burned, so dodge them! Grab 🪙 and 💗 as you fly, and burn the boss dragon that appears every so often for a big coin prize.</small></p><button class=go onclick="home()">Play</button></div>`;
+setInterval(()=>{if(mode=='care')save()},5000);
+requestAnimationFrame(loop);
+</script></body></html>
