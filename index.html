@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess: Clear Flight Edition</title>
+  <title>Dragon & Princess: Polish Edition</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0c0414">
@@ -14,28 +14,27 @@
     
     #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; position: relative; }
     
-    nav { height: 55px; background: rgba(0,0,0,0.85); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; }
+    nav { height: 55px; background: rgba(0,0,0,0.85); display: flex; justify-content: space-around; align-items: center; z-index: 10; border-bottom: 2px solid #ffd700; flex-shrink: 0; }
     nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; cursor: pointer; }
     nav button.active { background: #ffd700; color: #1a0933; }
 
     .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 12px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 13px; z-index: 15; display: flex; gap: 8px; }
 
-    .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow-y: auto; padding-bottom: 20px; }
+    .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow: hidden; }
     .screen.active { display: flex; }
 
     /* CARE SCREEN */
-    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; padding-bottom: 35px; }
+    #care-screen { background: linear-gradient(to bottom, #1d0736, #360d3d); justify-content: space-between; padding-bottom: 35px; overflow-y: auto; }
     .status-box { width: 92%; max-width: 400px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px solid #9333ea; margin-top: 8px; z-index: 2; }
     .bar-row { margin-bottom: 4px; }
     .bar-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; font-weight: bold; }
     .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 240px; overflow: visible; }
-    .dragon-render { font-size: 100px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; }
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 220px; overflow: visible; }
+    .dragon-render { font-size: 100px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; transform: scaleX(-1); }
     .princess-render { font-size: 45px; position: absolute; bottom: 30px; right: 15%; filter: drop-shadow(0 0 10px #fff); transition: all 0.4s ease-in-out; z-index: 3; }
 
-    /* Action Animations */
     .princess-render.interact { right: 42%; transform: scale(1.1); }
     .princess-render.hugging { right: 48%; transform: scale(1.2) rotate(-10deg); }
 
@@ -46,32 +45,32 @@
     .floating-text { position: absolute; font-size: 32px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
     @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-80px) scale(1.4); } }
 
-    /* LIFTED CARE BUTTONS */
     .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 92%; max-width: 420px; margin-bottom: 25px; z-index: 5; }
-    .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 2px solid #a855f7; color: white; padding: 12px 4px; border-radius: 16px; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); active: scale(0.95); }
+    .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 2px solid #a855f7; color: white; padding: 12px 4px; border-radius: 16px; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     .act-btn span { color: #ffd700; text-shadow: 0 1px 2px #000; }
 
-    /* CASTLE & 500+ SHOP SCREEN */
-    #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; }
-    .title { font-size: 18px; color: #ffd700; margin-top: 8px; text-shadow: 0 0 8px #ffd700; }
-    .elu-card { width: 92%; max-width: 400px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 12px; padding: 8px; margin: 8px 0; display: flex; gap: 8px; align-items: center; }
-    .elu-avatar { font-size: 30px; background: #26094d; padding: 6px; border-radius: 50%; border: 1px solid #ffd700; }
-    .elu-text { flex: 1; text-align: left; font-size: 11px; line-height: 1.3; color: #e9d5ff; }
+    /* CASTLE & 500+ SHOP SCREEN WITH SCROLLBOX */
+    #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; padding: 8px 12px; }
+    .title { font-size: 18px; color: #ffd700; margin-top: 4px; text-shadow: 0 0 8px #ffd700; flex-shrink: 0; }
+    .elu-card { width: 100%; max-width: 420px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 12px; padding: 6px 10px; margin: 6px 0; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .elu-avatar { font-size: 26px; background: #26094d; padding: 4px; border-radius: 50%; border: 1px solid #ffd700; }
+    .elu-text { flex: 1; text-align: left; font-size: 11px; line-height: 1.2; color: #e9d5ff; }
 
-    .shop-tabs { display: flex; gap: 4px; width: 92%; max-width: 400px; margin-bottom: 8px; overflow-x: auto; }
-    .tab-btn { background: #26094d; border: 1px solid #a855f7; color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 10px; white-space: nowrap; cursor: pointer; }
-    .tab-btn.active { background: #a855f7; font-weight: bold; }
+    .gacha-btn { width: 100%; max-width: 420px; background: linear-gradient(90deg, #b91c1c, #d97706, #6d28d9); border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 8px; flex-shrink: 0; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
 
-    .gacha-btn { width: 92%; max-width: 400px; background: linear-gradient(90deg, #b91c1c, #d97706, #6d28d9); border: 1px solid #ffd700; color: #fff; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 8px; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    .shop-tabs { display: flex; gap: 6px; width: 100%; max-width: 420px; margin-bottom: 8px; overflow-x: auto; flex-shrink: 0; padding-bottom: 4px; }
+    .tab-btn { background: #26094d; border: 1.5px solid #a855f7; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; cursor: pointer; font-weight: bold; }
+    .tab-btn.active { background: #ffd700; color: #1a0933; border-color: #ffd700; }
 
-    .catalog-list { width: 92%; max-width: 400px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .item-card { background: rgba(0,0,0,0.4); border: 1px solid #6b21a8; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 2px; }
-    .item-card button { background: #d97706; border: none; color: white; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; width: 100%; margin-top: 2px; }
+    .catalog-scrollbox { width: 100%; max-width: 420px; flex: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid #6b21a8; border-radius: 12px; padding: 8px; margin-bottom: 8px; }
+    .catalog-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .item-card { background: rgba(255,255,255,0.05); border: 1px solid #a855f7; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 4px; }
+    .item-card button { background: #d97706; border: none; color: white; padding: 6px 8px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; width: 100%; }
 
-    .pagination { display: flex; justify-content: space-between; align-items: center; width: 92%; max-width: 400px; margin: 10px 0; font-size: 11px; }
-    .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+    .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 420px; font-size: 11px; flex-shrink: 0; margin-bottom: 6px; }
+    .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-    /* HIGH-VISIBILITY FLIGHT CONTROLS */
+    /* FLIGHT CONTROLS */
     #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
     canvas { display: block; width: 100%; height: 100%; }
     .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; z-index: 20; pointer-events: none; }
@@ -140,21 +139,23 @@
     <div class="elu-card">
       <div class="elu-avatar">🎩</div>
       <div class="elu-text" id="elu-msg">
-        <strong>Elu:</strong> "Greetings Princess! We have cataloged over 500 Dragons, Outfits, Fire Types, Worlds, and Princess Sizes!"
+        <strong>Elu:</strong> "Greetings Princess! Select a category below to browse through our 500+ items!"
       </div>
     </div>
 
     <button class="gacha-btn" onclick="rollGacha()">🎲 Mystery Spin (30 🪙)</button>
 
     <div class="shop-tabs">
-      <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons (500)</button>
-      <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits (500)</button>
-      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Fire (500)</button>
-      <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds (500)</button>
-      <button class="tab-btn" id="tab-sizes" onclick="setCategory('sizes')">👸 Sizes (500)</button>
+      <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons</button>
+      <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits</button>
+      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Fire</button>
+      <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds</button>
+      <button class="tab-btn" id="tab-sizes" onclick="setCategory('sizes')">👸 Sizes</button>
     </div>
 
-    <div class="catalog-list" id="catalog-container"></div>
+    <div class="catalog-scrollbox">
+      <div class="catalog-list" id="catalog-container"></div>
+    </div>
 
     <div class="pagination">
       <button class="page-btn" onclick="changePage(-1)">◀ Prev</button>
@@ -178,9 +179,9 @@
 </div>
 
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR */
+  /* 1. PROCEDURAL CATALOG GENERATOR (STRICT DRAGONS ONLY) */
   const ELEMENTS = ["Crimson", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
-  const DRAGON_BASES = ["🐉", "🐲", "🦖", "🐍", "🐊"];
+  const DRAGON_BASES = ["🐉", "🐲"]; 
   const OUTFIT_BASES = ["👑👸", "👗✨", "🦸‍♀️", "👸🏼", "👸🏻", "👸🏽", "👸🏿", "💃", "👘", "🥻"];
 
   function generateCatalog(type) {
@@ -200,7 +201,7 @@
       } else if (type === 'worlds') {
         items.push({ id: `world_${i}`, name: `#${i} ${elem} Sky`, bg: `hsl(${hue}, 40%, 10%)`, stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`, cost: i * 20 });
       } else if (type === 'sizes') {
-        let sizeMult = (1 + (i * 0.1)).toFixed(1);
+        let sizeMult = (1 + (i * 0.05)).toFixed(2);
         items.push({ id: `size_${i}`, name: `Level ${i} Size (${sizeMult}x)`, mult: parseFloat(sizeMult), cost: i * 25 });
       }
     }
@@ -377,7 +378,7 @@
       if (currentCategory === 'sizes') preview = '📏';
 
       card.innerHTML = `
-        <span style="font-size:18px;">${preview}</span>
+        <span style="font-size:22px;">${preview}</span>
         <strong>${item.name}</strong>
         <span>${isUnlocked ? 'Unlocked' : item.cost + ' 🪙'}</span>
         <button onclick="handleItemAction('${currentCategory}', '${item.id}')">
@@ -442,7 +443,7 @@
     else stopFlyGame();
   }
 
-  /* 4. FLIGHT GAME ENGINE (HIGH CLARITY EDITION) */
+  /* 4. FLIGHT GAME ENGINE */
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   let gameLoopId = null;
@@ -493,11 +494,9 @@
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // World Background
     ctx.fillStyle = state.equipped.world.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Stars
     ctx.fillStyle = state.equipped.world.stars;
     for(let i=0; i<15; i++) {
       ctx.fillRect((i*60 + score*2)%canvas.width, (i*37)%canvas.height, 3, 3);
@@ -507,41 +506,43 @@
     if (moveDown) dragonY += 6;
     dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
 
-    // Custom Beam Fire Breath (Drawn under character)
+    // Fire Beam
     if (isFiring) {
       ctx.save();
-      let grad = ctx.createLinearGradient(95, dragonY, canvas.width, dragonY);
+      let grad = ctx.createLinearGradient(110, dragonY, canvas.width, dragonY);
       grad.addColorStop(0, '#ffffff');
       grad.addColorStop(0.4, state.equipped.fire.c1);
       grad.addColorStop(1, state.equipped.fire.c2);
       
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.moveTo(95, dragonY - 10);
-      ctx.lineTo(canvas.width, dragonY - 35);
-      ctx.lineTo(canvas.width, dragonY + 25);
-      ctx.lineTo(95, dragonY + 5);
+      ctx.moveTo(110, dragonY - 8);
+      ctx.lineTo(canvas.width, dragonY - 30);
+      ctx.lineTo(canvas.width, dragonY + 20);
+      ctx.lineTo(110, dragonY + 8);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
     }
 
-    /* DRAGON & PRINCESS HIGH-VISIBILITY RENDER */
+    /* FORWARD-FACING DRAGON RENDER (Flipped to face right) */
     ctx.save();
-    // Strong white outline glow to ensure max visibility on dark/light worlds
+    ctx.translate(85, dragonY);
+    ctx.scale(-1, 1); // Flip dragon horizontal so head points forward
     ctx.shadowColor = '#ffffff';
     ctx.shadowBlur = 18;
-    ctx.font = '52px serif';
-    ctx.fillText(state.equipped.dragon.icon, 45, dragonY);
+    ctx.font = '55px serif';
+    ctx.fillText(state.equipped.dragon.icon, 0, 18);
     ctx.restore();
 
-    // RENDER PRINCESS ON DRAGON (ULTRA-CLEAR)
+    /* PROPORTIONAL PRINCESS RENDER */
     ctx.save();
     ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = 12;
-    let pSize = Math.max(22, 22 * state.equipped.size.mult);
+    ctx.shadowBlur = 10;
+    // Cap maximum scale multiplier so princess fits proportionally on the dragon
+    let pSize = Math.min(32, Math.max(22, 22 * state.equipped.size.mult));
     ctx.font = `${pSize}px serif`;
-    ctx.fillText(state.equipped.outfit.icon, 52, dragonY - 24);
+    ctx.fillText(state.equipped.outfit.icon, 48, dragonY - 18);
     ctx.restore();
 
     // Spawn Obstacles & Coins
@@ -552,7 +553,7 @@
       coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
     }
 
-    // Render Coins with glow
+    // Render Coins
     for (let i = coinPickups.length - 1; i >= 0; i--) {
       let c = coinPickups[i];
       c.x -= c.speed;
@@ -563,7 +564,7 @@
       ctx.fillText('🪙', c.x, c.y);
       ctx.restore();
 
-      if (Math.abs(c.x - 60) < 40 && Math.abs(c.y - dragonY) < 40) {
+      if (Math.abs(c.x - 70) < 40 && Math.abs(c.y - dragonY) < 40) {
         coinPickups.splice(i, 1);
         state.coins += 5;
         updateUI();
@@ -581,7 +582,7 @@
       ctx.fillText('🪨', obs.x, obs.y);
       ctx.restore();
 
-      if (isFiring && obs.y > dragonY - 45 && obs.y < dragonY + 45 && obs.x > 80) {
+      if (isFiring && obs.y > dragonY - 45 && obs.y < dragonY + 45 && obs.x > 90) {
         obstacles.splice(i, 1);
         score += 10;
         state.coins += 1;
@@ -589,7 +590,7 @@
         continue;
       }
 
-      if (Math.abs(obs.x - 60) < 35 && Math.abs(obs.y - dragonY) < 35) {
+      if (Math.abs(obs.x - 70) < 35 && Math.abs(obs.y - dragonY) < 35) {
         obstacles.splice(i, 1);
         score = Math.max(0, score - 15);
       }
