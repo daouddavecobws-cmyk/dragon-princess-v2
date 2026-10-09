@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess Masa Edition</title>
+  <title>Dragon & Princess Masa: Ultimate Realm Edition</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0c0414">
@@ -35,10 +35,8 @@
     
     .dragon-render { width: 150px; height: 150px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 18%; }
     
-    /* PRINCESS MASA RENDER WITH SHIMMER */
     .princess-render { width: 120px; height: 140px; position: absolute; bottom: 25px; right: 10%; z-index: 5; transition: all 0.5s ease-in-out; }
 
-    /* MASA ACTION PATH MOVEMENTS */
     .princess-render.interact { right: 36%; transform: translateY(-10px) scale(1.1); }
     .princess-render.hugging { right: 40%; transform: translateY(-5px) scale(1.2) rotate(-8deg); }
 
@@ -85,7 +83,6 @@
     .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 20; pointer-events: none; }
     .fly-controls.drag-active { justify-content: flex-end; }
     
-    /* SPREAD OUT 4-WAY DIRECTIONAL D-PAD */
     .d-pad-grid { display: grid; grid-template-columns: repeat(3, 62px); grid-template-rows: repeat(2, 62px); gap: 12px; pointer-events: auto; }
     .ctrl-btn { width: 62px; height: 62px; border-radius: 50%; background: rgba(59, 130, 246, 0.45); border: 2.5px solid #60a5fa; color: #ffffff; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); box-shadow: 0 0 12px rgba(59,130,246,0.6); pointer-events: auto; }
     .ctrl-btn:active { background: rgba(59, 130, 246, 0.85); transform: scale(0.92); }
@@ -200,9 +197,17 @@
 </div>
 
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR WITH 500+ FLAMETHROWER COLOR OPTIONS */
-  const ELEMENTS = ["Inferno", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
+  /* 1. PROCEDURAL CATALOG GENERATOR WITH HIGH-DIVERSITY WORLD THEMES */
+  const ELEMENTS = ["Inferno", "Frost", "Void", "Storm", "Golden", "Emerald", "Solar", "Galactic", "Lava", "Nebula", "Titanium", "Neon", "Crystal", "Shadow", "Celestial"];
   const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
+
+  const WORLD_THEMES = [
+    { type: 'frost', bg1: '#0c2340', bg2: '#1d4ed8', obs: ['🧊', '❄️', '🏔️'], pColor: '#93c5fd' },
+    { type: 'lava', bg1: '#2a0800', bg2: '#991b1b', obs: ['☄️', '🔥', '🌋'], pColor: '#f97316' },
+    { type: 'void', bg1: '#110022', bg2: '#581c87', obs: ['🌌', '💥', '👾'], pColor: '#c084fc' },
+    { type: 'storm', bg1: '#0f172a', bg2: '#1e3a8a', obs: ['⚡', '🌩️', '🌪️'], pColor: '#38bdf8' },
+    { type: 'golden', bg1: '#2e1c02', bg2: '#854d0e', obs: ['☀️', '✨', '👑'], pColor: '#fde047' }
+  ];
 
   function generateCatalog(type) {
     let items = [];
@@ -218,7 +223,8 @@
       } else if (type === 'fire') {
         items.push({ id: `fire_${i}`, name: `#${i} ${elem} Flame`, hue: hue, cost: i * 12 });
       } else if (type === 'worlds') {
-        items.push({ id: `world_${i}`, name: `#${i} ${elem} Sky`, bg: `hsl(${hue}, 40%, 10%)`, stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`, cost: i * 20 });
+        let wTheme = WORLD_THEMES[i % WORLD_THEMES.length];
+        items.push({ id: `world_${i}`, name: `#${i} ${elem} Realm`, bg1: wTheme.bg1, bg2: wTheme.bg2, type: wTheme.type, obs: wTheme.obs, pColor: wTheme.pColor, cost: i * 20 });
       } else if (type === 'sizes') {
         let sizeMult = (1 + (i * 0.05)).toFixed(2);
         items.push({ id: `size_${i}`, name: `Level ${i} Size (${sizeMult}x)`, mult: parseFloat(sizeMult), cost: i * 25 });
@@ -243,7 +249,7 @@
     love: 80,
     health: 80,
     lives: 5,
-    controlMode: 'buttons', // 'buttons' or 'drag'
+    controlMode: 'buttons',
     equipped: {
       dragon: CATALOGS.dragons[0],
       outfit: CATALOGS.outfits[0],
@@ -310,12 +316,10 @@
     </svg>`;
   }
 
-  /* PRINCESS MASA WITH EXPRESSIVE HANDS FOR CARE ACTIONS */
   function getPrincessMasaSVG(dressColor, accentColor, pose = 'idle') {
     let handsSVG = '';
 
     if (pose === 'feed') {
-      // Reaching out hands holding apple prop
       handsSVG = `
         <path d="M 38 52 Q 22 42 16 32" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
         <path d="M 62 52 Q 32 45 20 34" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
@@ -323,7 +327,6 @@
         <circle cx="20" cy="34" r="3.5" fill="#fbcfe8"/>
       `;
     } else if (pose === 'wash') {
-      // Hands scrubbing with sponge/soap bubbles
       handsSVG = `
         <path d="M 38 52 Q 22 40 18 28" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
         <path d="M 62 52 Q 30 42 22 28" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
@@ -331,13 +334,11 @@
         <circle cx="22" cy="28" r="3.5" fill="#fbcfe8"/>
       `;
     } else if (pose === 'pet') {
-      // Gentle outstretched petting hands
       handsSVG = `
         <path d="M 38 50 Q 20 38 14 26" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round" fill="none"/>
         <circle cx="14" cy="26" r="3.5" fill="#fbcfe8"/>
       `;
     } else if (pose === 'hug') {
-      // Wide open loving arms wrap-around stance
       handsSVG = `
         <path d="M 38 50 Q 12 36 10 20" stroke="#fbcfe8" stroke-width="5" stroke-linecap="round" fill="none"/>
         <path d="M 62 50 Q 30 32 20 18" stroke="#fbcfe8" stroke-width="5" stroke-linecap="round" fill="none"/>
@@ -345,7 +346,6 @@
         <circle cx="20" cy="18" r="4" fill="#fbcfe8"/>
       `;
     } else {
-      // Idle graceful hands folded softly on dress
       handsSVG = `
         <path d="M 38 52 Q 44 60 50 60" stroke="#fbcfe8" stroke-width="4" stroke-linecap="round" fill="none"/>
         <path d="M 62 52 Q 56 60 50 60" stroke="#fbcfe8" stroke-width="4" stroke-linecap="round" fill="none"/>
@@ -370,7 +370,6 @@
       <path d="M 46 41 Q 50 45 54 41" fill="none" stroke="#be123c" stroke-width="1.5" stroke-linecap="round"/>
       <path d="M 35 30 Q 50 20 65 30 Q 60 22 50 22 Q 40 22 35 30 Z" fill="#4a2c11"/>
       
-      <!-- EXPRESSIVE HANDS -->
       ${handsSVG}
 
       <path d="M 38 22 L 42 12 L 50 18 L 58 12 L 62 22 Z" fill="#ffd700" stroke="#ffffff" stroke-width="1"/>
@@ -405,7 +404,6 @@
     d.innerHTML = getChubbyDragonSVG(state.equipped.dragon.color, state.equipped.dragon.belly, state.equipped.dragon.glow);
     d.style.setProperty('--dragon-glow', state.equipped.dragon.glow);
 
-    // Apply control mode layout
     const dpadWrap = document.getElementById('dpad-wrapper');
     const ctrlToggleBtn = document.getElementById('control-toggle-btn');
     const flyControlsContainer = document.getElementById('fly-controls-container');
@@ -428,7 +426,7 @@
     updateUI();
   }
 
-  /* PRINCESS MASA FULL CARE ACTIONS */
+  /* CARE ACTIONS */
   let isAnimatingCare = false;
   function doCare(type) {
     if (isAnimatingCare) return;
@@ -600,7 +598,7 @@
     else stopFlyGame();
   }
 
-  /* 4. FLIGHT GAME ENGINE WITH BUTTON & DRAG CONTROLS + MASA HOLDING HANDS */
+  /* 4. FLIGHT GAME ENGINE WITH WORLD PARTICLES & THEMED OBSTACLES */
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   let gameLoopId = null;
@@ -610,6 +608,7 @@
   let obstacles = [];
   let coinPickups = [];
   let flameParticles = [];
+  let worldWeatherParticles = [];
   let score = 0;
 
   let isDragging = false;
@@ -630,7 +629,20 @@
     obstacles = [];
     coinPickups = [];
     flameParticles = [];
+    worldWeatherParticles = [];
     score = 0;
+    
+    // Populate world weather particles
+    for (let i = 0; i < 35; i++) {
+      worldWeatherParticles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: 1 + Math.random() * 3,
+        speedX: Math.random() * 2 - 1,
+        speedY: 1 + Math.random() * 2
+      });
+    }
+
     if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
   }
 
@@ -655,7 +667,6 @@
   addTouch(document.getElementById('btn-right'), () => moveRight = true, () => moveRight = false);
   addTouch(document.getElementById('btn-fire'), () => isFiring = true, () => isFiring = false);
 
-  /* DRAG CONTROL EVENT LISTENERS */
   function getCanvasPos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -766,31 +777,26 @@
     let scale = Math.min(1.2, Math.max(0.8, 0.8 * state.equipped.size.mult));
     ctx.scale(scale, scale);
 
-    // PRINCESS MASA HANDS HOLDING DRAGON BACK & NECK
     ctx.strokeStyle = '#fbcfe8';
     ctx.lineWidth = 3.5;
     ctx.lineCap = 'round';
 
-    // Left Arm holding dragon's back
     ctx.beginPath();
     ctx.moveTo(0, 8);
     ctx.quadraticCurveTo(-6, 18, 2, 22);
     ctx.stroke();
 
-    // Right Arm reaching forward holding dragon's neck
     ctx.beginPath();
     ctx.moveTo(6, 8);
     ctx.quadraticCurveTo(14, 16, 18, 18);
     ctx.stroke();
 
-    // Hands Clasping Dragon Body
     ctx.fillStyle = '#fbcfe8';
     ctx.beginPath();
     ctx.arc(2, 22, 2.5, 0, Math.PI * 2);
     ctx.arc(18, 18, 2.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Princess Head & Crown
     ctx.shadowColor = '#ffffff';
     ctx.shadowBlur = 8;
     ctx.font = '22px serif';
@@ -819,15 +825,26 @@
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = state.equipped.world.bg;
+    // Dynamic Atmosphere Sky Gradient based on Equipped World
+    let w = state.equipped.world;
+    let bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    bgGrad.addColorStop(0, w.bg1 || '#0c0414');
+    bgGrad.addColorStop(1, w.bg2 || '#26094d');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = state.equipped.world.stars;
-    for(let i=0; i<18; i++) {
-      ctx.fillRect((i*65 + score*2)%canvas.width, (i*37)%canvas.height, 3, 3);
-    }
+    // Weather Particles (Snow, Embers, Sparkles)
+    ctx.fillStyle = w.pColor || '#ffffff';
+    worldWeatherParticles.forEach(p => {
+      p.x -= 1.5;
+      p.y += p.speedY;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
-    // Button Movement (if enabled)
     if (state.controlMode === 'buttons') {
       if (moveUp) dragonY -= 6;
       if (moveDown) dragonY += 6;
@@ -846,7 +863,6 @@
       spawnFlameParticles(mouthX, mouthY, equippedHue);
     }
 
-    // Render & Update Flamethrower Particles
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     for (let i = flameParticles.length - 1; i >= 0; i--) {
@@ -870,7 +886,6 @@
       ctx.shadowBlur = 15;
       ctx.fill();
 
-      // Particle Collision with Obstacles
       for (let j = obstacles.length - 1; j >= 0; j--) {
         let obs = obstacles[j];
         if (Math.abs(p.x - obs.x) < obs.size && Math.abs(p.y - obs.y) < obs.size) {
@@ -884,21 +899,19 @@
     }
     ctx.restore();
 
-    /* DRAW CUTE CHUBBY DRAGON */
     drawChubbyDragonCanvas(dragonX, dragonY, state.equipped.dragon);
-
-    /* PRINCESS MASA RIDING DRAGON WITH HANDS HOLDING ON */
     drawPrincessMasaRiding(dragonX, dragonY);
 
-    // Spawn Obstacles & Coins
+    // Spawn World-Themed Obstacles
     if (Math.random() < 0.03) {
-      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, size: 38, speed: 3 + Math.random() * 3 });
+      let obsList = w.obs || ['🪨', '☄️', '⚡'];
+      let chosenIcon = obsList[Math.floor(Math.random() * obsList.length)];
+      obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, size: 38, icon: chosenIcon, speed: 3 + Math.random() * 3 });
     }
     if (Math.random() < 0.02) {
       coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
     }
 
-    // Render Coins
     for (let i = coinPickups.length - 1; i >= 0; i--) {
       let c = coinPickups[i];
       c.x -= c.speed;
@@ -916,18 +929,16 @@
       }
     }
 
-    // Render Obstacles & Collision System
     for (let i = obstacles.length - 1; i >= 0; i--) {
       let obs = obstacles[i];
       obs.x -= obs.speed;
       ctx.save();
-      ctx.shadowColor = '#ef4444';
+      ctx.shadowColor = w.pColor || '#ef4444';
       ctx.shadowBlur = 8;
       ctx.font = obs.size + 'px serif';
-      ctx.fillText('🪨', obs.x, obs.y);
+      ctx.fillText(obs.icon || '🪨', obs.x, obs.y);
       ctx.restore();
 
-      // Hitting an obstacle loses 1 Life
       if (Math.abs(obs.x - dragonX) < 30 && Math.abs(obs.y - dragonY) < 30) {
         obstacles.splice(i, 1);
         state.lives = Math.max(0, state.lives - 1);
@@ -936,7 +947,6 @@
         state.love = Math.max(0, state.love - 15);
         updateUI();
 
-        // 0 Lives -> Force return to Care screen
         if (state.lives <= 0) {
           stopFlyGame();
           alert("Masa's dragon ran out of energy! Time to nurse it back to health in the Care screen! ❤️");
