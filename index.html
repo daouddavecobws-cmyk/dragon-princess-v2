@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess: Polish Edition</title>
+  <title>Dragon & Princess Masa Edition</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0c0414">
@@ -31,25 +31,34 @@
     .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 220px; overflow: visible; }
-    .dragon-render { font-size: 100px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; transform: scaleX(-1); }
-    .princess-render { font-size: 45px; position: absolute; bottom: 30px; right: 15%; filter: drop-shadow(0 0 10px #fff); transition: all 0.4s ease-in-out; z-index: 3; }
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 230px; overflow: visible; }
+    
+    .dragon-render { width: 140px; height: 140px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 20%; }
+    
+    /* PRINCESS MASA WITH MAGICAL SPECTRUM DRESS */
+    .princess-render { font-size: 55px; position: absolute; bottom: 35px; right: 12%; z-index: 5; transition: all 0.5s ease-in-out; animation: magicDress 4s infinite linear; }
+    @keyframes magicDress {
+      0% { filter: drop-shadow(0 0 12px #f43f5e) hue-rotate(0deg); }
+      50% { filter: drop-shadow(0 0 15px #a855f7) hue-rotate(180deg); }
+      100% { filter: drop-shadow(0 0 12px #f43f5e) hue-rotate(360deg); }
+    }
 
-    .princess-render.interact { right: 42%; transform: scale(1.1); }
-    .princess-render.hugging { right: 48%; transform: scale(1.2) rotate(-10deg); }
+    /* MASA ACTION PATH MOVEMENTS */
+    .princess-render.interact { right: 38%; transform: translateY(-10px) scale(1.15); }
+    .princess-render.hugging { right: 42%; transform: translateY(-5px) scale(1.25) rotate(-12deg); }
 
-    .action-tool { position: absolute; font-size: 35px; z-index: 4; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .action-tool { position: absolute; font-size: 40px; z-index: 6; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
-    @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.2) translateY(-5px); } }
+    @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.3) translateY(-8px); } }
 
-    .floating-text { position: absolute; font-size: 32px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
+    .floating-text { position: absolute; font-size: 34px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
     @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-80px) scale(1.4); } }
 
     .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 92%; max-width: 420px; margin-bottom: 25px; z-index: 5; }
     .act-btn { background: linear-gradient(135deg, #4c1d95, #2e1065); border: 2px solid #a855f7; color: white; padding: 12px 4px; border-radius: 16px; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     .act-btn span { color: #ffd700; text-shadow: 0 1px 2px #000; }
 
-    /* CASTLE & 500+ SHOP SCREEN WITH SCROLLBOX */
+    /* CASTLE & 500+ SHOP SCREEN */
     #castle-screen { background: linear-gradient(to bottom, #0f0728, #230836); text-align: center; padding: 8px 12px; }
     .title { font-size: 18px; color: #ffd700; margin-top: 4px; text-shadow: 0 0 8px #ffd700; flex-shrink: 0; }
     .elu-card { width: 100%; max-width: 420px; background: rgba(255,255,255,0.06); border: 1px solid #ffd700; border-radius: 12px; padding: 6px 10px; margin: 6px 0; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
@@ -119,8 +128,9 @@
     </div>
 
     <div class="viewport" id="viewport">
-      <div id="dragon-node" class="dragon-render">🐉</div>
-      <div id="princess-node" class="princess-render">👑👸</div>
+      <div id="dragon-node" class="dragon-render"></div>
+      <!-- PRINCESS MASA -->
+      <div id="princess-node" class="princess-render">👑👧🏻✨</div>
       <div id="action-tool" class="action-tool">🍎</div>
     </div>
 
@@ -139,7 +149,7 @@
     <div class="elu-card">
       <div class="elu-avatar">🎩</div>
       <div class="elu-text" id="elu-msg">
-        <strong>Elu:</strong> "Greetings Princess! Select a category below to browse through our 500+ items!"
+        <strong>Elu:</strong> "Welcome Princess Masa! Select a category below to browse through our 500+ items!"
       </div>
     </div>
 
@@ -179,10 +189,9 @@
 </div>
 
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR (STRICT DRAGONS ONLY) */
+  /* 1. PROCEDURAL CATALOG GENERATOR */
   const ELEMENTS = ["Crimson", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
-  const DRAGON_BASES = ["🐉", "🐲"]; 
-  const OUTFIT_BASES = ["👑👸", "👗✨", "🦸‍♀️", "👸🏼", "👸🏻", "👸🏽", "👸🏿", "💃", "👘", "🥻"];
+  const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
 
   function generateCatalog(type) {
     let items = [];
@@ -191,8 +200,7 @@
       let hue = (i * 137.5) % 360;
 
       if (type === 'dragons') {
-        let base = DRAGON_BASES[i % DRAGON_BASES.length];
-        items.push({ id: `dragon_${i}`, name: `#${i} ${elem} Dragon`, icon: base, glow: `hsl(${hue}, 80%, 50%)`, cost: i * 15 });
+        items.push({ id: `dragon_${i}`, name: `#${i} ${elem} Puff`, color: `hsl(${hue}, 85%, 55%)`, belly: `hsl(${hue}, 90%, 80%)`, glow: `hsl(${hue}, 80%, 50%)`, cost: i * 15 });
       } else if (type === 'outfits') {
         let base = OUTFIT_BASES[i % OUTFIT_BASES.length];
         items.push({ id: `outfit_${i}`, name: `#${i} ${elem} Dress`, icon: base, hue: hue, cost: i * 10 });
@@ -257,6 +265,25 @@
     localStorage.setItem('dp_500_state', JSON.stringify(state));
   }
 
+  function getChubbyDragonSVG(color, belly, glow) {
+    return `<svg viewBox="0 0 100 100" width="100%" height="100%">
+      <path d="M 25 45 Q 10 30 20 20 Q 30 30 35 45 Z" fill="${glow}" stroke="#fff" stroke-width="2"/>
+      <path d="M 15 50 Q 0 40 10 30 Q 20 40 25 50 Z" fill="${glow}" opacity="0.7"/>
+      <ellipse cx="45" cy="62" rx="30" ry="25" fill="${color}" stroke="#fff" stroke-width="2.5"/>
+      <ellipse cx="52" cy="65" rx="18" ry="16" fill="${belly}"/>
+      <circle cx="65" cy="38" r="22" fill="${color}" stroke="#fff" stroke-width="2.5"/>
+      <path d="M 58 18 Q 54 8 62 14 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
+      <path d="M 68 18 Q 66 6 72 12 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="72" cy="34" r="6" fill="#1e1b4b"/>
+      <circle cx="74" cy="32" r="2.5" fill="#ffffff"/>
+      <ellipse cx="68" cy="42" rx="4" ry="2.5" fill="#f43f5e" opacity="0.7"/>
+      <ellipse cx="80" cy="42" rx="8" ry="6" fill="${color}"/>
+      <circle cx="82" cy="40" r="1" fill="#fff"/>
+      <path d="M 18 68 Q 5 75 8 85 Q 18 82 25 72 Z" fill="${color}" stroke="#fff" stroke-width="2"/>
+      <polygon points="5,88 12,82 10,92" fill="#ffd700"/>
+    </svg>`;
+  }
+
   function updateUI() {
     state.health = Math.round((state.hunger + state.clean + state.love) / 3);
     
@@ -272,18 +299,13 @@
     document.getElementById('l-fill').style.width = state.love + '%';
 
     const d = document.getElementById('dragon-node');
-    const p = document.getElementById('princess-node');
-
-    d.innerText = state.equipped.dragon.icon;
+    d.innerHTML = getChubbyDragonSVG(state.equipped.dragon.color, state.equipped.dragon.belly, state.equipped.dragon.glow);
     d.style.setProperty('--dragon-glow', state.equipped.dragon.glow);
 
-    p.innerText = state.equipped.outfit.icon;
-    p.style.filter = `hue-rotate(${state.equipped.outfit.hue}deg) drop-shadow(0 0 10px #fff)`;
-    
     saveState();
   }
 
-  /* VISIBLE CARE ACTION ANIMATIONS */
+  /* PRINCESS MASA FULL CARE ACTIONS */
   let isAnimatingCare = false;
   function doCare(type) {
     if (isAnimatingCare) return;
@@ -292,10 +314,10 @@
     let floatIcons = '';
     let toolIcon = '';
 
-    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); floatIcons = '🍎🍏✨'; toolIcon = '🍎'; }
-    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); floatIcons = '🧼🫧✨'; toolIcon = '🧽'; }
-    if (type === 'pet') { state.love = Math.min(100, state.love + 15); floatIcons = '✨🖐️💖'; toolIcon = '🖐️'; }
-    if (type === 'hug') { state.love = Math.min(100, state.love + 30); floatIcons = '💖🤗🥰'; toolIcon = '💖'; }
+    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); floatIcons = '🍎🍏✨ Masa Fed Dragon!'; toolIcon = '🍎'; }
+    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); floatIcons = '🧼🫧✨ Masa Washed Dragon!'; toolIcon = '🧽'; }
+    if (type === 'pet') { state.love = Math.min(100, state.love + 15); floatIcons = '✨🖐️💖 Masa Petted Dragon!'; toolIcon = '🖐️'; }
+    if (type === 'hug') { state.love = Math.min(100, state.love + 30); floatIcons = '💖🤗🥰 Masa Hugged Dragon!'; toolIcon = '💖'; }
     
     state.coins += 2;
 
@@ -303,6 +325,7 @@
     const tool = document.getElementById('action-tool');
     const vp = document.getElementById('viewport');
 
+    // Masa walks directly to the dragon's front side
     if (type === 'hug') {
       p.className = 'princess-render hugging';
     } else {
@@ -310,16 +333,16 @@
     }
 
     tool.innerText = toolIcon;
-    tool.style.left = '48%';
-    tool.style.top = '45%';
+    tool.style.left = '32%';
+    tool.style.top = '35%';
     tool.classList.add('active');
 
     setTimeout(() => {
       const floatEl = document.createElement('div');
       floatEl.className = 'floating-text';
       floatEl.innerText = floatIcons;
-      floatEl.style.left = '40%';
-      floatEl.style.top = '25%';
+      floatEl.style.left = '25%';
+      floatEl.style.top = '15%';
       vp.appendChild(floatEl);
 
       setTimeout(() => floatEl.remove(), 1200);
@@ -330,7 +353,7 @@
       tool.classList.remove('active');
       isAnimatingCare = false;
       updateUI();
-    }, 1200);
+    }, 1300);
 
     updateUI();
   }
@@ -372,7 +395,7 @@
       let isUnlocked = state.unlockedIds.includes(item.id);
       let isEquipped = state.equipped[currentCategory.slice(0, -1)]?.id === item.id;
 
-      let preview = item.icon || '✨';
+      let preview = item.icon || '🐉';
       if (currentCategory === 'fire') preview = '🔥';
       if (currentCategory === 'worlds') preview = '🌌';
       if (currentCategory === 'sizes') preview = '📏';
@@ -491,6 +514,74 @@
   addTouch(btnDown, () => moveDown = true, () => moveDown = false);
   addTouch(btnFire, () => isFiring = true, () => isFiring = false);
 
+  function drawChubbyDragonCanvas(x, y, d) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 12;
+
+    ctx.fillStyle = d.glow;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-15, -5);
+    ctx.quadraticCurveTo(-30, -25, -10, -30);
+    ctx.quadraticCurveTo(-5, -15, -5, -5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = d.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 5, 26, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = d.belly;
+    ctx.beginPath();
+    ctx.ellipse(6, 8, 14, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = d.color;
+    ctx.beginPath();
+    ctx.arc(18, -12, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.moveTo(12, -28);
+    ctx.lineTo(8, -38);
+    ctx.lineTo(18, -30);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath();
+    ctx.arc(24, -15, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(26, -17, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#f43f5e';
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    ctx.ellipse(20, -8, 3.5, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1.0;
+
+    ctx.fillStyle = d.color;
+    ctx.beginPath();
+    ctx.ellipse(30, -10, 7, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -525,24 +616,16 @@
       ctx.restore();
     }
 
-    /* FORWARD-FACING DRAGON RENDER (Flipped to face right) */
-    ctx.save();
-    ctx.translate(85, dragonY);
-    ctx.scale(-1, 1); // Flip dragon horizontal so head points forward
-    ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = 18;
-    ctx.font = '55px serif';
-    ctx.fillText(state.equipped.dragon.icon, 0, 18);
-    ctx.restore();
+    /* DRAW CUTE CHUBBY DRAGON */
+    drawChubbyDragonCanvas(65, dragonY, state.equipped.dragon);
 
-    /* PROPORTIONAL PRINCESS RENDER */
+    /* PRINCESS MASA RIDING DRAGON */
     ctx.save();
     ctx.shadowColor = '#ffffff';
     ctx.shadowBlur = 10;
-    // Cap maximum scale multiplier so princess fits proportionally on the dragon
-    let pSize = Math.min(32, Math.max(22, 22 * state.equipped.size.mult));
+    let pSize = Math.min(28, Math.max(22, 22 * state.equipped.size.mult));
     ctx.font = `${pSize}px serif`;
-    ctx.fillText(state.equipped.outfit.icon, 48, dragonY - 18);
+    ctx.fillText("👑👧🏻", 55, dragonY - 22);
     ctx.restore();
 
     // Spawn Obstacles & Coins
