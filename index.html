@@ -18,7 +18,7 @@
     nav button { background: #3b1566; color: #ffd700; border: 1px solid #ffd700; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; cursor: pointer; }
     nav button.active { background: #ffd700; color: #1a0933; }
 
-    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 12px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 13px; z-index: 15; display: flex; gap: 8px; }
+    .hud-header { position: absolute; top: 8px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid #ffd700; padding: 4px 12px; border-radius: 12px; font-weight: bold; color: #ffd700; font-size: 13px; z-index: 15; display: flex; gap: 10px; }
 
     .screen { flex: 1; display: none; position: relative; flex-direction: column; align-items: center; overflow: hidden; }
     .screen.active { display: flex; }
@@ -31,27 +31,22 @@
     .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 230px; overflow: visible; }
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 250px; overflow: visible; }
     
-    .dragon-render { width: 140px; height: 140px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 20%; }
+    .dragon-render { width: 150px; height: 150px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 18%; }
     
-    /* PRINCESS MASA WITH MAGICAL SPECTRUM DRESS */
-    .princess-render { font-size: 55px; position: absolute; bottom: 35px; right: 12%; z-index: 5; transition: all 0.5s ease-in-out; animation: magicDress 4s infinite linear; }
-    @keyframes magicDress {
-      0% { filter: drop-shadow(0 0 12px #f43f5e) hue-rotate(0deg); }
-      50% { filter: drop-shadow(0 0 15px #a855f7) hue-rotate(180deg); }
-      100% { filter: drop-shadow(0 0 12px #f43f5e) hue-rotate(360deg); }
-    }
+    /* PRINCESS MASA RENDER WITH SHIMMER */
+    .princess-render { width: 120px; height: 140px; position: absolute; bottom: 25px; right: 10%; z-index: 5; transition: all 0.5s ease-in-out; }
 
     /* MASA ACTION PATH MOVEMENTS */
-    .princess-render.interact { right: 38%; transform: translateY(-10px) scale(1.15); }
-    .princess-render.hugging { right: 42%; transform: translateY(-5px) scale(1.25) rotate(-12deg); }
+    .princess-render.interact { right: 36%; transform: translateY(-10px) scale(1.1); }
+    .princess-render.hugging { right: 40%; transform: translateY(-5px) scale(1.2) rotate(-8deg); }
 
     .action-tool { position: absolute; font-size: 40px; z-index: 6; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
     @keyframes toolPulse { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.3) translateY(-8px); } }
 
-    .floating-text { position: absolute; font-size: 34px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
+    .floating-text { position: absolute; font-size: 32px; animation: floatUp 1.2s forwards ease-out; pointer-events: none; z-index: 8; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
     @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 100% { opacity: 0; transform: translateY(-80px) scale(1.4); } }
 
     .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 92%; max-width: 420px; margin-bottom: 25px; z-index: 5; }
@@ -79,24 +74,29 @@
     .pagination { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 420px; font-size: 11px; flex-shrink: 0; margin-bottom: 6px; }
     .page-btn { background: #3b1566; border: 1px solid #ffd700; color: #ffd700; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-    /* FLIGHT CONTROLS */
+    /* FLIGHT CONTROLS & HUD */
     #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
     canvas { display: block; width: 100%; height: 100%; }
-    .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 24px; box-sizing: border-box; z-index: 20; pointer-events: none; }
-    .d-pad { display: flex; gap: 14px; pointer-events: auto; }
-    .ctrl-btn { width: 68px; height: 68px; border-radius: 50%; background: rgba(59, 130, 246, 0.4); border: 3px solid #60a5fa; color: #ffffff; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); box-shadow: 0 0 15px rgba(59,130,246,0.6); pointer-events: auto; }
-    .ctrl-btn:active { background: rgba(59, 130, 246, 0.8); transform: scale(0.92); }
     
-    .fire-btn { width: 85px; height: 85px; border-radius: 50%; background: radial-gradient(circle, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%); border: 3px solid #fef08a; color: #ffffff; font-weight: 900; font-size: 15px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), inset 0 0 10px #fef08a; display: flex; align-items: center; justify-content: center; pointer-events: auto; }
-    .fire-btn:active { transform: scale(0.92); background: radial-gradient(circle, #f87171 0%, #dc2626 100%); }
+    .fly-hud { position: absolute; top: 12px; left: 16px; display: flex; gap: 12px; z-index: 20; }
+    .hud-box { font-size: 15px; font-weight: bold; color: #ffd700; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 12px; border: 1.5px solid #ffd700; text-shadow: 0 0 6px #000; }
 
-    .hud-score { position: absolute; top: 12px; left: 16px; font-size: 16px; font-weight: bold; color: #ffd700; z-index: 20; text-shadow: 0 0 6px #000; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 10px; border: 1px solid #ffd700; }
+    .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 20; pointer-events: none; }
+    
+    /* 4-WAY DIRECTIONAL D-PAD */
+    .d-pad-grid { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 52px); gap: 6px; pointer-events: auto; }
+    .ctrl-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(59, 130, 246, 0.45); border: 2.5px solid #60a5fa; color: #ffffff; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); box-shadow: 0 0 12px rgba(59,130,246,0.6); pointer-events: auto; }
+    .ctrl-btn:active { background: rgba(59, 130, 246, 0.85); transform: scale(0.92); }
+    
+    .fire-btn { width: 85px; height: 85px; border-radius: 50%; background: radial-gradient(circle, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%); border: 3px solid #fef08a; color: #ffffff; font-weight: 900; font-size: 15px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), inset 0 0 10px #fef08a; display: flex; align-items: center; justify-content: center; pointer-events: auto; align-self: flex-end; }
+    .fire-btn:active { transform: scale(0.92); background: radial-gradient(circle, #f87171 0%, #dc2626 100%); }
   </style>
 </head>
 <body>
 
 <div id="app">
   <div class="hud-header">
+    <span>❤️ <span id="lives-header">5/5</span></span>
     <span>🪙 <span id="coin-txt">100</span></span>
   </div>
 
@@ -129,8 +129,7 @@
 
     <div class="viewport" id="viewport">
       <div id="dragon-node" class="dragon-render"></div>
-      <!-- PRINCESS MASA -->
-      <div id="princess-node" class="princess-render">👑👧🏻✨</div>
+      <div id="princess-node" class="princess-render"></div>
       <div id="action-tool" class="action-tool">🍎</div>
     </div>
 
@@ -158,7 +157,7 @@
     <div class="shop-tabs">
       <button class="tab-btn active" id="tab-dragons" onclick="setCategory('dragons')">🐉 Dragons</button>
       <button class="tab-btn" id="tab-outfits" onclick="setCategory('outfits')">👗 Outfits</button>
-      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Fire</button>
+      <button class="tab-btn" id="tab-fire" onclick="setCategory('fire')">🔥 Flamethrower</button>
       <button class="tab-btn" id="tab-worlds" onclick="setCategory('worlds')">🌌 Worlds</button>
       <button class="tab-btn" id="tab-sizes" onclick="setCategory('sizes')">👸 Sizes</button>
     </div>
@@ -176,12 +175,21 @@
 
   <!-- FLIGHT SCREEN -->
   <div id="fly-screen" class="screen">
-    <div class="hud-score">Score: <span id="score-txt">0</span></div>
+    <div class="fly-hud">
+      <div class="hud-box">Lives: <span id="lives-txt">❤️❤️❤️❤️❤️</span></div>
+      <div class="hud-box">Score: <span id="score-txt">0</span></div>
+    </div>
+    
     <canvas id="gameCanvas"></canvas>
+    
     <div class="fly-controls">
-      <div class="d-pad">
+      <div class="d-pad-grid">
+        <div></div>
         <div class="ctrl-btn" id="btn-up">▲</div>
+        <div></div>
+        <div class="ctrl-btn" id="btn-left">◀</div>
         <div class="ctrl-btn" id="btn-down">▼</div>
+        <div class="ctrl-btn" id="btn-right">▶</div>
       </div>
       <button class="fire-btn" id="btn-fire">🔥 FIRE</button>
     </div>
@@ -189,8 +197,8 @@
 </div>
 
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR */
-  const ELEMENTS = ["Crimson", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
+  /* 1. PROCEDURAL CATALOG GENERATOR WITH 500+ FLAMETHROWER COLOR OPTIONS */
+  const ELEMENTS = ["Inferno", "Azure", "Shadow", "Celestial", "Emerald", "Solar", "Galactic", "Frost", "Venom", "Golden", "Void", "Rainbow", "Lava", "Nebula", "Titanium"];
   const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
 
   function generateCatalog(type) {
@@ -205,7 +213,7 @@
         let base = OUTFIT_BASES[i % OUTFIT_BASES.length];
         items.push({ id: `outfit_${i}`, name: `#${i} ${elem} Dress`, icon: base, hue: hue, cost: i * 10 });
       } else if (type === 'fire') {
-        items.push({ id: `fire_${i}`, name: `#${i} ${elem} Beam`, c1: `hsl(${hue}, 100%, 50%)`, c2: `hsl(${(hue + 60) % 360}, 100%, 50%)`, cost: i * 12 });
+        items.push({ id: `fire_${i}`, name: `#${i} ${elem} Flame`, hue: hue, cost: i * 12 });
       } else if (type === 'worlds') {
         items.push({ id: `world_${i}`, name: `#${i} ${elem} Sky`, bg: `hsl(${hue}, 40%, 10%)`, stars: `hsl(${(hue + 180) % 360}, 100%, 80%)`, cost: i * 20 });
       } else if (type === 'sizes') {
@@ -227,10 +235,11 @@
   /* 2. GAME STATE */
   let state = {
     coins: 100,
-    hunger: 60,
-    clean: 60,
-    love: 60,
-    health: 60,
+    hunger: 80,
+    clean: 80,
+    love: 80,
+    health: 80,
+    lives: 5,
     equipped: {
       dragon: CATALOGS.dragons[0],
       outfit: CATALOGS.outfits[0],
@@ -241,14 +250,24 @@
     unlockedIds: ['dragon_1', 'outfit_1', 'fire_1', 'world_1', 'size_1']
   };
 
+  let dressHue = 0;
+  setInterval(() => {
+    dressHue = (dressHue + 2) % 360;
+    const pNode = document.getElementById('princess-node');
+    if (pNode) {
+      pNode.innerHTML = getPrincessMasaSVG(`hsl(${dressHue}, 90%, 60%)`, `hsl(${(dressHue+40)%360}, 95%, 75%)`);
+    }
+  }, 50);
+
   const saved = localStorage.getItem('dp_500_state');
   if (saved) {
     try {
       let parsed = JSON.parse(saved);
       state.coins = parsed.coins || 100;
-      state.hunger = parsed.hunger || 60;
-      state.clean = parsed.clean || 60;
-      state.love = parsed.love || 60;
+      state.hunger = parsed.hunger || 80;
+      state.clean = parsed.clean || 80;
+      state.love = parsed.love || 80;
+      state.lives = parsed.lives !== undefined ? parsed.lives : 5;
       state.unlockedIds = parsed.unlockedIds || state.unlockedIds;
       
       ['dragons','outfits','fire','worlds','sizes'].forEach(cat => {
@@ -284,10 +303,42 @@
     </svg>`;
   }
 
+  /* PRINCESS MASA WITH MAGICAL COLOR DRESS & GOLDEN NAME "MASA" */
+  function getPrincessMasaSVG(dressColor, accentColor) {
+    return `<svg viewBox="0 0 100 120" width="100%" height="100%">
+      <circle cx="50" cy="60" r="45" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.5"/>
+      <path d="M 32 30 Q 20 60 30 85 Q 50 90 70 85 Q 80 60 68 30 Z" fill="#4a2c11"/>
+      <path d="M 35 60 Q 15 110 50 112 Q 85 110 65 60 Z" fill="${dressColor}" stroke="#ffffff" stroke-width="2"/>
+      <path d="M 42 60 Q 30 110 50 112 Q 70 110 58 60 Z" fill="${accentColor}" opacity="0.6"/>
+      <text x="50" y="92" font-family="'Segoe UI', bold, sans-serif" font-weight="900" font-size="14" fill="#ffd700" stroke="#000" stroke-width="0.8" text-anchor="middle" letter-spacing="1">MASA</text>
+      <path d="M 40 46 L 60 46 L 56 62 L 44 62 Z" fill="${dressColor}" stroke="#ffffff" stroke-width="1.5"/>
+      <circle cx="50" cy="35" r="15" fill="#fbcfe8"/>
+      <circle cx="43" cy="38" r="3" fill="#f43f5e" opacity="0.6"/>
+      <circle cx="57" cy="38" r="3" fill="#f43f5e" opacity="0.6"/>
+      <circle cx="44" cy="33" r="2.5" fill="#1e1b4b"/>
+      <circle cx="56" cy="33" r="2.5" fill="#1e1b4b"/>
+      <circle cx="45" cy="32" r="1" fill="#fff"/>
+      <circle cx="57" cy="32" r="1" fill="#fff"/>
+      <path d="M 46 41 Q 50 45 54 41" fill="none" stroke="#be123c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M 35 30 Q 50 20 65 30 Q 60 22 50 22 Q 40 22 35 30 Z" fill="#4a2c11"/>
+      <path d="M 38 22 L 42 12 L 50 18 L 58 12 L 62 22 Z" fill="#ffd700" stroke="#ffffff" stroke-width="1"/>
+      <circle cx="42" cy="12" r="1.5" fill="#ef4444"/>
+      <circle cx="50" cy="18" r="1.5" fill="#3b82f6"/>
+      <circle cx="58" cy="12" r="1.5" fill="#ef4444"/>
+    </svg>`;
+  }
+
   function updateUI() {
     state.health = Math.round((state.hunger + state.clean + state.love) / 3);
     
+    if (state.health >= 50 && state.lives === 0) {
+      state.lives = 5;
+    }
+
     document.getElementById('coin-txt').innerText = state.coins;
+    document.getElementById('lives-header').innerText = `${state.lives}/5`;
+    document.getElementById('lives-txt').innerText = '❤️'.repeat(state.lives) + '🖤'.repeat(5 - state.lives);
+
     document.getElementById('hp-val').innerText = state.health + '%';
     document.getElementById('f-val').innerText = state.hunger + '%';
     document.getElementById('c-val').innerText = state.clean + '%';
@@ -314,18 +365,21 @@
     let floatIcons = '';
     let toolIcon = '';
 
-    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 25); floatIcons = '🍎🍏✨ Masa Fed Dragon!'; toolIcon = '🍎'; }
-    if (type === 'wash') { state.clean = Math.min(100, state.clean + 25); floatIcons = '🧼🫧✨ Masa Washed Dragon!'; toolIcon = '🧽'; }
-    if (type === 'pet') { state.love = Math.min(100, state.love + 15); floatIcons = '✨🖐️💖 Masa Petted Dragon!'; toolIcon = '🖐️'; }
-    if (type === 'hug') { state.love = Math.min(100, state.love + 30); floatIcons = '💖🤗🥰 Masa Hugged Dragon!'; toolIcon = '💖'; }
+    if (type === 'feed') { state.hunger = Math.min(100, state.hunger + 30); floatIcons = '🍎🍏✨ Masa Fed Dragon!'; toolIcon = '🍎'; }
+    if (type === 'wash') { state.clean = Math.min(100, state.clean + 30); floatIcons = '🧼🫧✨ Masa Washed Dragon!'; toolIcon = '🧽'; }
+    if (type === 'pet') { state.love = Math.min(100, state.love + 20); floatIcons = '✨🖐️💖 Masa Petted Dragon!'; toolIcon = '🖐️'; }
+    if (type === 'hug') { state.love = Math.min(100, state.love + 35); floatIcons = '💖🤗🥰 Masa Hugged Dragon!'; toolIcon = '💖'; }
     
-    state.coins += 2;
+    state.coins += 3;
+
+    if (state.hunger > 40 && state.clean > 40 && state.love > 40) {
+      state.lives = 5;
+    }
 
     const p = document.getElementById('princess-node');
     const tool = document.getElementById('action-tool');
     const vp = document.getElementById('viewport');
 
-    // Masa walks directly to the dragon's front side
     if (type === 'hug') {
       p.className = 'princess-render hugging';
     } else {
@@ -341,7 +395,7 @@
       const floatEl = document.createElement('div');
       floatEl.className = 'floating-text';
       floatEl.innerText = floatIcons;
-      floatEl.style.left = '25%';
+      floatEl.style.left = '20%';
       floatEl.style.top = '15%';
       vp.appendChild(floatEl);
 
@@ -455,6 +509,11 @@
   }
 
   function switchTab(screenName) {
+    if (screenName === 'fly' && state.lives <= 0) {
+      alert("Masa's dragon is out of energy! Nurse it back to health in the Care screen to fly again! ❤️");
+      screenName = 'care';
+    }
+
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
 
@@ -466,17 +525,19 @@
     else stopFlyGame();
   }
 
-  /* 4. FLIGHT GAME ENGINE */
+  /* 4. FLIGHT GAME ENGINE WITH REALISTIC PARTICLE FLAMETHROWER */
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   let gameLoopId = null;
+  let dragonX = 80;
   let dragonY = 150;
   let isFiring = false;
   let obstacles = [];
   let coinPickups = [];
+  let flameParticles = [];
   let score = 0;
-  let moveUp = false;
-  let moveDown = false;
+
+  let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
 
   function resizeCanvas() {
     canvas.width = canvas.parentElement.clientWidth;
@@ -485,9 +546,11 @@
 
   function startFlyGame() {
     resizeCanvas();
+    dragonX = 80;
     dragonY = canvas.height / 2;
     obstacles = [];
     coinPickups = [];
+    flameParticles = [];
     score = 0;
     if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
   }
@@ -499,20 +562,19 @@
     }
   }
 
-  const btnUp = document.getElementById('btn-up');
-  const btnDown = document.getElementById('btn-down');
-  const btnFire = document.getElementById('btn-fire');
-
   const addTouch = (elem, startFn, endFn) => {
+    if (!elem) return;
     elem.addEventListener('touchstart', (e) => { e.preventDefault(); startFn(); });
     elem.addEventListener('touchend', (e) => { e.preventDefault(); endFn(); });
     elem.addEventListener('mousedown', startFn);
     elem.addEventListener('mouseup', endFn);
   };
 
-  addTouch(btnUp, () => moveUp = true, () => moveUp = false);
-  addTouch(btnDown, () => moveDown = true, () => moveDown = false);
-  addTouch(btnFire, () => isFiring = true, () => isFiring = false);
+  addTouch(document.getElementById('btn-up'), () => moveUp = true, () => moveUp = false);
+  addTouch(document.getElementById('btn-down'), () => moveDown = true, () => moveDown = false);
+  addTouch(document.getElementById('btn-left'), () => moveLeft = true, () => moveLeft = false);
+  addTouch(document.getElementById('btn-right'), () => moveRight = true, () => moveRight = false);
+  addTouch(document.getElementById('btn-fire'), () => isFiring = true, () => isFiring = false);
 
   function drawChubbyDragonCanvas(x, y, d) {
     ctx.save();
@@ -582,6 +644,23 @@
     ctx.restore();
   }
 
+  function spawnFlameParticles(originX, originY, baseHue) {
+    for (let i = 0; i < 12; i++) {
+      let speed = 9 + Math.random() * 7;
+      let angle = (Math.random() - 0.5) * 0.45; 
+      flameParticles.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: 10 + Math.random() * 12,
+        life: 1.0,
+        decay: 0.03 + Math.random() * 0.03,
+        hue: baseHue + (Math.random() * 30 - 15)
+      });
+    }
+  }
+
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -589,43 +668,75 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = state.equipped.world.stars;
-    for(let i=0; i<15; i++) {
-      ctx.fillRect((i*60 + score*2)%canvas.width, (i*37)%canvas.height, 3, 3);
+    for(let i=0; i<18; i++) {
+      ctx.fillRect((i*65 + score*2)%canvas.width, (i*37)%canvas.height, 3, 3);
     }
 
+    // 4-Way Directional Movement
     if (moveUp) dragonY -= 6;
     if (moveDown) dragonY += 6;
-    dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
+    if (moveLeft) dragonX -= 6;
+    if (moveRight) dragonX += 6;
 
-    // Fire Beam
+    dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
+    dragonX = Math.max(40, Math.min(canvas.width - 120, dragonX));
+
+    /* REALISTIC PARTICLE FLAMETHROWER SYSTEM */
     if (isFiring) {
-      ctx.save();
-      let grad = ctx.createLinearGradient(110, dragonY, canvas.width, dragonY);
-      grad.addColorStop(0, '#ffffff');
-      grad.addColorStop(0.4, state.equipped.fire.c1);
-      grad.addColorStop(1, state.equipped.fire.c2);
-      
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.moveTo(110, dragonY - 8);
-      ctx.lineTo(canvas.width, dragonY - 30);
-      ctx.lineTo(canvas.width, dragonY + 20);
-      ctx.lineTo(110, dragonY + 8);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+      let mouthX = dragonX + 38;
+      let mouthY = dragonY - 10;
+      let equippedHue = state.equipped.fire.hue !== undefined ? state.equipped.fire.hue : 20;
+      spawnFlameParticles(mouthX, mouthY, equippedHue);
     }
 
+    // Render & Update Flamethrower Particles
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = flameParticles.length - 1; i >= 0; i--) {
+      let p = flameParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.size += 0.8;
+      p.life -= p.decay;
+
+      if (p.life <= 0) {
+        flameParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      let alpha = p.life;
+      let lightness = 50 + (1 - p.life) * 30;
+      ctx.fillStyle = `hsla(${p.hue}, 100%, ${lightness}%, ${alpha})`;
+      ctx.shadowColor = `hsl(${p.hue}, 100%, 50%)`;
+      ctx.shadowBlur = 15;
+      ctx.fill();
+
+      // Particle Collision with Obstacles
+      for (let j = obstacles.length - 1; j >= 0; j--) {
+        let obs = obstacles[j];
+        if (Math.abs(p.x - obs.x) < obs.size && Math.abs(p.y - obs.y) < obs.size) {
+          obstacles.splice(j, 1);
+          score += 10;
+          state.coins += 1;
+          updateUI();
+          break;
+        }
+      }
+    }
+    ctx.restore();
+
     /* DRAW CUTE CHUBBY DRAGON */
-    drawChubbyDragonCanvas(65, dragonY, state.equipped.dragon);
+    drawChubbyDragonCanvas(dragonX, dragonY, state.equipped.dragon);
 
     /* PRINCESS MASA RIDING DRAGON */
     ctx.save();
     ctx.shadowColor = '#ffffff';
     ctx.shadowBlur = 10;
-    let pSize = Math.min(28, Math.max(22, 22 * state.equipped.size.mult));
+    let pSize = Math.min(26, Math.max(20, 20 * state.equipped.size.mult));
     ctx.font = `${pSize}px serif`;
-    ctx.fillText("👑👧🏻", 55, dragonY - 22);
+    ctx.fillText("👑👧🏻", dragonX - 8, dragonY - 22);
     ctx.restore();
 
     // Spawn Obstacles & Coins
@@ -647,14 +758,14 @@
       ctx.fillText('🪙', c.x, c.y);
       ctx.restore();
 
-      if (Math.abs(c.x - 70) < 40 && Math.abs(c.y - dragonY) < 40) {
+      if (Math.abs(c.x - dragonX) < 35 && Math.abs(c.y - dragonY) < 35) {
         coinPickups.splice(i, 1);
         state.coins += 5;
         updateUI();
       }
     }
 
-    // Render Obstacles
+    // Render Obstacles & Collision System
     for (let i = obstacles.length - 1; i >= 0; i--) {
       let obs = obstacles[i];
       obs.x -= obs.speed;
@@ -665,17 +776,22 @@
       ctx.fillText('🪨', obs.x, obs.y);
       ctx.restore();
 
-      if (isFiring && obs.y > dragonY - 45 && obs.y < dragonY + 45 && obs.x > 90) {
+      // Hitting an obstacle loses 1 Life
+      if (Math.abs(obs.x - dragonX) < 30 && Math.abs(obs.y - dragonY) < 30) {
         obstacles.splice(i, 1);
-        score += 10;
-        state.coins += 1;
+        state.lives = Math.max(0, state.lives - 1);
+        state.hunger = Math.max(0, state.hunger - 15);
+        state.clean = Math.max(0, state.clean - 15);
+        state.love = Math.max(0, state.love - 15);
         updateUI();
-        continue;
-      }
 
-      if (Math.abs(obs.x - 70) < 35 && Math.abs(obs.y - dragonY) < 35) {
-        obstacles.splice(i, 1);
-        score = Math.max(0, score - 15);
+        // 0 Lives -> Force return to Care screen
+        if (state.lives <= 0) {
+          stopFlyGame();
+          alert("Masa's dragon ran out of energy! Time to nurse it back to health in the Care screen! ❤️");
+          switchTab('care');
+          return;
+        }
       }
     }
 
