@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dragon & Princess Masa: Ultimate Realm Edition</title>
+  <title>Dragon & Princess Masa: World Quest Edition</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0c0414">
@@ -31,14 +31,15 @@
     .bar-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 250px; overflow: visible; }
+    .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; min-height: 260px; overflow: visible; }
     
-    .dragon-render { width: 150px; height: 150px; filter: drop-shadow(0 0 20px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 18%; }
-    
-    .princess-render { width: 120px; height: 140px; position: absolute; bottom: 25px; right: 10%; z-index: 5; transition: all 0.5s ease-in-out; }
+    .dragon-render { width: 180px; height: 180px; filter: drop-shadow(0 0 25px var(--dragon-glow, #a855f7)); transition: transform 0.3s ease; z-index: 2; position: absolute; left: 14%; animation: dragonFloat 3s ease-in-out infinite alternate; }
+    @keyframes dragonFloat { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(-12px) rotate(2deg); } }
+
+    .princess-render { width: 120px; height: 140px; position: absolute; bottom: 25px; right: 8%; z-index: 5; transition: all 0.5s ease-in-out; }
 
     .princess-render.interact { right: 36%; transform: translateY(-10px) scale(1.1); }
-    .princess-render.hugging { right: 40%; transform: translateY(-5px) scale(1.2) rotate(-8deg); }
+    .princess-render.hugging { right: 38%; transform: translateY(-5px) scale(1.2) rotate(-8deg); }
 
     .action-tool { position: absolute; font-size: 40px; z-index: 6; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .action-tool.active { opacity: 1; animation: toolPulse 0.5s infinite alternate; }
@@ -76,8 +77,9 @@
     #fly-screen { background: #000; position: relative; width: 100%; height: 100%; overflow: hidden; padding-bottom: 0; }
     canvas { display: block; width: 100%; height: 100%; }
     
-    .fly-hud { position: absolute; top: 12px; left: 16px; display: flex; gap: 10px; z-index: 20; align-items: center; }
-    .hud-box { font-size: 14px; font-weight: bold; color: #ffd700; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 12px; border: 1.5px solid #ffd700; text-shadow: 0 0 6px #000; }
+    .fly-hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; z-index: 20; align-items: center; }
+    .hud-box { font-size: 13px; font-weight: bold; color: #ffd700; background: rgba(0,0,0,0.75); padding: 5px 10px; border-radius: 12px; border: 1.5px solid #ffd700; text-shadow: 0 0 6px #000; }
+    .mission-box { position: absolute; top: 52px; left: 12px; right: 12px; background: rgba(15, 7, 40, 0.85); border: 1.5px solid #a855f7; border-radius: 10px; padding: 6px 12px; font-size: 12px; color: #e9d5ff; font-weight: bold; text-align: center; z-index: 20; text-shadow: 0 1px 2px #000; backdrop-filter: blur(4px); }
     .mode-toggle-btn { font-size: 12px; font-weight: bold; color: #fff; background: linear-gradient(135deg, #a855f7, #6d28d9); border: 1.5px solid #ffd700; padding: 5px 10px; border-radius: 12px; cursor: pointer; backdrop-filter: blur(4px); }
 
     .fly-controls { position: absolute; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 20; pointer-events: none; }
@@ -179,9 +181,13 @@
       <div class="hud-box">Score: <span id="score-txt">0</span></div>
       <button class="mode-toggle-btn" id="control-toggle-btn" onclick="toggleControlMode()">🎮 Mode: Buttons</button>
     </div>
-    
+
+    <div class="mission-box" id="mission-hud-box">
+      🎯 Mission: Collect 10 Ice Eggs! Progress: <span id="mission-progress">0/10</span>
+    </div>
+
     <canvas id="gameCanvas"></canvas>
-    
+
     <div class="fly-controls" id="fly-controls-container">
       <div class="d-pad-grid" id="dpad-wrapper">
         <div></div>
@@ -197,16 +203,16 @@
 </div>
 
 <script>
-  /* 1. PROCEDURAL CATALOG GENERATOR WITH HIGH-DIVERSITY WORLD THEMES */
+  /* 1. PROCEDURAL CATALOG GENERATOR WITH WORLD-SPECIFIC MISSIONS */
   const ELEMENTS = ["Inferno", "Frost", "Void", "Storm", "Golden", "Emerald", "Solar", "Galactic", "Lava", "Nebula", "Titanium", "Neon", "Crystal", "Shadow", "Celestial"];
   const OUTFIT_BASES = ["👗✨", "👗👑", "👗🌸", "👗💎", "👗⭐"];
 
   const WORLD_THEMES = [
-    { type: 'frost', bg1: '#0c2340', bg2: '#1d4ed8', obs: ['🧊', '❄️', '🏔️'], pColor: '#93c5fd' },
-    { type: 'lava', bg1: '#2a0800', bg2: '#991b1b', obs: ['☄️', '🔥', '🌋'], pColor: '#f97316' },
-    { type: 'void', bg1: '#110022', bg2: '#581c87', obs: ['🌌', '💥', '👾'], pColor: '#c084fc' },
-    { type: 'storm', bg1: '#0f172a', bg2: '#1e3a8a', obs: ['⚡', '🌩️', '🌪️'], pColor: '#38bdf8' },
-    { type: 'golden', bg1: '#2e1c02', bg2: '#854d0e', obs: ['☀️', '✨', '👑'], pColor: '#fde047' }
+    { type: 'frost', bg1: '#0c2340', bg2: '#1d4ed8', obs: ['🧊', '❄️', '🏔️'], pColor: '#93c5fd', mission: "Collect 10 Frozen Eggs!", targetType: 'item', targetIcon: '🥚', targetGoal: 10 },
+    { type: 'lava', bg1: '#2a0800', bg2: '#991b1b', obs: ['☄️', '🔥', '🌋'], pColor: '#f97316', mission: "Destroy 12 Magma Rocks!", targetType: 'destroy', targetIcon: '☄️', targetGoal: 12 },
+    { type: 'void', bg1: '#110022', bg2: '#581c87', obs: ['🌌', '💥', '👾'], pColor: '#c084fc', mission: "Collect 15 Star Orbs!", targetType: 'item', targetIcon: '🔮', targetGoal: 15 },
+    { type: 'storm', bg1: '#0f172a', bg2: '#1e3a8a', obs: ['⚡', '🌩️', '🌪️'], pColor: '#38bdf8', mission: "Collect 10 Spark Energy!", targetType: 'item', targetIcon: '⚡', targetGoal: 10 },
+    { type: 'golden', bg1: '#2e1c02', bg2: '#854d0e', obs: ['☀️', '✨', '👑'], pColor: '#fde047', mission: "Collect 12 Golden Crowns!", targetType: 'item', targetIcon: '👑', targetGoal: 12 }
   ];
 
   function generateCatalog(type) {
@@ -224,7 +230,7 @@
         items.push({ id: `fire_${i}`, name: `#${i} ${elem} Flame`, hue: hue, cost: i * 12 });
       } else if (type === 'worlds') {
         let wTheme = WORLD_THEMES[i % WORLD_THEMES.length];
-        items.push({ id: `world_${i}`, name: `#${i} ${elem} Realm`, bg1: wTheme.bg1, bg2: wTheme.bg2, type: wTheme.type, obs: wTheme.obs, pColor: wTheme.pColor, cost: i * 20 });
+        items.push({ id: `world_${i}`, name: `#${i} ${elem} Realm`, bg1: wTheme.bg1, bg2: wTheme.bg2, type: wTheme.type, obs: wTheme.obs, pColor: wTheme.pColor, mission: wTheme.mission, targetType: wTheme.targetType, targetIcon: wTheme.targetIcon, targetGoal: wTheme.targetGoal, cost: i * 20 });
       } else if (type === 'sizes') {
         let sizeMult = (1 + (i * 0.05)).toFixed(2);
         items.push({ id: `size_${i}`, name: `Level ${i} Size (${sizeMult}x)`, mult: parseFloat(sizeMult), cost: i * 25 });
@@ -262,6 +268,7 @@
 
   let dressHue = 0;
   let currentCarePose = 'idle';
+  let missionCount = 0;
 
   setInterval(() => {
     dressHue = (dressHue + 2) % 360;
@@ -297,22 +304,71 @@
     localStorage.setItem('dp_500_state', JSON.stringify(state));
   }
 
+  /* HIGH-DETAIL ULTRA CUTE DRAGON SVG RENDER */
   function getChubbyDragonSVG(color, belly, glow) {
-    return `<svg viewBox="0 0 100 100" width="100%" height="100%">
-      <path d="M 25 45 Q 10 30 20 20 Q 30 30 35 45 Z" fill="${glow}" stroke="#fff" stroke-width="2"/>
-      <path d="M 15 50 Q 0 40 10 30 Q 20 40 25 50 Z" fill="${glow}" opacity="0.7"/>
-      <ellipse cx="45" cy="62" rx="30" ry="25" fill="${color}" stroke="#fff" stroke-width="2.5"/>
-      <ellipse cx="52" cy="65" rx="18" ry="16" fill="${belly}"/>
-      <circle cx="65" cy="38" r="22" fill="${color}" stroke="#fff" stroke-width="2.5"/>
-      <path d="M 58 18 Q 54 8 62 14 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
-      <path d="M 68 18 Q 66 6 72 12 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
-      <circle cx="72" cy="34" r="6" fill="#1e1b4b"/>
-      <circle cx="74" cy="32" r="2.5" fill="#ffffff"/>
-      <ellipse cx="68" cy="42" rx="4" ry="2.5" fill="#f43f5e" opacity="0.7"/>
-      <ellipse cx="80" cy="42" rx="8" ry="6" fill="${color}"/>
-      <circle cx="82" cy="40" r="1" fill="#fff"/>
-      <path d="M 18 68 Q 5 75 8 85 Q 18 82 25 72 Z" fill="${color}" stroke="#fff" stroke-width="2"/>
-      <polygon points="5,88 12,82 10,92" fill="#ffd700"/>
+    return `<svg viewBox="0 0 120 120" width="100%" height="100%">
+      <!-- Tail with Heart Tip -->
+      <path d="M 30 85 Q 10 100 8 112 Q 18 118 32 95 Z" fill="${color}" stroke="#fff" stroke-width="2"/>
+      <path d="M 6 112 Q 0 106 6 100 Q 12 106 6 112 Q 0 118 6 112 Z" fill="#f43f5e"/>
+
+      <!-- Dragon Wings with Floating Flap Motion -->
+      <g>
+        <path d="M 38 48 Q 15 20 28 10 Q 42 22 48 45 Z" fill="${glow}" stroke="#fff" stroke-width="2.2"/>
+        <path d="M 30 46 Q 10 30 20 18 Q 32 28 38 45 Z" fill="${glow}" opacity="0.6"/>
+        <path d="M 28 52 Q 8 36 18 24 Q 28 34 32 50 Z" fill="${glow}" opacity="0.4"/>
+      </g>
+
+      <!-- Chubby Body -->
+      <ellipse cx="55" cy="72" rx="36" ry="30" fill="${color}" stroke="#fff" stroke-width="2.8"/>
+      <!-- Soft Scaled Belly -->
+      <ellipse cx="64" cy="76" rx="22" ry="20" fill="${belly}"/>
+      <path d="M 52 70 Q 64 65 76 70 M 50 78 Q 64 73 78 78 M 52 86 Q 64 81 76 86" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none"/>
+
+      <!-- Cute Back Ridge Spikes -->
+      <path d="M 25 58 Q 22 50 28 54 Z M 20 68 Q 16 60 22 64 Z M 16 78 Q 12 70 18 74 Z" fill="#ffd700" stroke="#fff" stroke-width="1.5"/>
+
+      <!-- Back Leg & Paw -->
+      <ellipse cx="38" cy="92" rx="14" ry="10" fill="${color}" stroke="#fff" stroke-width="2"/>
+      <circle cx="30" cy="95" r="2.5" fill="#fff"/>
+      <circle cx="36" cy="98" r="2.5" fill="#fff"/>
+      <circle cx="42" cy="97" r="2.5" fill="#fff"/>
+
+      <!-- Front Arm / Paw -->
+      <ellipse cx="78" cy="80" rx="9" ry="7" fill="${color}" stroke="#fff" stroke-width="2"/>
+      <circle cx="84" cy="78" r="1.8" fill="#fff"/>
+      <circle cx="85" cy="82" r="1.8" fill="#fff"/>
+
+      <!-- Big Cute Head -->
+      <circle cx="78" cy="42" r="26" fill="${color}" stroke="#fff" stroke-width="2.8"/>
+
+      <!-- Curving Golden Horns with Ridge Details -->
+      <path d="M 68 20 Q 62 4 72 10 Q 75 20 72 22 Z" fill="#ffd700" stroke="#fff" stroke-width="1.8"/>
+      <path d="M 68 14 Q 70 12 73 16" stroke="#b45309" stroke-width="1.2" fill="none"/>
+      
+      <path d="M 78 19 Q 78 2 86 8 Q 83 19 80 21 Z" fill="#ffd700" stroke="#fff" stroke-width="1.8"/>
+      <path d="M 79 12 Q 81 10 84 14" stroke="#b45309" stroke-width="1.2" fill="none"/>
+
+      <!-- Super Anime Cute Eyes -->
+      <ellipse cx="88" cy="38" rx="8" ry="11" fill="#1e1b4b" stroke="#fff" stroke-width="1.2"/>
+      <ellipse cx="88" cy="38" rx="6.5" ry="9" fill="${glow}"/>
+      <circle cx="86" cy="34" r="3.5" fill="#ffffff"/>
+      <circle cx="91" cy="42" r="1.8" fill="#ffffff"/>
+
+      <!-- Fluttery Eyelashes -->
+      <path d="M 84 27 Q 88 24 92 26 M 90 26 L 94 24" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Rosy Cheeks -->
+      <ellipse cx="82" cy="48" rx="5" ry="3" fill="#f43f5e" opacity="0.75"/>
+
+      <!-- Cute Snout, Nostrils & Smiling Teeth -->
+      <ellipse cx="98" cy="46" rx="11" ry="8" fill="${color}" stroke="#fff" stroke-width="2"/>
+      <circle cx="96" cy="43" r="1.2" fill="#4c0519"/>
+      <circle cx="101" cy="43" r="1.2" fill="#4c0519"/>
+      
+      <!-- Open Happy Mouth -->
+      <path d="M 92 48 Q 98 56 104 48 Z" fill="#be123c" stroke="#fff" stroke-width="1.2"/>
+      <polygon points="95,48 97,51 99,48" fill="#fff"/>
+      <polygon points="99,48 101,51 103,48" fill="#fff"/>
     </svg>`;
   }
 
@@ -417,6 +473,9 @@
       ctrlToggleBtn.innerText = '🎮 Mode: Buttons';
       flyControlsContainer.classList.remove('drag-active');
     }
+
+    let w = state.equipped.world;
+    document.getElementById('mission-hud-box').innerHTML = `🎯 Mission: ${w.mission} Progress: <span id="mission-progress">${missionCount}/${w.targetGoal}</span>`;
 
     saveState();
   }
@@ -598,7 +657,7 @@
     else stopFlyGame();
   }
 
-  /* 4. FLIGHT GAME ENGINE WITH WORLD PARTICLES & THEMED OBSTACLES */
+  /* 4. FLIGHT ENGINE WITH DETAILED CANVAS DRAGON RENDER */
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   let gameLoopId = null;
@@ -607,6 +666,7 @@
   let isFiring = false;
   let obstacles = [];
   let coinPickups = [];
+  let missionPickups = [];
   let flameParticles = [];
   let worldWeatherParticles = [];
   let score = 0;
@@ -628,11 +688,12 @@
     dragonY = canvas.height / 2;
     obstacles = [];
     coinPickups = [];
+    missionPickups = [];
     flameParticles = [];
     worldWeatherParticles = [];
     score = 0;
+    missionCount = 0;
     
-    // Populate world weather particles
     for (let i = 0; i < 35; i++) {
       worldWeatherParticles.push({
         x: Math.random() * canvas.width,
@@ -643,6 +704,7 @@
       });
     }
 
+    updateUI();
     if (!gameLoopId) gameLoopId = requestAnimationFrame(updateFlyGame);
   }
 
@@ -702,69 +764,105 @@
   canvas.addEventListener('mousemove', handleDragMove);
   canvas.addEventListener('mouseup', handleDragEnd);
 
+  /* HIGH-DETAIL CANVAS DRAGON RENDER FOR FLIGHT */
   function drawChubbyDragonCanvas(x, y, d) {
     ctx.save();
     ctx.translate(x, y);
 
-    ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = 12;
+    ctx.shadowColor = d.glow;
+    ctx.shadowBlur = 15;
 
-    ctx.fillStyle = d.glow;
+    // Tail with Heart Tip
+    ctx.fillStyle = d.color;
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.8;
     ctx.beginPath();
-    ctx.moveTo(-15, -5);
-    ctx.quadraticCurveTo(-30, -25, -10, -30);
-    ctx.quadraticCurveTo(-5, -15, -5, -5);
+    ctx.moveTo(-18, 15);
+    ctx.quadraticCurveTo(-38, 28, -42, 38);
+    ctx.quadraticCurveTo(-30, 42, -18, 24);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = d.color;
+    ctx.fillStyle = '#f43f5e';
+    ctx.font = '16px serif';
+    ctx.fillText('💖', -48, 48);
+
+    // Wings with Soft Layering
+    ctx.fillStyle = d.glow;
     ctx.beginPath();
-    ctx.ellipse(0, 5, 26, 20, 0, 0, Math.PI * 2);
+    ctx.moveTo(-10, -5);
+    ctx.quadraticCurveTo(-32, -35, -8, -42);
+    ctx.quadraticCurveTo(-2, -20, -2, -5);
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
+    // Chubby Body
+    ctx.fillStyle = d.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 28, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Scaled Belly
     ctx.fillStyle = d.belly;
     ctx.beginPath();
-    ctx.ellipse(6, 8, 14, 12, 0, 0, Math.PI * 2);
+    ctx.ellipse(8, 12, 16, 14, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // Head
     ctx.fillStyle = d.color;
     ctx.beginPath();
-    ctx.arc(18, -12, 18, 0, Math.PI * 2);
+    ctx.arc(22, -12, 20, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
+    // Golden Curved Horns
     ctx.fillStyle = '#ffd700';
     ctx.beginPath();
-    ctx.moveTo(12, -28);
-    ctx.lineTo(8, -38);
-    ctx.lineTo(18, -30);
+    ctx.moveTo(14, -28);
+    ctx.quadraticCurveTo(8, -42, 18, -38);
+    ctx.quadraticCurveTo(20, -30, 22, -28);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
 
+    // Anime Eye with Highlight
     ctx.fillStyle = '#1e1b4b';
     ctx.beginPath();
-    ctx.arc(24, -15, 5, 0, Math.PI * 2);
+    ctx.ellipse(30, -15, 6, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = d.glow;
+    ctx.beginPath();
+    ctx.ellipse(30, -15, 4.5, 6.5, 0, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(26, -17, 2, 0, Math.PI * 2);
+    ctx.arc(28, -18, 2.5, 0, Math.PI * 2);
+    ctx.arc(32, -12, 1.2, 0, Math.PI * 2);
     ctx.fill();
 
+    // Cheeks & Snout
     ctx.fillStyle = '#f43f5e';
-    ctx.globalAlpha = 0.7;
+    ctx.globalAlpha = 0.75;
     ctx.beginPath();
-    ctx.ellipse(20, -8, 3.5, 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(26, -6, 4, 2.5, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1.0;
 
     ctx.fillStyle = d.color;
     ctx.beginPath();
-    ctx.ellipse(30, -10, 7, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(36, -8, 8, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#4c0519';
+    ctx.beginPath();
+    ctx.arc(38, -10, 1, 0, Math.PI * 2);
+    ctx.arc(41, -10, 1, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.restore();
@@ -825,7 +923,6 @@
   function updateFlyGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Dynamic Atmosphere Sky Gradient based on Equipped World
     let w = state.equipped.world;
     let bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
     bgGrad.addColorStop(0, w.bg1 || '#0c0414');
@@ -833,7 +930,6 @@
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Weather Particles (Snow, Embers, Sparkles)
     ctx.fillStyle = w.pColor || '#ffffff';
     worldWeatherParticles.forEach(p => {
       p.x -= 1.5;
@@ -855,10 +951,9 @@
     dragonY = Math.max(40, Math.min(canvas.height - 90, dragonY));
     dragonX = Math.max(40, Math.min(canvas.width - 120, dragonX));
 
-    /* REALISTIC PARTICLE FLAMETHROWER SYSTEM */
     if (isFiring) {
-      let mouthX = dragonX + 38;
-      let mouthY = dragonY - 10;
+      let mouthX = dragonX + 42;
+      let mouthY = dragonY - 8;
       let equippedHue = state.equipped.fire.hue !== undefined ? state.equipped.fire.hue : 20;
       spawnFlameParticles(mouthX, mouthY, equippedHue);
     }
@@ -889,6 +984,10 @@
       for (let j = obstacles.length - 1; j >= 0; j--) {
         let obs = obstacles[j];
         if (Math.abs(p.x - obs.x) < obs.size && Math.abs(p.y - obs.y) < obs.size) {
+          if (w.targetType === 'destroy' && obs.icon === w.targetIcon) {
+            missionCount++;
+            checkMissionVictory();
+          }
           obstacles.splice(j, 1);
           score += 10;
           state.coins += 1;
@@ -902,7 +1001,6 @@
     drawChubbyDragonCanvas(dragonX, dragonY, state.equipped.dragon);
     drawPrincessMasaRiding(dragonX, dragonY);
 
-    // Spawn World-Themed Obstacles
     if (Math.random() < 0.03) {
       let obsList = w.obs || ['🪨', '☄️', '⚡'];
       let chosenIcon = obsList[Math.floor(Math.random() * obsList.length)];
@@ -910,6 +1008,10 @@
     }
     if (Math.random() < 0.02) {
       coinPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
+    }
+
+    if (w.targetType === 'item' && Math.random() < 0.02) {
+      missionPickups.push({ x: canvas.width, y: Math.random() * (canvas.height - 120) + 40, speed: 3 });
     }
 
     for (let i = coinPickups.length - 1; i >= 0; i--) {
@@ -925,6 +1027,26 @@
       if (Math.abs(c.x - dragonX) < 35 && Math.abs(c.y - dragonY) < 35) {
         coinPickups.splice(i, 1);
         state.coins += 5;
+        updateUI();
+      }
+    }
+
+    for (let i = missionPickups.length - 1; i >= 0; i--) {
+      let mp = missionPickups[i];
+      mp.x -= mp.speed;
+      ctx.save();
+      ctx.shadowColor = '#a855f7';
+      ctx.shadowBlur = 12;
+      ctx.font = '30px serif';
+      ctx.fillText(w.targetIcon, mp.x, mp.y);
+      ctx.restore();
+
+      if (Math.abs(mp.x - dragonX) < 35 && Math.abs(mp.y - dragonY) < 35) {
+        missionPickups.splice(i, 1);
+        missionCount++;
+        score += 20;
+        state.coins += 3;
+        checkMissionVictory();
         updateUI();
       }
     }
@@ -958,6 +1080,17 @@
 
     document.getElementById('score-txt').innerText = score;
     gameLoopId = requestAnimationFrame(updateFlyGame);
+  }
+
+  function checkMissionVictory() {
+    let w = state.equipped.world;
+    if (missionCount >= w.targetGoal) {
+      stopFlyGame();
+      state.coins += 50;
+      state.lives = 5;
+      alert(`🎉 MISSION COMPLETE! Princess Masa & Her Dragon conquered the ${w.name}! +50 Coins Awarded & Full Lives Restored! 🏆`);
+      switchTab('castle');
+    }
   }
 
   updateUI();
