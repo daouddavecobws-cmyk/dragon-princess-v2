@@ -1,829 +1,307 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#7046b8">
-<title>Princess Masa and the Dragon of Crown Jewel</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Crown Jewel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>
-:root{--purple:#7548b8;--pink:#ffb8d8;--gold:#ffe59b;--ink:#432c5b}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{font-family:system-ui,-apple-system,sans-serif;background:#a8eaff;color:var(--ink);touch-action:manipulation}
-button{font:inherit;font-weight:800;border:2px solid white;border-radius:14px;padding:10px 12px;background:white;color:var(--ink);box-shadow:0 3px 0 #38204b1c;cursor:pointer;touch-action:manipulation}
-button:active{transform:scale(.96)}
-button:disabled{opacity:.45}
-#game{position:fixed;inset:0;width:100%;height:100%;display:block}
-#top{position:fixed;z-index:3;top:env(safe-area-inset-top,0px);left:0;right:0;padding:7px;display:flex;justify-content:space-between;gap:7px;pointer-events:none}
-.card{background:#ffffffed;border:2px solid white;border-radius:14px;padding:7px 10px;box-shadow:0 3px 12px #39245020}
-#brand{font-size:clamp(12px,3vw,19px);font-weight:1000;color:var(--purple)}
-#stats{font-size:11px;font-weight:900;line-height:1.7}
-#worldLabel{font-size:clamp(10px,2.8vw,14px);font-weight:900;text-align:right}
-#modeLabel{font-size:10px;text-align:right;font-weight:800}
-#status{position:fixed;z-index:3;top:72px;left:50%;transform:translateX(-50%);width:max-content;max-width:94vw;text-align:center;padding:8px 12px;background:#fff9e9;border:2px solid white;border-radius:14px;font-size:12px;font-weight:850;box-shadow:0 3px 12px #39245020;pointer-events:none}
-#nav{position:fixed;z-index:6;left:0;right:0;bottom:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:5px;flex-wrap:wrap;background:linear-gradient(transparent,#3020433d)}
-#nav button{font-size:11px;padding:9px 10px;border-radius:12px}
-.purple{background:var(--purple);color:white}
-.pink{background:#ffcae1}
-.gold{background:var(--gold)}
-#careButtons,#activityButtons{position:fixed;z-index:5;left:5px;right:5px;bottom:calc(80px + env(safe-area-inset-bottom,0px));display:none;justify-content:center;gap:5px;flex-wrap:wrap}
-#careButtons button,#activityButtons button{font-size:11px;padding:9px 10px}
-#flightButtons{position:fixed;z-index:5;left:7px;right:7px;bottom:calc(80px + env(safe-area-inset-bottom,0px));display:none;justify-content:space-between;align-items:center;pointer-events:none}
-#flightButtons button{pointer-events:auto;width:53px;height:53px;padding:2px;font-size:21px;border-radius:17px;background:#ffffffed;touch-action:none}
-#flightButtons .cluster{display:flex;gap:6px}
-#tip{position:fixed;z-index:3;left:50%;bottom:calc(142px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ffffffdf;border-radius:12px;padding:6px 10px;font-size:10px;font-weight:850;white-space:nowrap;pointer-events:none;max-width:96vw}
-#dialog{position:fixed;z-index:10;inset:0;background:#251539aa;display:none;align-items:center;justify-content:center;padding:14px}
-#dialog.open{display:flex}
-#dialogBox{width:min(600px,100%);max-height:82dvh;overflow-y:auto;background:#fff8f0;border:4px solid white;border-radius:22px;padding:16px;box-shadow:0 12px 50px #150b25aa}
-#dialogBox h2{margin:0 0 7px;font-size:22px;color:var(--purple)}
-#dialogDescription{font-size:13px;line-height:1.45}
-#options{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
-.option{background:white;border:2px solid #eadcfb;border-radius:14px;padding:10px;text-align:center}
-.option strong{display:block;font-size:13px}
-.option p{font-size:11px;margin:6px 0 9px}
-.option button{font-size:11px;padding:8px}
-#dialogFooter{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
-#toast{position:fixed;z-index:20;left:50%;bottom:calc(145px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:none;max-width:90vw;background:#392450;color:white;border-radius:14px;padding:10px 14px;font-weight:900;font-size:12px;text-align:center}
-@media(max-width:400px){
- #nav{gap:4px}
- #nav button{font-size:10px;padding:8px 7px}
- #status{top:67px;font-size:10px}
- #careButtons,#activityButtons{bottom:calc(102px + env(safe-area-inset-bottom,0px))}
- #flightButtons{bottom:calc(97px + env(safe-area-inset-bottom,0px))}
- #flightButtons button{width:47px;height:48px}
-}
-</style>
-</head>
-<body>
-<canvas id="game" aria-label="Princess Masa fantasy adventure game"></canvas>
-
-<div id="top">
- <div class="card">
-  <div id="brand">👑 CROWN JEWEL</div>
-  <div id="stats">🪙 0 · ❤️ 7/7</div>
- </div>
- <div class="card">
-  <div id="worldLabel">🏰 Castle Gardens</div>
-  <div id="modeLabel">Royal Castle</div>
- </div>
-</div>
-
-<div id="status" role="status">Elu: Welcome home, Princess Masa!</div>
-<div id="tip">Explore the castle with Elu!</div>
-
-<div id="careButtons">
- <button class="pink" id="feed">🥕 Feed</button>
- <button class="pink" id="wash">🫧 Wash</button>
- <button class="pink" id="pet">💗 Pet</button>
- <button class="pink" id="hug">🤗 Hug</button>
- <button class="gold" id="heal">💚 Heal</button>
-</div>
-
-<div id="activityButtons">
- <button class="pink" id="tea">🫖 Tea party</button>
- <button class="pink" id="dance">💃 Dance party</button>
- <button class="pink" id="garden">🌱 Garden</button>
- <button class="gold" id="harvest">🧺 Harvest</button>
-</div>
-
-<div id="flightButtons">
- <div class="cluster">
-  <button id="backward" aria-label="Fly backward">⬅️</button>
-  <button id="up" aria-label="Fly up">⬆️</button>
-  <button id="down" aria-label="Fly down">⬇️</button>
- </div>
- <div class="cluster">
-  <button id="boost" aria-label="Fly faster">⚡</button>
-  <button id="forward" aria-label="Fly forward">➡️</button>
- </div>
-</div>
-
-<div id="nav">
- <button id="castleTab" class="purple">🏰 Castle</button>
- <button id="flyTab">🐉 Fly</button>
- <button id="worldTab">🌎 Worlds</button>
- <button id="styleTab">👗 Style</button>
- <button id="gardenTab">🌷 Garden</button>
- <button id="missionTab">⭐ Missions</button>
- <button id="eluTab">💬 Elu</button>
-</div>
-
-<div id="dialog">
- <div id="dialogBox">
-  <h2 id="dialogTitle">Welcome!</h2>
-  <p id="dialogDescription"></p>
-  <div id="options"></div>
-  <div id="dialogFooter"></div>
- </div>
-</div>
-<div id="toast" role="status"></div>
-
+:root{box-sizing:border-box;--pn:#fffffff2;--fg:#2a1b3d;--bt:#f3e6ff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pn:#241636f2;--fg:#fff;--bt:#3a2557}}
+:root[data-theme="dark"]{--pn:#241636f2;--fg:#fff;--bt:#3a2557}
+html,body{margin:0;height:100%;overflow:hidden;background:#1a1030;font-family:system-ui,sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+canvas{display:block;position:fixed;inset:0;touch-action:none}
+#hud{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;flex-wrap:wrap;gap:6px;padding:8px;pointer-events:none;z-index:2}
+#hud>*{pointer-events:auto}
+.chip{background:var(--pn);color:var(--fg);border-radius:18px;padding:6px 12px;font-weight:700;font-size:14px}
+#elu{flex:1 1 100%;font-weight:500;font-size:13px}
+#cmb:empty{display:none}
+button{font:inherit;border:0;border-radius:14px;padding:9px 12px;margin:3px;background:var(--bt);color:var(--fg);cursor:pointer;touch-action:manipulation}
+button.on{outline:3px solid #ff8fc8}
+.big{background:#ff8fc8;color:#fff;font-weight:700;margin:0}
+#joy{position:fixed;left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);width:130px;height:130px;border-radius:50%;background:#ffffff40;border:3px solid #ffffff90;touch-action:none;z-index:2}
+#knob{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:#ff8fc8;box-shadow:0 2px 8px #0006}
+#side{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);display:flex;flex-direction:column;gap:10px;z-index:2;align-items:flex-end}
+#act,#trick,#exit{display:none;padding:14px 18px;font-size:16px;border-radius:24px}
+#mg{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,340px);background:var(--pn);color:var(--fg);border-radius:20px;padding:12px;z-index:5;text-align:center;box-shadow:0 8px 30px #0008}
+#panel{position:fixed;left:0;right:0;bottom:0;height:55%;background:var(--pn);color:var(--fg);border-radius:18px 18px 0 0;display:flex;flex-direction:column;z-index:3;padding-bottom:env(safe-area-inset-bottom,0px)}
+#panel.hide{display:none}
+.tabs{display:flex;overflow-x:auto;padding:4px}
+.body{overflow-y:auto;padding:6px 10px;flex:1;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+h4{margin:8px 0 2px}
+.pop{position:fixed;left:50%;top:40%;font-size:42px;pointer-events:none;animation:up 1.2s forwards;z-index:4}
+@keyframes up{to{transform:translateY(-120px);opacity:0}}
+input[type=color]{width:60px;height:36px;border:0;vertical-align:middle}
+</style></head><body>
+<div id="hud"><div class="chip" id="orb">✨ 0</div><div class="chip" id="cmb"></div><button class="big" onclick="$('#panel').classList.toggle('hide')">☰ Menu</button><button class="big" id="fly" onclick="setMode(mode=='castle'?'fly':'castle')">🐉 Fly</button><div class="chip" id="elu"></div></div>
+<div id="joy"><div id="knob"></div></div>
+<div id="side"><button class="big" id="trick" onclick="doTrick(rndTrick())">🌀 Trick</button><button class="big" id="exit" onclick="exitRoom()">🚪 Exit</button><button class="big" id="act" onclick="doAct()"></button></div>
+<div id="mg"></div>
+<div id="panel" class="hide"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-"use strict";
-(function(){
-const $=id=>document.getElementById(id);
-const canvas=$("game");
-const ctx=canvas.getContext("2d");
-if(!ctx){$("status").textContent="Please open this game in Safari or another modern browser.";return;}
-
-const worlds=[
- {name:"Castle Gardens",emoji:"🏰",cost:0,sky:"#91e4ff",far:"#d7f5ff",ground:"#8bd99a",hazard:"🌳"},
- {name:"Candy Cloud Kingdom",emoji:"🍬",cost:100,sky:"#ffb9e5",far:"#e8d4ff",ground:"#ffb4df",hazard:"🍭"},
- {name:"Crystal Ice Mountains",emoji:"❄️",cost:220,sky:"#a3eeff",far:"#9bc5f4",ground:"#b9edfa",hazard:"💎"},
- {name:"Enchanted Forest",emoji:"🌲",cost:350,sky:"#a4e7bb",far:"#c4f1c6",ground:"#63c67c",hazard:"🌲"},
- {name:"Starry Dragon Realm",emoji:"🌌",cost:500,sky:"#302657",far:"#7763a9",ground:"#6752a1",hazard:"☄️"},
- {name:"Rainbow Sky Palace",emoji:"🌈",cost:750,sky:"#ffd4a7",far:"#f0d5ff",ground:"#a2e7d5",hazard:"🌈"}
-];
-
-const defaultState={
- coins:0,lives:7,world:0,unlocked:[0],
- dragon:"#a16ee8",wings:"#ff9dce",princess:"#ff83b9",
- accessory:0,outfit:0,
- care:{hunger:65,clean:80,happy:80,health:100},
- totalCoins:0,best:0,completed:[],
- garden:{plots:[null,null,null,null,null,null],harvests:0,plants:0}
-};
-let old={};
-try{old=JSON.parse(localStorage.getItem("crownJewelSave")||"{}")||{};}catch(e){}
-const state={...defaultState,...old};
-state.care={...defaultState.care,...(old.care||{})};
-state.garden={...defaultState.garden,...(old.garden||{})};
-state.garden.plots=Array.isArray(state.garden.plots)?state.garden.plots.slice(0,6):defaultState.garden.plots.slice();
-while(state.garden.plots.length<6)state.garden.plots.push(null);
-state.unlocked=Array.isArray(state.unlocked)?[...new Set([0,...state.unlocked])].filter(i=>Number.isInteger(i)&&i>=0&&i<worlds.length):[0];
-state.completed=Array.isArray(state.completed)?state.completed:[];
-state.coins=Math.max(0,Number(state.coins)||0);
-state.lives=Math.max(0,Math.min(7,Number(state.lives??7)));
-state.world=state.unlocked.includes(state.world)?state.world:0;
-
-const plants=[
- {name:"Sunflower",emoji:"🌻",seed:5,grow:30,harvest:12,food:5},
- {name:"Strawberry",emoji:"🍓",seed:8,grow:40,harvest:18,food:12},
- {name:"Carrot",emoji:"🥕",seed:4,grow:25,harvest:10,food:18},
- {name:"Rose",emoji:"🌹",seed:10,grow:45,harvest:22,food:0},
- {name:"Bluebell",emoji:"🪻",seed:7,grow:35,harvest:15,food:0},
- {name:"Pumpkin",emoji:"🎃",seed:12,grow:60,harvest:30,food:10}
-];
-
-let W=innerWidth,H=innerHeight,DPR=1;
-let mode="castle",last=0,frame=0,saveClock=0;
-let action=null,princess={walk:0},dragon={wing:0};
-let obstacles=[],coins=[],particles=[];
-let flight={x:.22,y:.48,worldX:0,speed:0,boost:0,invulnerable:0,spawn:1};
-let mission={type:"coins",target:8,progress:0};
-let toastTime=0,partyTime=0,partyType="";
-let gardenSelection=0;
-
-function save(){try{localStorage.setItem("crownJewelSave",JSON.stringify(state));}catch(e){}}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-function rand(a,b){return a+Math.random()*(b-a);}
-function say(t){$("status").textContent=t;}
-function toast(t){$("toast").textContent=t;$("toast").style.display="block";toastTime=2.5;}
-function resize(){
- W=innerWidth;H=innerHeight;DPR=Math.min(devicePixelRatio||1,2);
- canvas.width=Math.max(1,Math.round(W*DPR));canvas.height=Math.max(1,Math.round(H*DPR));
- canvas.style.width=W+"px";canvas.style.height=H+"px";
- ctx.setTransform(DPR,0,0,DPR,0,0);
-}
-window.addEventListener("resize",resize);resize();
-
-function oval(x,y,rx,ry,color){
- ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),0,0,Math.PI*2);ctx.fill();
-}
-function rounded(x,y,w,h,r,color){
- ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
- ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
- ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
- ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
- ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
-}
-function path(points,color,width){
- ctx.strokeStyle=color;ctx.lineWidth=width||3;ctx.lineCap="round";ctx.lineJoin="round";
- ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();
-}
-function label(t,x,y,size,color){
- ctx.font="900 "+size+"px system-ui,sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
- ctx.lineWidth=2;ctx.strokeStyle="#563a6c55";ctx.strokeText(t,x,y);
- ctx.fillStyle=color||"#fff";ctx.fillText(t,x,y);
-}
-function star(x,y,r,color){
- ctx.fillStyle=color;ctx.beginPath();
- for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.43:r;
- if(i===0)ctx.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);else ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}
- ctx.closePath();ctx.fill();
-}
-function heart(x,y,s,color){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=color||"#ff6fa7";
- ctx.beginPath();ctx.moveTo(0,10);ctx.bezierCurveTo(-25,-5,-14,-20,0,-9);ctx.bezierCurveTo(14,-20,25,-5,0,10);ctx.fill();ctx.restore();
-}
-function cloud(x,y,s){
- ctx.fillStyle="#ffffffdf";ctx.beginPath();
- ctx.ellipse(x,y,35*s,14*s,0,0,Math.PI*2);ctx.ellipse(x-18*s,y-7*s,19*s,17*s,0,0,Math.PI*2);
- ctx.ellipse(x+3*s,y-13*s,22*s,21*s,0,0,Math.PI*2);ctx.ellipse(x+25*s,y-4*s,18*s,14*s,0,0,Math.PI*2);ctx.fill();
-}
-function lighten(hex){
- const n=parseInt(hex.slice(1),16);if(!Number.isFinite(n))return "#e6d4ff";
- return "rgb("+Math.min(255,((n>>16)&255)+38)+","+Math.min(255,((n>>8)&255)+38)+","+Math.min(255,(n&255)+38)+")";
-}
-
-function drawCastle(x,y,s){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);
- oval(110,180,125,12,"#467e7240");
- rounded(15,60,190,110,5,"#fff0dd");
- for(let yy=82;yy<164;yy+=21)path([[18,yy],[202,yy]],"#e9bca8",1.5);
- for(const tx of [0,157]){
-  rounded(tx,15,48,155,4,"#ffe0cf");rounded(tx-5,5,58,16,3,"#aa83db");
-  ctx.fillStyle="#8863bd";ctx.beginPath();ctx.moveTo(tx-5,5);ctx.lineTo(tx+24,-24);ctx.lineTo(tx+53,5);ctx.closePath();ctx.fill();
-  rounded(tx+13,32,21,29,10,"#77d7ff");path([[tx+23,33],[tx+23,59]],"#fff",2);
- }
- ctx.fillStyle="#ad83df";ctx.beginPath();ctx.moveTo(64,60);ctx.lineTo(110,12);ctx.lineTo(156,60);ctx.closePath();ctx.fill();
- rounded(85,112,48,58,23,"#8455a0");
- for(const wx of [42,154]){
-  rounded(wx,91,23,33,11,"#70d4ff");path([[wx+11,93],[wx+11,122]],"#fff",2);path([[wx+2,107],[wx+21,107]],"#fff",2);
- }
- label("CROWN JEWEL",110,197,13,"#fff");ctx.restore();
-}
-
-function drawDragon(x,y,s,pose){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);
- const c=state.dragon,w=state.wings,flap=Math.sin(dragon.wing)*.45;
- path([[28,5],[53,14],[73,4]],c,12);oval(74,4,7,6,c);
- for(const lx of [-20,20]){
-  rounded(lx-7,13,14,24,6,c);
-  for(let i=0;i<3;i++)oval(lx-8+i*6,36,3,3,"#ffe5a0");
- }
- ctx.save();ctx.translate(-7,-7);ctx.rotate(-.35+flap);ctx.fillStyle=w;
- ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-8,-49);ctx.lineTo(-42,-64);ctx.lineTo(-38,-34);ctx.lineTo(-59,-42);ctx.lineTo(-35,7);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();ctx.restore();
- oval(0,0,39,27,c);oval(10,8,23,16,lighten(c));path([[19,-7],[30,-21]],c,19);
- oval(35,-25,23,21,c);oval(49,-18,17,11,lighten(c));
- ctx.fillStyle="#ffe5a0";ctx.beginPath();ctx.moveTo(23,-39);ctx.lineTo(20,-54);ctx.lineTo(35,-42);ctx.fill();
- ctx.beginPath();ctx.moveTo(39,-41);ctx.lineTo(47,-54);ctx.lineTo(49,-37);ctx.fill();
- oval(39,-29,7,8,"#fff");oval(41,-28,3.5,5,"#35234d");oval(42,-30,1.4,1.5,"#fff");
- oval(51,-21,1.8,2,"#4a315e");oval(59,-21,1.8,2,"#4a315e");
- oval(48,-11,6,3,"#ff9dbb");path([[45,-9],[50,-6],[55,-9]],"#543250",1.8);
- ctx.save();ctx.translate(-5,-5);ctx.rotate(.15-flap);ctx.fillStyle=w;
- ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-5,-35);ctx.lineTo(18,-26);ctx.lineTo(34,-40);ctx.lineTo(34,0);ctx.closePath();ctx.fill();ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.stroke();ctx.restore();
- for(let i=0;i<3;i++)oval(-2+i*9,9+i*2,3,2,"#fff8");
- if(state.accessory===1){oval(35,-48,12,6,"#ffd66b");star(35,-51,7,"#fff4b0");}
- if(state.accessory===2){path([[23,-42],[36,-51],[49,-42]],"#ffe49a",4);star(36,-50,5,"#fff");}
- if(state.accessory===3){oval(31,-49,6,6,"#ff9bc2");oval(42,-49,6,6,"#ff9bc2");oval(36,-49,4,4,"#ffdeef");}
- if(pose==="hug")heart(0,-58,.8);
- ctx.restore();
-}
-
-function drawPrincess(x,y,s,walking){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);
- const swing=walking?Math.sin(princess.walk*10)*.6:0;
- oval(0,37,20,5,"#34234b25");
- oval(0,-25,16,19,"#653a53");oval(-13,-12,5,17,"#653a53");
- ctx.fillStyle=state.princess;ctx.beginPath();ctx.moveTo(-9,-11);ctx.lineTo(-17,23);ctx.lineTo(17,23);ctx.lineTo(9,-11);ctx.closePath();ctx.fill();
- ctx.fillStyle="#fff0f7";ctx.beginPath();ctx.moveTo(-7,-8);ctx.lineTo(0,5);ctx.lineTo(7,-8);ctx.closePath();ctx.fill();
- /* Princess's name is physically written on the front of her dress. */
- ctx.save();ctx.rotate(-.02);ctx.font="900 7px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
- ctx.lineWidth=1.5;ctx.strokeStyle="#ffffff";ctx.strokeText("Masa",0,10);ctx.fillStyle="#713f89";ctx.fillText("Masa",0,10);ctx.restore();
- path([[-8,-5],[-16+swing*5,7]],"#f5c5a5",6);path([[8,-5],[16-swing*5,7]],"#f5c5a5",6);
- path([[-6,21],[-8+swing*4,34]],"#f5c5a5",6);path([[6,21],[8-swing*4,34]],"#f5c5a5",6);
- oval(-10,36,6,3,"#8b60bd");oval(10,36,6,3,"#8b60bd");
- oval(0,-17,12,14,"#ffdabe");ctx.fillStyle="#653a53";ctx.beginPath();ctx.arc(0,-23,12,Math.PI,Math.PI*2);ctx.lineTo(10,-17);ctx.quadraticCurveTo(4,-24,-2,-18);ctx.lineTo(-10,-16);ctx.closePath();ctx.fill();
- oval(-4,-17,1.7,2.8,"#3b284c");oval(4,-17,1.7,2.8,"#3b284c");path([[-3,-10],[0,-8],[3,-10]],"#b35c75",1.5);
- ctx.fillStyle="#ffd66b";ctx.beginPath();ctx.moveTo(-10,-29);ctx.lineTo(-8,-39);ctx.lineTo(-2,-33);ctx.lineTo(3,-41);ctx.lineTo(7,-32);ctx.lineTo(11,-36);ctx.lineTo(9,-28);ctx.closePath();ctx.fill();
- if(state.outfit===1)oval(12,-23,5,5,"#ff8db8");
- if(state.outfit===2)path([[-12,-28],[0,-34],[12,-28]],"#85dfff",3);
- if(state.outfit===3)oval(0,-32,5,4,"#9b78ed");
- ctx.restore();
-}
-
-/* Elu is an animated, visible character, not just a menu. */
-function drawElu(x,y,s){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);
- const bob=Math.sin(frame*.06)*2;
- oval(0,34,17,4,"#34234b25");
- rounded(-10,-3,20,35,7,"#4c9ac8");
- ctx.fillStyle="#fff0d8";ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(0,10);ctx.lineTo(10,0);ctx.closePath();ctx.fill();
- path([[-9,2],[-17,13]],"#f0c49e",5);path([[9,2],[17,13]],"#f0c49e",5);
- path([[-5,29],[-7,35]],"#553c72",5);path([[5,29],[7,35]],"#553c72",5);
- oval(0,-15+bob,12,13,"#f5cda9");oval(0,-26+bob,12,7,"#49314e");
- oval(-4,-15+bob,1.5,2.3,"#3b284c");oval(4,-15+bob,1.5,2.3,"#3b284c");
- path([[-2,-9+bob],[0,-8+bob],[3,-9+bob]],"#a65b6c",1.5);
- ctx.fillStyle="#ffd76d";ctx.beginPath();ctx.moveTo(-9,-21+bob);ctx.lineTo(0,-29+bob);ctx.lineTo(9,-21+bob);ctx.closePath();ctx.fill();
- label("ELU",0,47,10,"#fff");ctx.restore();
-}
-
-function drawBackground(){
- const world=worlds[state.world],g=ctx.createLinearGradient(0,0,0,H);
- g.addColorStop(0,world.sky);g.addColorStop(1,world.far);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- if(state.world===4){for(let i=0;i<35;i++)star((i*137+33)%W,(i*79+20)%(H*.8),2+(i%3),"#fff1b7");}
- else for(let i=0;i<5;i++)cloud(((i*211+frame*.12)%(W+130))-55,H*(.14+(i%3)*.13),.65+(i%3)*.15);
- ctx.fillStyle=world.ground;ctx.beginPath();ctx.moveTo(0,H*.78);
- for(let x=0;x<=W+20;x+=20)ctx.lineTo(x,H*(.76+Math.sin(x*.009+frame*.001)*.025));
- ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
-}
-
-function drawStats(){
- const x=W*.025,y=H*.245,bw=Math.min(W*.29,145);
- [
-  ["🍎 HUNGER",100-state.care.hunger,"#ffad7b"],
-  ["🫧 CLEAN",state.care.clean,"#6fd8f8"],
-  ["💖 HAPPY",state.care.happy,"#ff80b5"],
-  ["💚 HEALTH",state.care.health,"#71d794"]
- ].forEach((b,i)=>{
-  const yy=y+i*34;rounded(x,yy,bw,29,9,"#ffffffdf");
-  ctx.font="800 9px system-ui";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle="#65457f";ctx.fillText(b[0],x+6,yy+9);
-  rounded(x+6,yy+17,bw-12,6,3,"#eadcf4");rounded(x+6,yy+17,(bw-12)*clamp(b[1]/100,0,1),6,3,b[2]);
- });
-}
-
-function drawGarden(){
- const groundY=H*.72;
- rounded(W*.12,groundY-28,W*.76,100,16,"#9d663c");
- rounded(W*.12+6,groundY-22,W*.76-12,88,13,"#704329");
- const gap=W*.76/6;
- state.garden.plots.forEach((p,i)=>{
-  const x=W*.12+gap*(i+.5),y=groundY+14;
-  rounded(x-gap*.38,y-25,gap*.76,48,8,"#b77b4b");
-  oval(x,y+10,13,4,"#563a2c");
-  if(!p){label("➕",x,y-5,20,"#fff");return;}
-  const plant=plants[p.type]||plants[0];
-  const progress=clamp(p.age/plant.grow,0,1);
-  const height=10+progress*25;
-  path([[x,y+8],[x,y+8-height]],"#32854e",3);
-  oval(x-6,y-height*.6,8,4,"#58bb6b");
-  oval(x+7,y-height*.4,8,4,"#58bb6b");
-  if(progress>=1)label(plant.emoji,x,y-height-3,24);
-  else{
-   oval(x,y-height,6+progress*4,6+progress*4,"#80cf86");
-   label(Math.floor(progress*100)+"%",x,y+27,9,"#fff");
-  }
- });
- label("🌷 ROYAL GARDEN",W*.5,groundY-48,clamp(W*.04,15,24),"#fff");
-}
-
-function drawCare(){
- const scale=clamp(Math.min(W,H)/520,.7,1.35);
- drawCastle(W*.16,H*.39,clamp(Math.min(W,H)/650,.68,1.0));
- for(let i=0;i<10;i++){
-  const x=(i*83+25)%W,y=H*.83+(i%3)*8;
-  path([[x,y+8],[x,y-2]],"#278b59",2);
-  for(let j=0;j<5;j++){const a=j*Math.PI*2/5;oval(x+Math.cos(a)*4,y-4+Math.sin(a)*4,3,3,["#ff8fb9","#ffe77d","#fff","#bba0ff"][i%4]);}
- }
- rounded(W*.39,H*.76,W*.55,H*.15,17,"#fff0d9");
- label("✨ DRAGON CARE STATION ✨",W*.665,H*.785,clamp(W*.023,10,17),"#8757ac");
- rounded(W*.52,H*.85,W*.22,H*.05,12,"#7edbfa");
- const dx=W*.68,dy=H*.65,ds=scale*.88;
- const px=action?(action.phase==="act"?dx-ds*70:W*.30):W*.30;
- const py=action?dy+ds*12:H*.67;
- drawDragon(dx,dy,ds,action&&action.kind==="hug"?"hug":null);
- drawPrincess(px,py,scale*.78,!!action);
- drawStats();
- if(action){
-  const fx=dx,fy=dy-ds*65;
-  if(action.kind==="wash"){for(let i=0;i<9;i++)oval(fx+Math.sin(frame*.12+i)*27,fy+Math.cos(frame*.09+i)*19,3+i%3,4,"#a5eaff");label("🫧",fx+30,fy-18,21);}
-  if(action.kind==="feed"){label("🥕",fx-37,fy+10,23);heart(fx+27,fy-20,.6);}
-  if(action.kind==="pet"){heart(fx+25,fy-40,.7);star(fx-25,fy-30,7,"#ffe879");}
-  if(action.kind==="hug"){heart(fx,fy-57,1);heart(fx-30,fy-35,.5);heart(fx+30,fy-35,.5);}
-  if(action.kind==="heal"){heart(fx,fy-52,.8,"#71d991");star(fx-30,fy-35,8,"#fff1a0");}
- }
-}
-
-function drawCastleRoom(){
- const scale=clamp(Math.min(W,H)/520,.7,1.2);
- // castle interior
- ctx.fillStyle="#fff0df";ctx.fillRect(0,H*.20,W,H*.58);
- for(let x=0;x<W;x+=55)path([[x,H*.20],[x,H*.78]],"#e5bfa9",1);
- path([[0,H*.78],[W,H*.78]],"#bd8b9a",4);
- for(let i=0;i<Math.ceil(W/75);i++){
-  const x=i*75+30;
-  rounded(x-17,H*.27,34,65,16,"#b7eaff");
-  path([[x,H*.29],[x,H*.32+45]],"#fff",2);
-  path([[x-13,H*.50],[x+13,H*.50]],"#fff",2);
- }
- // royal rug
- rounded(W*.22,H*.65,W*.56,H*.12,12,"#d58ab8");
- rounded(W*.25,H*.67,W*.50,H*.08,8,"#f5c5df");
- if(mode==="tea"){
-  // table and tea service
-  oval(W*.52,H*.66,W*.19,13,"#9b603e");
-  rounded(W*.35,H*.64,W*.34,12,6,"#c78d5f");
-  path([[W*.40,H*.67],[W*.39,H*.77]],"#8c573b",5);
-  path([[W*.64,H*.67],[W*.65,H*.77]],"#8c573b",5);
-  rounded(W*.48,H*.57,34,22,6,"#9f72d0");
-  oval(W*.50,H*.57,17,5,"#d9c1f5");
-  path([[W*.51,H*.58],[W*.54,H*.62]],"#fff",2);
-  oval(W*.42,H*.61,9,6,"#fff");path([[W*.43,H*.61],[W*.43,H*.66]],"#fff",2);
-  oval(W*.61,H*.61,9,6,"#fff");path([[W*.62,H*.61],[W*.62,H*.66]],"#fff",2);
-  label("🍪",W*.57,H*.60,17);
-  label("TEA PARTY!",W*.50,H*.31,clamp(W*.05,17,28),"#9b5b9f");
- }else if(mode==="dance"){
-  rounded(W*.33,H*.57,W*.34,13,6,"#a86fbd");
-  for(let i=0;i<7;i++)star(W*(.12+i*.12),H*(.31+Math.sin(frame*.06+i)*.06),7,["#fff0a2","#ff9cdb","#fff","#a9ecff"][i%4]);
-  label("💃 DANCE PARTY! 🕺",W*.5,H*.32,clamp(W*.045,15,25),"#9b5b9f");
- }else{
-  label("WELCOME TO CROWN JEWEL",W*.5,H*.31,clamp(W*.04,15,25),"#9b5b9f");
- }
- const py=H*.60,dx=W*.65,dy=H*.60;
- drawPrincess(W*.36,py,scale*.78,mode==="dance");
- drawDragon(dx,dy,scale*.77);
- // Elu always appears in the royal castle room
- drawElu(W*.85,H*.60,scale*.83);
- label(mode==="tea"?"☕":"✨",W*.85,H*.47,20);
-}
-
-function drawGardenScene(){
- drawGarden();
- drawPrincess(W*.22,H*.68,clamp(Math.min(W,H)/650,.65,1),false);
- drawDragon(W*.82,H*.64,clamp(Math.min(W,H)/650,.65,1));
- drawElu(W*.49,H*.59,clamp(Math.min(W,H)/700,.6,.9));
- label("ELU CAN HELP YOU GROW ANYTHING!",W*.5,H*.30,clamp(W*.03,11,19),"#fff");
-}
-
-function drawFlight(){
- const world=worlds[state.world];
- // Side-scrolling scenery only; there is deliberately NO flight trail.
- ctx.fillStyle=world.ground;ctx.beginPath();ctx.moveTo(0,H);
- for(let x=0;x<=W+25;x+=25)ctx.lineTo(x,H*.94+Math.sin((x+flight.worldX*.2)*.018)*H*.035);
- ctx.lineTo(W,H);ctx.closePath();ctx.fill();
- for(let i=0;i<6;i++){
-  const x=((i*185-flight.worldX*.35)%(W+200)+W+200)%(W+200)-70,y=H*(.19+(i%4)*.14);
-  if(state.world===0)label("🏰",x,y,38);
-  else if(state.world===1){cloud(x,y,.8);label("🍭",x,y+14,29);}
-  else if(state.world===2)label("💎",x,y,43);
-  else if(state.world===3)label("🌲",x,y,46);
-  else if(state.world===4)star(x,y,16,"#fff1a4");
-  else label("🌈",x,y,45);
- }
- for(const c of coins)label(c.kind==="star"?"⭐":"🪙",c.x,c.y,25);
- for(const o of obstacles)label(o.emoji,o.x,o.y,o.size);
- const scale=clamp(Math.min(W,H)/520,.7,1.35);
- drawDragon(W*flight.x,H*flight.y,scale);
- drawPrincess(W*flight.x-24*scale,H*flight.y+23*scale,scale*.78,false);
- rounded(W*.27,Math.max(104,H*.14),W*.46,32,12,"#ffffffdf");
- label("⭐ "+missionName()+": "+mission.progress+"/"+mission.target,W*.5,Math.max(120,H*.14+16),clamp(W*.023,10,14),"#6946a3");
-}
-function missionName(){return mission.type==="coins"?"Collect treasure":mission.type==="dodge"?"Dodge obstacles":"Fly distance";}
-
-function addParticles(x,y,color,n){
- for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-90,90),vy:rand(-130,20),life:rand(.4,.9),color,size:rand(2,5)});
-}
-function drawParticles(dt){
- for(let i=particles.length-1;i>=0;i--){
-  const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=100*dt;p.life-=dt;
-  if(p.life<=0){particles.splice(i,1);continue;}
-  ctx.globalAlpha=clamp(p.life,0,1);oval(p.x,p.y,p.size,p.size,p.color);ctx.globalAlpha=1;
- }
-}
-
-function updateHUD(){
- $("stats").textContent="🪙 "+state.coins+" · ❤️ "+state.lives+"/7 · 💚 "+Math.round(state.care.health)+"%";
- $("worldLabel").textContent=worlds[state.world].emoji+" "+worlds[state.world].name;
- $("modeLabel").textContent=({castle:"Royal Castle",care:"Dragon Care",tea:"Royal Tea Party",dance:"Royal Dance Party",garden:"Royal Garden",flight:"Flying Adventure"})[mode]||"Royal Adventure";
- $("careButtons").style.display=mode==="care"?"flex":"none";
- $("activityButtons").style.display=["castle","tea","dance","garden"].includes(mode)?"flex":"none";
- $("flightButtons").style.display=mode==="flight"?"flex":"none";
- $("castleTab").classList.toggle("purple",["castle","tea","dance","garden","care"].includes(mode));
- $("flyTab").classList.toggle("purple",mode==="flight");
- $("tip").textContent=mode==="flight"?"⬅️ Back · ➡️ Forward · ⬆️ Up · ⬇️ Down · ⚡ Boost":"Visit Elu for help with everything!";
-}
-
-function setMode(next){
- if(next==="flight"&&(state.lives<=0||state.care.health<=0)){
-  mode="care";updateHUD();say("Elu: Your dragon needs healing before another flight. I'll help you! 💚");toast("Heal your dragon to restore all seven lives.");return;
- }
- mode=next;action=null;
- if(mode==="flight"){
-  obstacles=[];coins=[];flight.worldX=0;flight.speed=0;flight.boost=0;flight.spawn=.5;flight.invulnerable=1.5;
-  flight.x=.23;flight.y=.48;
-  mission={type:["coins","dodge","distance"][state.completed.length%3],target:10,progress:0};
-  say("Elu: Adventure time, Princess Masa! Fly in every direction, collect coins, and dodge hazards!");
- }else if(mode==="castle"){
-  say("Elu: Welcome home! I'm here to help with the castle, garden, parties, dragon care, and every adventure.");
- }else if(mode==="care"){
-  say("Elu: Let's take good care of your dragon together.");
- }else if(mode==="tea"){
-  partyTime=0;say("Elu: Tea is served! Enjoy a royal tea party with your dragon.");
- }else if(mode==="dance"){
-  partyTime=0;say("Elu: Let's dance! The whole castle is celebrating!");
- }else if(mode==="garden"){
-  say("Elu: Welcome to your garden. Plant seeds, water them, and choose neighbors that make you happy!");
- }
- updateHUD();
-}
-
-function beginCare(kind){
- if(!["care","castle"].includes(mode))setMode("care");
- if(action){toast("Masa is already helping her dragon!");return;}
- if(kind!=="heal"&&state.care.health<=0){toast("Your dragon needs healing first!");return;}
- if(kind==="heal"&&state.care.health>=100&&state.lives===7){toast("Your dragon is already healthy!");return;}
- action={kind,phase:"walk",time:0};princess.walk=0;
- say(({feed:"Masa is walking over with a tasty snack! 🥕",wash:"Masa is preparing a bubbly bath! 🫧",pet:"Masa is walking over to gently pet her dragon! 💗",hug:"Masa is going to give her dragon a big hug! 🤗",heal:"Masa is nursing her dragon back to health! 💚"})[kind]);
-}
-function finishCare(kind){
- const c=state.care;
- if(kind==="feed"){c.hunger=clamp(c.hunger+40,0,100);c.health=clamp(c.health+5,0,100);}
- if(kind==="wash"){c.clean=clamp(c.clean+50,0,100);c.happy=clamp(c.happy+8,0,100);}
- if(kind==="pet"){c.happy=clamp(c.happy+25,0,100);c.health=clamp(c.health+3,0,100);}
- if(kind==="hug"){c.happy=clamp(c.happy+30,0,100);c.health=clamp(c.health+8,0,100);}
- if(kind==="heal"){
-  c.health=100;c.hunger=Math.max(75,c.hunger);c.clean=Math.max(75,c.clean);c.happy=Math.max(80,c.happy);state.lives=7;
-  toast("💚 Fully healed! All seven lives restored!");say("Elu: Perfect! Your dragon is healthy again. I'll be here if you need anything.");
-  action=null;save();updateHUD();return;
- }
- state.coins+=5;state.totalCoins+=5;addParticles(W*.68,H*.60,kind==="wash"?"#8de6ff":"#ffaad3",15);
- toast("Care complete! +5 coins! 💖");say("Elu: Wonderful care, Princess Masa! Five coins for you.");
- action=null;save();updateHUD();
-}
-
-function plantSeed(index,type){
- const plot=state.garden.plots[index],p=plants[type];
- if(plot){toast("Harvest or clear that plot before planting again.");return;}
- if(state.coins<p.seed){toast("You need "+p.seed+" coins for those seeds.");return;}
- state.coins-=p.seed;state.garden.plots[index]={type,age:0,water:0};
- state.garden.plants++;save();closeDialog();setMode("garden");
- toast(p.emoji+" planted! Elu will help it grow.");updateHUD();
-}
-function openPlanting(index){
- const p=state.garden.plots[index];
- if(p){
-  const plant=plants[p.type],progress=clamp(p.age/plant.grow,0,1);
-  openDialog("🌱 Garden Plot "+(index+1),plant.emoji+" "+plant.name+" is growing. Progress: "+Math.floor(progress*100)+"%. Water it to help it grow.",[
-   {title:"💧 Water plant",desc:"Watering helps the plant grow faster.",button:"Water",run:()=>{
-    p.age=Math.min(plant.grow,p.age+12);p.water++;save();closeDialog();toast("Watered with love! 💧");
-   }},
-   {title:"🌿 Garden advice",desc:"Plants in neighboring plots grow together in your royal garden. Try different combinations!",button:"Ask Elu",run:()=>{closeDialog();eluHelp();}}
-  ]);
-  return;
- }
- openDialog("🌱 Choose seeds","Elu says: Pick anything you like! Try planting different flowers, fruit, and vegetables next to each other.",plants.map((p,i)=>({
-  title:p.emoji+" "+p.name,desc:"Seed cost: "+p.seed+" coins · Grows in "+p.grow+" garden seconds · Harvest reward: "+p.harvest+" coins.",
-  button:"Plant seeds",disabled:state.coins<p.seed,run:()=>plantSeed(index,i)
- })));
-}
-function harvestGarden(){
- let count=0,reward=0,food=0;
- state.garden.plots.forEach((p,i)=>{
-  if(!p)return;
-  const plant=plants[p.type];
-  if(p.age>=plant.grow){
-   count++;reward+=plant.harvest;food+=plant.food;state.garden.plots[i]=null;
-  }
- });
- if(!count){toast("Not ready yet! Water your plants and let them grow.");return;}
- state.coins+=reward;state.totalCoins+=reward;state.garden.harvests+=count;
- state.care.hunger=clamp(state.care.hunger+food,0,100);
- save();updateHUD();toast("Harvested "+count+" plants! Earned "+reward+" coins!");
- say("Elu: A beautiful harvest! I saved your produce for the dragon and the royal kitchen.");
-}
-function openGarden(){
- setMode("garden");
- openDialog("🌷 Elu's Royal Garden","Tap an empty plot to choose seeds. Tap growing plants to water them. Put different plants next to one another and discover your favorite garden combinations.",[
-  {title:"🌱 Plant something",desc:"Sunflowers, strawberries, carrots, roses, bluebells, and pumpkins.",button:"Choose seeds",run:()=>{closeDialog();openPlanting(state.garden.plots.findIndex(p=>!p));if(state.garden.plots.every(Boolean))toast("Your garden is full! Harvest some plants first.");}},
-  {title:"💧 Water everything",desc:"Give every growing plant a boost.",button:"Water garden",run:()=>{
-   state.garden.plots.forEach(p=>{if(p)p.age=Math.min(plants[p.type].grow,p.age+10);});
-   save();closeDialog();toast("Your garden is refreshed! 💧");
-  }},
-  {title:"🧺 Harvest",desc:"Collect ripe plants for coins and dragon snacks.",button:"Harvest",run:()=>{closeDialog();harvestGarden();}}
- ]);
-}
-
-/* Modal helpers create text nodes, never inject player text as HTML. */
-function openDialog(title,description,items){
- $("dialogTitle").textContent=title;$("dialogDescription").textContent=description;
- const area=$("options"),footer=$("dialogFooter");area.replaceChildren();footer.replaceChildren();
- items.forEach(item=>{
-  const box=document.createElement("div");box.className="option";
-  const h=document.createElement("strong");h.textContent=item.title;box.appendChild(h);
-  const p=document.createElement("p");p.textContent=item.desc;box.appendChild(p);
-  const b=document.createElement("button");b.textContent=item.button||"Choose";b.disabled=!!item.disabled;
-  b.addEventListener("click",item.run);box.appendChild(b);area.appendChild(box);
- });
- const close=document.createElement("button");close.textContent="Close";close.addEventListener("click",closeDialog);footer.appendChild(close);
- $("dialog").classList.add("open");
-}
-function closeDialog(){$("dialog").classList.remove("open");}
-$("dialog").addEventListener("click",e=>{if(e.target===$("dialog"))closeDialog();});
-
-function eluHelp(){
- openDialog("💬 Elu — Your Royal Concierge","Hello, Princess Masa! I'm Elu. I can help you with absolutely everything in Crown Jewel.",[
-  {title:"🏰 Castle life",desc:"Host a tea party, dance party, or explore the castle.",button:"Visit castle",run:()=>{closeDialog();setMode("castle");}},
-  {title:"🐉 Dragon care",desc:"Masa walks over to feed, wash, pet, hug, or heal her dragon.",button:"Care for dragon",run:()=>{closeDialog();setMode("care");}},
-  {title:"🌷 Royal garden",desc:"Choose seeds, water plants, harvest produce, and earn coins.",button:"Visit garden",run:()=>{closeDialog();openGarden();}},
-  {title:"✈️ Flight school",desc:"Fly forward, backward, up, and down. Dodge obstacles and collect coins.",button:"Start flying",run:()=>{closeDialog();setMode("flight");}},
-  {title:"👗 Style studio",desc:"Change the dragon, wings, princess dress, and accessories.",button:"Customize",run:()=>{closeDialog();$("styleTab").click();}},
-  {title:"🌎 World travel",desc:"Spend coins to unlock new lands with unique hazards.",button:"Travel",run:()=>{closeDialog();$("worldTab").click();}}
- ]);
-}
-function openParties(){
- openDialog("🏰 Royal Castle Activities","Elu has everything ready for you! What should Princess Masa do?",[
-  {title:"🫖 Tea party",desc:"A royal table, teacups, treats, and friends.",button:"Start tea party",run:()=>{closeDialog();setMode("tea");}},
-  {title:"💃 Dance party",desc:"Animated dancing, sparkling decorations, and a celebration.",button:"Start dancing",run:()=>{closeDialog();setMode("dance");}},
-  {title:"🌷 Garden",desc:"Plant and grow flowers, fruit, and vegetables.",button:"Visit garden",run:()=>{closeDialog();openGarden();}},
-  {title:"🐉 Dragon care",desc:"Feed, wash, pet, hug, and heal your dragon.",button:"Care station",run:()=>{closeDialog();setMode("care");}}
- ]);
-}
-
-$("castleTab").addEventListener("click",()=>{setMode("castle");openParties();});
-$("flyTab").addEventListener("click",()=>setMode("flight"));
-$("gardenTab").addEventListener("click",openGarden);
-$("tea").addEventListener("click",()=>setMode("tea"));
-$("dance").addEventListener("click",()=>setMode("dance"));
-$("garden").addEventListener("click",openGarden);
-$("harvest").addEventListener("click",harvestGarden);
-
-$("feed").addEventListener("click",()=>beginCare("feed"));
-$("wash").addEventListener("click",()=>beginCare("wash"));
-$("pet").addEventListener("click",()=>beginCare("pet"));
-$("hug").addEventListener("click",()=>beginCare("hug"));
-$("heal").addEventListener("click",()=>beginCare("heal"));
-
-$("worldTab").addEventListener("click",()=>openDialog("🌎 Magical Worlds","Spend coins to unlock new adventures. Every world has different obstacles.",worlds.map((w,i)=>({
- title:w.emoji+" "+w.name,
- desc:state.unlocked.includes(i)?"Unlocked!"+(i===state.world?" You are here.":" Ready to visit!"):"Unlock for "+w.cost+" coins.",
- button:state.unlocked.includes(i)?"Visit world":"Unlock",
- disabled:!state.unlocked.includes(i)&&state.coins<w.cost,
- run:()=>{
-  if(!state.unlocked.includes(i)){
-   if(state.coins<w.cost)return;
-   state.coins-=w.cost;state.unlocked.push(i);toast("🌟 New world unlocked!");
-  }
-  state.world=i;closeDialog();setMode("castle");save();updateHUD();say("Elu: Welcome to "+w.name+"! I'll show you around.");
- }
-}))));
-
-$("styleTab").addEventListener("click",()=>{
- const dc=["#a16ee8","#67c6e8","#ff8eb4","#8bdc9a","#ffb54f","#6c7cff","#f5f1ff"];
- const wc=["#ff9dce","#83e4ff","#ffdf83","#b6f7c5","#c7b4ff","#ffad83"];
- const pc=["#ff83b9","#8a7cff","#67c9e8","#f5a65c","#7acb96"];
- const outfits=["Masa's Royal Pink","Flower Princess","Ice Princess","Golden Autumn","Garden Princess"];
- const acc=["No accessory","Golden star crown","Royal tiara","Pink bow"];
- openDialog("👗 Royal Style Studio","Every look is saved on this device. Princess Masa's dress always displays her name.",[
-  {title:"🐉 Dragon color",desc:"Current: "+state.dragon,button:"Change color",run:()=>{state.dragon=dc[(dc.indexOf(state.dragon)+1)%dc.length];save();closeDialog();$("styleTab").click();}},
-  {title:"🪽 Wing color",desc:"Current: "+state.wings,button:"Change wings",run:()=>{state.wings=wc[(wc.indexOf(state.wings)+1)%wc.length];save();closeDialog();$("styleTab").click();}},
-  {title:"👸 Princess dress",desc:outfits[state.outfit]||outfits[0],button:"Change dress",run:()=>{state.outfit=(state.outfit+1)%outfits.length;state.princess=pc[state.outfit%pc.length];save();closeDialog();$("styleTab").click();}},
-  {title:"👑 Accessories",desc:acc[state.accessory],button:"Change accessory",run:()=>{state.accessory=(state.accessory+1)%acc.length;save();closeDialog();$("styleTab").click();}}
- ]);
-});
-
-$("missionTab").addEventListener("click",()=>openDialog("⭐ Royal Mission Board","Complete missions and earn rewards.",[
- {title:"🪙 Treasure hunter",desc:"Collect coins while flying.",button:"Fly",run:()=>{closeDialog();setMode("flight");}},
- {title:"🌷 Garden keeper",desc:"Grow and harvest plants.",button:"Garden",run:()=>{closeDialog();openGarden();}},
- {title:"💖 Dragon care",desc:"Perform care activities for five coins each.",button:"Care",run:()=>{closeDialog();setMode("care");}},
- {title:"🏆 Adventure record",desc:"Total coins earned: "+state.totalCoins+". Best flight distance: "+state.best+". Plants grown: "+state.garden.plants+". Harvests: "+state.garden.harvests+".",button:"Wonderful!",run:closeDialog}
-]));
-$("eluTab").addEventListener("click",eluHelp);
-
-function setMotion(direction){
- if(mode!=="flight")return;
- if(direction==="forward")flight.speed=1;
- if(direction==="backward")flight.speed=-1;
- if(direction==="up")flight.vy=-1;
- if(direction==="down")flight.vy=1;
- if(direction==="boost")flight.boost=1.5;
-}
-flight.vy=0;
-function bindHold(id,direction){
- const el=$(id);
- el.addEventListener("pointerdown",e=>{
-  e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(err){}
-  setMotion(direction);
- });
- const stop=()=>{
-  if(direction==="up"||direction==="down")flight.vy=0;
-  if(direction==="forward"||direction==="backward")flight.speed=0;
- };
- el.addEventListener("pointerup",stop);
- el.addEventListener("pointercancel",stop);
- el.addEventListener("lostpointercapture",stop);
-}
-bindHold("forward","forward");bindHold("backward","backward");
-bindHold("up","up");bindHold("down","down");
-$("boost").addEventListener("pointerdown",e=>{e.preventDefault();setMotion("boost");});
-
-window.addEventListener("keydown",e=>{
- if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," ","w","W","s","S","a","A","d","D"].includes(e.key))e.preventDefault();
- if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")setMotion("up");
- if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")setMotion("down");
- if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")setMotion("backward");
- if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")setMotion("forward");
- if(e.key===" "||e.key==="Shift")setMotion("boost");
-});
-window.addEventListener("keyup",e=>{
- if(["ArrowUp","ArrowDown","w","W","s","S"].includes(e.key))flight.vy=0;
- if(["ArrowLeft","ArrowRight","a","A","d","D"].includes(e.key))flight.speed=0;
-});
-
-canvas.addEventListener("pointerdown",e=>{
- if(mode==="garden"){
-  const y=H*.72;
-  if(e.clientY>y-45&&e.clientY<y+65){
-   const i=Math.floor((e.clientX-W*.12)/(W*.76/6));
-   if(i>=0&&i<6)openPlanting(i);
-  }
- }else if(mode==="flight"){
-  // Tap to steer vertically; left/right movement remains available on dedicated buttons.
-  flight.y=clamp(e.clientY/H,.12,.84);
- }
-});
-
-function loseLife(){
- if(flight.invulnerable>0)return;
- state.lives=Math.max(0,state.lives-1);state.care.health=Math.max(0,state.care.health-12);
- flight.invulnerable=1.5;addParticles(W*flight.x,H*flight.y,"#ff94b7",12);
- toast("Ouch! "+state.lives+" flying lives remaining!");
- if(state.lives===0){save();setMode("care");say("Elu: Back to the castle! Let's nurse your dragon to health.");}
-}
-function completeMission(){
- const key=state.world+":"+mission.type+":"+mission.target;
- if(state.completed.includes(key))return;
- state.completed.push(key);state.coins+=25;state.totalCoins+=25;
- state.best=Math.max(state.best,Math.floor(flight.worldX));
- toast("⭐ Mission complete! +25 coins!");say("Elu: Magnificent flying, Princess Masa!");save();updateHUD();
-}
-function spawnObject(){
- const y=rand(H*.18,H*.79);
- if(Math.random()<.58)obstacles.push({x:W+55,y,emoji:worlds[state.world].hazard,size:rand(35,54),hit:false});
- else coins.push({x:W+45,y,kind:Math.random()<.12?"star":"coin"});
-}
-function updateFlight(dt){
- flight.invulnerable=Math.max(0,flight.invulnerable-dt);
- flight.boost=Math.max(0,flight.boost-dt);
- const dir=flight.speed;
- const speed=(dir===0?115:dir*240)*(flight.boost>0?1.7:1);
- flight.worldX+=speed*dt;
- flight.y=clamp(flight.y+flight.vy*dt*.75,.12,.84);
- const scroll=speed;
- flight.spawn-=dt;
- if(flight.spawn<=0){spawnObject();flight.spawn=rand(.7,1.1);}
- for(let i=obstacles.length-1;i>=0;i--){
-  const o=obstacles[i];
-  o.x-=scroll*dt;
-  if(o.x<-90){obstacles.splice(i,1);continue;}
-  if(Math.hypot(o.x-W*flight.x,o.y-H*flight.y)<o.size*.42+22&&!o.hit){
-   o.hit=true;loseLife();if(mode!=="flight")return;
-  }else if(!o.hit&&o.x<W*flight.x){
-   o.hit=true;
-   if(mission.type==="dodge"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
-  }
- }
- for(let i=coins.length-1;i>=0;i--){
-  const c=coins[i];c.x-=scroll*dt;
-  if(c.x<-50){coins.splice(i,1);continue;}
-  if(Math.hypot(c.x-W*flight.x,c.y-H*flight.y)<32){
-   const reward=c.kind==="star"?10:2;state.coins+=reward;state.totalCoins+=reward;
-   addParticles(c.x,c.y,"#ffe477",8);coins.splice(i,1);
-   if(mission.type==="coins"){mission.progress++;if(mission.progress>=mission.target)completeMission();}
-   updateHUD();
-  }
- }
- if(mission.type==="distance"){
-  mission.progress=Math.min(mission.target,Math.floor(Math.abs(flight.worldX)/350));
-  if(mission.progress>=mission.target)completeMission();
- }
-}
-
-function update(dt){
- frame+=dt*60;dragon.wing+=dt*8;saveClock+=dt;
- if(toastTime>0){toastTime-=dt;if(toastTime<=0)$("toast").style.display="none";}
- if(mode==="care"&&action){
-  action.time+=dt;princess.walk+=dt;
-  if(action.phase==="walk"&&action.time>=1.1)action.phase="act";
-  else if(action.phase==="act"&&action.time>=3)finishCare(action.kind);
- }
- if(mode==="care"&&!action){
-  state.care.hunger=Math.max(0,state.care.hunger-dt*.10);
-  state.care.clean=Math.max(0,state.care.clean-dt*.055);
-  state.care.happy=Math.max(0,state.care.happy-dt*.025);
-  if(state.care.hunger<8)state.care.health=Math.max(0,state.care.health-dt*.08);
-  if(state.care.clean<5)state.care.health=Math.max(0,state.care.health-dt*.04);
- }
- if(mode==="garden"){
-  state.garden.plots.forEach(p=>{if(p)p.age=Math.min(plants[p.type].grow,p.age+dt);});
- }
- if(mode==="tea"||mode==="dance")partyTime+=dt;
- if(mode==="flight")updateFlight(dt);
- if(saveClock>5){save();saveClock=0;}
-}
-
-function draw(){
- ctx.clearRect(0,0,W,H);drawBackground();
- if(mode==="care")drawCare();
- else if(mode==="flight")drawFlight();
- else if(mode==="garden")drawGardenScene();
- else drawCastleRoom();
- drawParticles(0);
-}
-function loop(now){
- const dt=last?Math.min(.04,(now-last)/1000):0;last=now;
- update(dt);draw();requestAnimationFrame(loop);
-}
-
-window.addEventListener("pagehide",save);
-document.addEventListener("visibilitychange",()=>{if(document.hidden)save();});
-
-setMode("castle");
-updateHUD();
-say("Elu: Welcome to Crown Jewel, Princess Masa! I'm here to help with everything.");
-requestAnimationFrame(loop);
-})();
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s),hue=i=>`hsl(${(i*47)%360},70%,62%)`;
+const C={
+Dress:"Rose,Sky,Mint,Gold,Lilac,Coral,Midnight,Sunset,Aurora,Pearl,Ruby,Emerald,Sapphire,Amber,Candy,Frost,Blossom,Starry,Ocean,Flame,Lavender,Honey,Opal,Storm,Royal",
+Dragon:"Ember,Frost,Forest,Sunny,Shadow,Crystal,Storm,Rosebud,Jade,Goldscale,Cosmic,Coral,Moon,Lava,Rainbow",
+Crown:"Classic,Tiara,Star,Flower,Moon,Heart,Sun,Snowflake,Leaf,Pearl,Ruby,Feather,Cloud,Comet,Diamond",
+Wings:"Leathery,Feathered,Crystal,Flame,Frost,Butterfly,Bat,Starlight,Petal,Rainbow",
+Trail:"Sparkle,Hearts,Stars,Bubbles,Petals,Snow,Fire,Rainbow,Moonbeam,Confetti,Notes,Lightning,Mist,Gems,Fireflies",
+Decor:"Pink Marble,Gold Floor,Sky Glass,Mint Tiles,Velvet,Starry Rug,Lava Stone,Ice Floor,Moss,Pearl,Sunset,Amber,Lilac Silk,Coral Reef,Midnight,Honey,Opal,Crystal,Candy,Royal Blue",
+Trick:"Barrel Roll,Loop,Dive,Spiral,Hover,Flip,Wing Wave,Zigzag,Glide,Twirl,Cloud Surf,Star Spin,Bow,Backflip,Rainbow Arc",
+Food:"Apple,Berries,Honey Cake,Fish,Cookies,Star Fruit,Sweet Pie,Pumpkin,Melon,Moon Cheese",
+Song:"Waltz,Pop Beat,Lullaby,Jig,Disco,Harp,Parade,Starlit,Fanfare,Giggle",
+Upgrade:"Taller Towers,Moat,Flag,Fountain,Bridge,Lanterns,Banner,Drawbridge,Garden Gate,Clock,Balcony,Chimes,Windmill,Stable,Crown Spire"};
+{const A='Sparkle,Cosmic,Jelly,Rainbow,Turbo,Fluffy,Mystic,Golden,Dizzy,Royal'.split(','),V='Loop,Spin,Dive,Flip,Glide,Zoom,Hop,Swirl,Bounce,Dash'.split(',');C.Trick+=','+A.flatMap(a=>V.map(v=>a+' '+v)).join(',')}
+const cat={};for(const k in C)cat[k]=C[k].split(',');const cost=(k,i)=>k=='Trick'?Math.max(0,i-5):i*3;
+const RM=("Dance Party Room|Twirl together under the disco orbs|💃;Tea Party Room|Sip tea from tiny dragon-sized cups|🍵;Trick Academy|Learn new flight tricks|🎓;Rose Garden|Grow flowers and dragon snacks|🌹;Nursery|Warm eggs and nurse baby dragons|🥚;Dragon Spa|Bubbles, brushes and scale polish|🛁;Feast Hall|Banquets for royal tummies|🍰;Library of Wings|Storybooks of legendary dragons|📚;Star Observatory|Map the stars you will fly to|🔭;Music Hall|Compose songs with the court|🎻;Masa Boutique|Gown fittings, every dress says Masa|👗;Treasure Vault|Show off your orb collection|💎;Throne Room|Hold royal court|👑;Sky Balcony|The launch pad for flights|🌅;Moonlit Pond|Quiet reflections and fireflies|🌙;Training Yard|Obstacle courses and races|🏹;Cozy Den|Naps, blankets and bedtime stories|🛌;Crystal Cave|Glowing crystals and echoes|🔮;Art Studio|Paint murals and portraits|🎨;Game Parlor|Puzzles, riddles and board games|🎲").split(';').map(s=>s.split('|'));
+const AC=['dance','tea','trick','garden','nursery','spa','feed','pet','gift','song','gift','gift','pet','gift','pet','train','pet','gift','song','hug'];
+const AL={garden:'Pick flowers',spa:'Bubble spa',train:'Target practice',tea:'Pour tea',dance:'Dance game',hug:'Hug',trick:'Learn a trick',gift:'Collect gift',nursery:'Nurse babies',wash:'Wash',feed:'Feed',pet:'Pet',song:'Play music'};
+let S={orbs:30,eq:{Dress:0,Dragon:0,Crown:0,Wings:0,Trail:0,Decor:0,Trick:0,Food:0,Song:0,Upgrade:0},own:{},bond:0,eggs:0,warm:0,baby:0,grow:0,room:0,pcol:'#ff8fc8',dcol:'#7be0a0',acc:'#d9c8ff',roster:['#7be0a0']};
+try{Object.assign(S,JSON.parse(localStorage.getItem('cj2')||'{}'))}catch(e){}
+for(let i=1;i<6;i++)S.own['Trick'+i]=1;
+const save=()=>{try{localStorage.setItem('cj2',JSON.stringify(S))}catch(e){}};
+// ---------- renderer ----------
+const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;document.body.appendChild(R.domElement);
+const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(60,1,.1,400);
+sc.add(new THREE.HemisphereLight(0xcfe3ff,0x7a6a8a,.95));
+const dl=new THREE.DirectionalLight(0xfff0d8,.9);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);const shc=dl.shadow.camera;shc.left=shc.bottom=-30;shc.right=shc.top=30;shc.far=140;sc.add(dl,dl.target);
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.65},o));
+const sph=new THREE.SphereGeometry(1,24,16);
+const B=(m,x,y,z,sx,sy,sz,cs)=>{const o=new THREE.Mesh(sph,m);o.position.set(x,y,z);o.scale.set(sx,sy??sx,sz??sx);o.castShadow=cs!==false;return o};
+const mk=(g,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;return o};
+const gc=document.createElement('canvas');gc.width=gc.height=64;{const x=gc.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'#fff');g.addColorStop(.35,'#fff8');g.addColorStop(1,'#fff0');x.fillStyle=g;x.fillRect(0,0,64,64)}
+const gt=new THREE.CanvasTexture(gc);
+const glow=(c,s)=>{const p=new THREE.Sprite(new THREE.SpriteMaterial({map:gt,color:c,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false}));p.scale.setScalar(s);return p};
+const spC={};const emo=e=>{if(!spC[e]){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.font='96px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,68);spC[e]=new THREE.CanvasTexture(c)}return new THREE.Sprite(new THREE.SpriteMaterial({map:spC[e],transparent:true}))};
+function sky(a,b,c){const g=document.createElement('canvas');g.width=2;g.height=256;const x=g.getContext('2d'),r=x.createLinearGradient(0,0,0,256);r.addColorStop(0,a);r.addColorStop(.6,b);r.addColorStop(1,c);x.fillStyle=r;x.fillRect(0,0,2,256);sc.background=new THREE.CanvasTexture(g)}
+// ---------- dragon ----------
+const dm=M('#7be0a0'),bm=M('#fff0c0'),wm=M('#ff9',{side:THREE.DoubleSide,roughness:.5}),spm=M('#ffd36b',{metalness:.4,roughness:.4}),dk=M('#222',{roughness:.2}),wh=M('#fff',{roughness:.2}),pk=M('#ff9bb5');
+const D=new THREE.Group();
+D.add(B(dm,0,0,0,.85,.75,1.7),B(bm,0,-.28,-.1,.68,.52,1.45),B(dm,0,.45,-1.3,.4,.4,.5),B(dm,0,.75,-1.7,.34,.34,.42),B(dm,0,1,-2.05,.42,.36,.5),B(dm,0,.88,-2.5,.24,.19,.3));
+[-1,1].forEach(s=>{D.add(B(wh,s*.2,1.1,-2.2,.11),B(dk,s*.2,1.1,-2.3,.065),B(wh,s*.18,1.14,-2.34,.022,.022,.022,false),B(pk,s*.32,.9,-2.2,.07,.07,.05),B(dk,s*.07,.92,-2.76,.03,.03,.03,false),B(dm,s*.5,-.55,.75,.28,.45,.3),B(dm,s*.5,-.55,-.7,.28,.45,.3),B(bm,s*.5,-.9,.82,.2,.12,.3),B(bm,s*.5,-.9,-.62,.2,.12,.3));
+ const h=mk(new THREE.ConeGeometry(.08,.4,8),wh,s*.2,1.4,-1.95);h.rotation.x=-.5;D.add(h)});
+for(let i=0;i<8;i++){const z=-1.1+i*.38;D.add(mk(new THREE.ConeGeometry(.11,.34,6),spm,0,.75*Math.sqrt(Math.max(0,1-(z/1.7)**2))+.06,z))}
+const tl=new THREE.Group();tl.position.set(0,0,1.4);D.add(tl);
+for(let i=0;i<6;i++){const r=.45-.06*i;tl.add(B(dm,Math.sin(i*.8)*.25,.05+i*.04,i*.6,r,r,r*1.5))}
+const ts=mk(new THREE.ConeGeometry(.28,.6,4),spm,Math.sin(4.8)*.25,.3,3.5);ts.rotation.x=Math.PI/2;tl.add(ts);
+const ws=new THREE.Shape();ws.moveTo(0,0);ws.lineTo(.8,1.4);ws.lineTo(2,1.1);ws.lineTo(3.2,.4);ws.quadraticCurveTo(2.6,0,3,-.7);ws.quadraticCurveTo(1.9,-.2,1.7,-1);ws.quadraticCurveTo(1,-.3,0,-.4);
+const wg=new THREE.ShapeGeometry(ws);wg.rotateX(-Math.PI/2);
+const wings=[1,-1].map(s=>{const p=new THREE.Group();p.position.set(s*.5,.55,-.3);const w=new THREE.Mesh(wg,wm);w.castShadow=true;p.add(w);p.scale.x=s;D.add(p);return p});
+// ---------- princess ----------
+const dres=M('#f8c',{side:THREE.DoubleSide,roughness:.4}),skin=M('#ffd9bf'),hairM=M('#5a3320'),crown=mk(new THREE.ConeGeometry(.13,.2,5),M('#fd0',{metalness:.6,roughness:.3}),0,1.35,-.02);
+const P=new THREE.Group();P.position.set(0,.6,-.1);
+const lg=new THREE.LatheGeometry([[0,0],[.5,0],[.47,.1],[.36,.3],[.22,.5],[.13,.62],[.15,.72],[.1,.86],[0,.88]].map(p=>new THREE.Vector2(p[0],p[1])),28);
+P.add(mk(lg,dres),B(skin,0,1.05,0,.17),B(hairM,0,1.1,.05,.19,.19,.17),B(hairM,0,1.27,.14,.08),crown,B(hairM,0,.82,.12,.14,.3,.1));
+[-1,1].forEach(s=>{P.add(B(dk,s*.06,1.06,-.15,.025,.025,.02,false),B(pk,s*.11,1.0,-.15,.04,.03,.02,false),B(dres,s*.18,.9,-.02,.08));const a=mk(new THREE.CylinderGeometry(.04,.04,.4,8),skin,s*.22,.75,-.14);a.rotation.set(-1,0,s*.35);P.add(a)});
+const cv=document.createElement('canvas');cv.width=256;cv.height=128;const cx=cv.getContext('2d'),tex=new THREE.CanvasTexture(cv);
+function drawMasa(){cx.clearRect(0,0,256,128);cx.font='bold 84px Georgia,serif';cx.textAlign='center';cx.textBaseline='middle';cx.lineWidth=9;cx.strokeStyle='#4a2a6a';cx.strokeText('Masa',128,64);cx.fillStyle='#fff';cx.fillText('Masa',128,64);tex.needsUpdate=true}
+const pm=new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide});
+[0,Math.PI].forEach(o=>{const bd=new THREE.Mesh(new THREE.CylinderGeometry(.28,.46,.3,20,1,true,o-.9,1.8),pm);bd.position.y=.3;P.add(bd)});
+sc.add(D,P);
+// ---------- castle ----------
+const K=new THREE.Group();sc.add(K);
+const gr=mk(new THREE.CylinderGeometry(75,75,.4,48),M('#6cc57a'),0,-.2,0);gr.castShadow=false;gr.receiveShadow=true;K.add(gr);
+const plz=M('#d9c8ff'),pl=mk(new THREE.CylinderGeometry(13,13,.5,40),plz,0,-.05,0);pl.receiveShadow=true;K.add(pl);
+[[14,16],[33,35]].forEach(r=>{const p=new THREE.Mesh(new THREE.RingGeometry(r[0],r[1],48),M('#e8dccb',{side:THREE.DoubleSide}));p.rotation.x=-Math.PI/2;p.position.y=.03;p.receiveShadow=true;K.add(p)});
+const jewel=mk(new THREE.OctahedronGeometry(1.6),M('#7fe6ff',{emissive:'#38b6ff',emissiveIntensity:.6,roughness:.1,metalness:.3}),0,4.5,0),jg=glow('#7fe6ff',9);jg.position.y=4.5;K.add(jewel,jg,mk(new THREE.CylinderGeometry(.8,1.2,2.2,12),M('#ffd36b',{metalness:.5}),0,1.1,0));
+const doors=[];RM.forEach((r,i)=>{const a=i<10?i*Math.PI/5:(i-10)*Math.PI/5+Math.PI/10,rad=i<10?24:44;
+ const g=new THREE.Group();g.position.set(Math.cos(a)*rad,0,Math.sin(a)*rad);g.rotation.y=Math.atan2(-Math.cos(a),-Math.sin(a));
+ const bd=mk(new THREE.BoxGeometry(8,5,8),M(`hsl(${i*18},60%,78%)`),0,2.5,0),rf=mk(new THREE.ConeGeometry(6.2,3.5,4),M(`hsl(${i*18},60%,45%)`),0,6.75,0);rf.rotation.y=Math.PI/4;
+ g.add(bd,rf,mk(new THREE.BoxGeometry(2,3,.3),M('#5a3a2a'),0,1.5,4.05));
+ [-2.6,2.6].forEach(x=>g.add(new THREE.Mesh(new THREE.PlaneGeometry(1.4,1.6),new THREE.MeshBasicMaterial({color:'#ffe9a0'}),0).translateX(x).translateY(3).translateZ(4.02)));
+ const sp=emo(r[2]);sp.position.y=10;sp.scale.setScalar(3);g.add(sp);K.add(g);
+ const dr=rad-7.5,ring=new THREE.Mesh(new THREE.RingGeometry(2.2,3,32),new THREE.MeshBasicMaterial({color:`hsl(${i*18},90%,60%)`,transparent:true,opacity:.7,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(Math.cos(a)*dr,.08,Math.sin(a)*dr);K.add(ring);doors.push({x:ring.position.x,z:ring.position.z,r:ring})});
+for(let i=0;i<28;i++){const a=i/28*Math.PI*2,w=mk(new THREE.BoxGeometry(14,5,1.5),M('#efe6ff'),Math.cos(a)*62,2.5,Math.sin(a)*62);w.rotation.y=-a-Math.PI/2;K.add(w);
+ if(i%7==0){const t=mk(new THREE.CylinderGeometry(3,3.4,12,12),M('#e8d9ff'),Math.cos(a)*62,6,Math.sin(a)*62);t.add(mk(new THREE.ConeGeometry(4,4,12),M('#ff8fc8'),0,8,0));K.add(t)}}
+for(let i=0;i<30;i++){const a=Math.random()*6.28,r=50+Math.random()*8,t=new THREE.Group();t.add(mk(new THREE.CylinderGeometry(.3,.4,2,6),M('#7a5a3a'),0,1,0),mk(new THREE.ConeGeometry(1.6,4,8),M('#2f9e5a'),0,4,0));t.position.set(Math.cos(a)*r,0,Math.sin(a)*r);K.add(t)}
+const elu=new THREE.Group();elu.add(mk(new THREE.CylinderGeometry(.3,.5,1.3,12),M('#3a3a7a'),0,.65,0),B(skin,0,1.6,0,.28),mk(new THREE.BoxGeometry(.4,.14,.1),M('#c33'),0,1.25,-.4));const eh=emo('🎩');eh.position.y=2.4;eh.scale.setScalar(1.2);elu.add(eh);elu.position.set(4,0,6);K.add(elu);
+const go=[];function spawnGO(){const a=Math.random()*6.28,r=6+Math.random()*50,o=orbCore(hue(Math.random()*8));o.position.set(Math.cos(a)*r,1.4,Math.sin(a)*r);K.add(o);go.push(o)}
+function orbCore(c){const g=new THREE.Group(),m=new THREE.Mesh(sph,new THREE.MeshBasicMaterial({color:c}));m.scale.setScalar(.6);g.add(m,glow(c,3.4));return g}
+// ---------- flight world ----------
+const FW=new THREE.Group();sc.add(FW);FW.visible=false;
+const oc=new THREE.Mesh(new THREE.PlaneGeometry(600,600),M('#4aa3e8',{roughness:.25,metalness:.1}));oc.rotation.x=-Math.PI/2;oc.position.y=-16;FW.add(oc);
+const sun=glow('#ffc070',80);sun.position.set(-30,25,-170);FW.add(sun);
+const cm=M('#fff',{emissive:'#ffd6ec',emissiveIntensity:.4}),cl=[],isl=[];
+for(let i=0;i<26;i++){const g=new THREE.Group();for(let j=0;j<4;j++)g.add(B(cm,j*2-3,Math.random(),Math.random()*2,2.5+Math.random()*1.5,1.4,2,false));g.position.set((Math.random()-.5)*110,Math.random()*30-8,-Math.random()*160);FW.add(g);cl.push(g)}
+for(let i=0;i<8;i++){const g=new THREE.Group();g.add(mk(new THREE.CylinderGeometry(4,4.4,.8,14),M('#6fcf7f')),mk(new THREE.ConeGeometry(4.2,4,14),M('#8a6a5a'),0,-2.4,0));g.children[1].rotation.x=Math.PI;for(let j=0;j<3;j++)g.add(mk(new THREE.ConeGeometry(.8,2.2,7),M('#2f9e5a'),(j-1)*1.6,1.5,(j%2)-.5));g.position.set((i%2?1:-1)*(18+Math.random()*20),Math.random()*12-6,-Math.random()*150);FW.add(g);isl.push(g)}
+let orbs=[],parts=[];
+const txt=t=>{const c=document.createElement('canvas');c.width=512;c.height=128;const x=c.getContext('2d');x.font='bold 50px Georgia,serif';x.textAlign='center';x.textBaseline='middle';x.lineWidth=8;x.strokeStyle='#4a2a6a';x.strokeText(t,256,64);x.fillStyle='#fff';x.fillText(t,256,64);return new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true}))};
+const RP=[
+[['s',0,6,-1,1.2,0,0,'#e8e8ff'],['g',-5,3,-5,8,0,0,'#ff4fd8'],['g',5,3,-5,8,0,0,'#4fd8ff'],['b',-6,1,-6.5,1.6,2,1.6,'#222'],['b',6,1,-6.5,1.6,2,1.6,'#222'],['b',0,.06,0,10,.1,10,'#c58cff']],
+[['c',0,.9,-1,2.2,.2,0,'#fff'],['c',0,.45,-1,.3,.9,0,'#fff'],['s',0,1.5,-1,.5,0,0,'#ff9bd0'],['c',-1.4,1.1,-.2,.3,.25,0,'#8fd'],['c',1.4,1.1,-.2,.3,.25,0,'#fd8'],['e',-4.5,1.5,-1,2.2,0,0,'☕'],['e',4.5,1.5,-1,2.2,0,0,'🧁']],
+[['b',-3,.4,-2,3,.8,.8,'#e44'],['b',3,.4,-2,3,.8,.8,'#4a4'],['n',0,1.5,-5,1.2,3,0,'#fc3'],['e',0,3.2,-3,3.5,0,0,'🎪'],['b',0,.2,-6,8,.4,.8,'#46f']],
+[['f',0,0,0,0,0,0,'#7fd47a'],['e',-4,1.2,-3,3,0,0,'🌹'],['e',4,1.2,-3,3,0,0,'🌷'],['e',0,1.2,-5,3,0,0,'🌻'],['c',0,.15,2,2,.3,0,'#9ee'],['n',-6,2,-6,1.3,4,0,'#2f9e5a'],['n',6,2,-6,1.3,4,0,'#2f9e5a']],
+[['b',0,.3,-3,3.4,.6,3.4,'#ffd9a8'],['g',0,2,-3,6,0,0,'#ffcf7f'],['e',-4.5,2,-5,2.5,0,0,'🧸'],['e',4.5,2,-5,2.5,0,0,'🍼'],['b',-5.5,.5,2,2.5,1,4,'#bfe3ff']],
+[['f',0,0,0,0,0,0,'#bfeaff'],['c',0,.4,-3,2.8,.8,0,'#8fe0ff'],['e',-4.5,2,-5,2.5,0,0,'🫧'],['e',4.5,2,-5,2.5,0,0,'🧴'],['b',5.5,1,2,1.5,2,1.5,'#fff'],['g',0,2.5,-3,6,0,0,'#9ff']],
+[['b',0,.9,-2,10,.2,2.6,'#8a5a3a'],['e',-3,1.7,-2,2,0,0,'🍰'],['e',0,1.7,-2,2,0,0,'🍗'],['e',3,1.7,-2,2,0,0,'🍎'],['g',0,5,-2,9,0,0,'#ffd36b'],['c',-6.5,2,-6,.4,4,0,'#caa'],['c',6.5,2,-6,.4,4,0,'#caa']],
+[['b',-4.5,2.5,-8,4,5,.8,'#7a4a2a'],['b',4.5,2.5,-8,4,5,.8,'#7a4a2a'],['e',-4.5,3,-7.4,3,0,0,'📚'],['e',4.5,3,-7.4,3,0,0,'📖'],['b',0,.05,-2,5,.1,4,'#a33'],['s',0,.9,-3,1.1,0,0,'#c66']],
+[['f',0,0,0,0,0,0,'#2a2a5a'],['c',0,.5,-3,1.2,1,0,'#889'],['c',0,2,-3.5,.45,3,0,'#ccd'],['e',-4,4,-6,3,0,0,'🪐'],['e',4,5,-6,3,0,0,'⭐'],['e',0,6,-6,3,0,0,'🌙'],['g',0,5,-5,12,0,0,'#7a6fff']],
+[['b',0,.4,-5,9,.8,4,'#8a4a2a'],['e',-3,2,-5,3,0,0,'🎻'],['e',0,2,-5,3,0,0,'🎹'],['e',3,2,-5,3,0,0,'🥁'],['g',0,5,-5,8,0,0,'#ffe08a']],
+[['c',-4,1.2,-5,.4,2.4,0,'#ffd9bf'],['n',-4,.8,-5,1.2,1.6,0,'#f8c'],['c',4,1.2,-5,.4,2.4,0,'#ffd9bf'],['n',4,.8,-5,1.2,1.6,0,'#9bf'],['b',0,2.2,-7.5,5,4,.2,'#cfe'],['e',0,2.5,-6,3,0,0,'👗']],
+[['f',0,0,0,0,0,0,'#6a5a2a'],['b',-3,.5,-4,3,1,2,'#ffd36b'],['b',3,.5,-4,3,1,2,'#ffd36b'],['s',0,.8,-5,1,0,0,'#ffd36b'],['e',-5,1.5,-1,2,0,0,'💎'],['e',5,1.5,-1,2,0,0,'💰'],['g',0,2,-4,9,0,0,'#ffd36b']],
+[['b',0,.04,0,3,.05,16,'#c22'],['b',0,.4,-5.5,4,.8,4,'#a33'],['b',0,1.1,-5.5,1.6,.6,1.6,'#fc3'],['b',0,2.2,-6.8,2,3,.6,'#fc3'],['e',-5,3,-6,2.5,0,0,'🏆'],['e',5,3,-6,2.5,0,0,'👑']],
+[['f',0,0,0,0,0,0,'#9fd4ff'],['b',0,.2,-3,6,.4,6,'#e8e8ff'],['e',-4,3,-4,5,0,0,'☁️'],['e',4,5,-5,5,0,0,'☁️'],['e',0,4,-6,3,0,0,'🌅']],
+[['f',0,0,0,0,0,0,'#223a5a'],['c',0,.1,-2,3.5,.2,0,'#6ab'],['g',-4,1.5,-4,3,0,0,'#ffff80'],['g',4,2,-3,3,0,0,'#ffff80'],['e',4.5,1.5,-5,2.5,0,0,'🐸'],['e',-5,1.5,-1,2.5,0,0,'🪷']],
+[['f',0,0,0,0,0,0,'#caa07a'],['b',-4,.3,-3,2,.6,.6,'#963'],['b',4,.3,-3,2,.6,.6,'#963'],['c',0,1.5,-5,.1,3,0,'#963'],['e',0,3.3,-5,2.5,0,0,'🎯'],['e',-5,1.5,-6,2.2,0,0,'🏹']],
+[['b',0,.4,-4,4,.8,3,'#f6a8c8'],['b',0,.9,-5.4,4,.8,.5,'#d98ab0'],['e',-4,2,-6,2.5,0,0,'🧸'],['e',4,1.5,-4,2.5,0,0,'🕯️'],['g',4,2,-4,6,0,0,'#ffb870']],
+[['f',0,0,0,0,0,0,'#3a2a6a'],['n',-4,2,-4,1.2,4,0,'#7ff'],['n',4,2.5,-5,1.5,5,0,'#f9f'],['n',0,1.5,-6,1,3,0,'#9f9'],['g',-4,2,-4,7,0,0,'#7ff'],['g',4,2,-5,7,0,0,'#f9f']],
+[['b',0,2,-7.5,5,3.5,.2,'#fff'],['e',0,2.5,-7,3,0,0,'🖼️'],['e',-4,1.5,-2,2.5,0,0,'🎨'],['e',4,1.5,-2,2.5,0,0,'🖌️'],['s',-2,.4,0,.4,0,0,'#f44'],['s',0,.4,0,.4,0,0,'#4af'],['s',2,.4,0,.4,0,0,'#fd4']],
+[['b',0,.8,-2,4,.2,4,'#6a8'],['e',-1,1.8,-2,1.5,0,0,'🎲'],['e',1,1.8,-2,1.5,0,0,'♟️'],['e',-5,2,-6,3,0,0,'🧩'],['e',5,2,-6,3,0,0,'🃏']]];
+{const E=['🎯','🏹','🛡️','⚔️','🏋️','🥇','🪵','🔔','🚩','🧱','🥊','🏆','🪢','⛳','🧗','🤸'];
+for(let i=0;i<100;i++){const an=i*2.4,r=5.5+((i*7)%10)*.25,x=+(Math.cos(an)*r).toFixed(2),z=+Math.max(-8,Math.sin(an)*r-1).toFixed(2),t=i%4;
+ RP[15].push(t==0?['e',x,1.2+(i%3)*.4,z,1.4,0,0,E[(i>>2)%E.length]]:t==1?['b',x,.25,z,1.6,.5,.25,`hsl(${i*13},70%,55%)`]:t==2?['n',x,.35,z,.35,.7,0,'#ff8a1f']:['s',x,.35,z,.35,0,0,`hsl(${i*29},80%,60%)`])}}
+const IR={};let inR=-1,noEnt=false;
+function buildRoom(i){if(IR[i])return IR[i];const g=new THREE.Group(),h=i*18;g.position.set(1000,0,i*40);
+ const fl=mk(new THREE.BoxGeometry(18,.4,18),M(`hsl(${h},50%,80%)`),0,-.2,0);fl.receiveShadow=true;fl.castShadow=false;g.add(fl);
+ const wl=M(`hsl(${h},55%,88%)`);g.add(mk(new THREE.BoxGeometry(18,8,.6),wl,0,4,-9),mk(new THREE.BoxGeometry(.6,8,18),wl,-9,4,0),mk(new THREE.BoxGeometry(.6,8,18),wl,9,4,0));
+ const tt=txt(RM[i][0]);tt.position.set(0,6.6,-8.5);tt.scale.set(9,2.2,1);g.add(tt);
+ [-7,7].forEach(x=>{const e=emo(RM[i][2]);e.position.set(x,4.8,-8.4);e.scale.setScalar(2.4);g.add(e)});
+ const ex=emo('🚪');ex.position.set(0,1.4,8.4);ex.scale.setScalar(2.2);g.add(ex);const eh=emo('🎩');eh.position.set(-7,1.4,6);eh.scale.setScalar(2);g.add(eh);
+ RP[i].forEach(p=>{const[t,x,y,z,a,b,c,col]=p;let o;if(t=='f'){fl.material.color.set(col);return}
+  if(t=='g')o=glow(col,a);else if(t=='e'){o=emo(col);o.scale.setScalar(a)}else if(t=='s')o=B(M(col),0,0,0,a);
+  else o=mk(t=='b'?new THREE.BoxGeometry(a,b,c):t=='c'?new THREE.CylinderGeometry(a,a,b,16):new THREE.ConeGeometry(a,b,12),M(col));
+  o.position.set(x,y,z);g.add(o)});
+ g.visible=false;sc.add(g);IR[i]=g;return g}
+function enter(i){inR=i;const g=buildRoom(i);for(const k in IR)IR[k].visible=false;g.visible=true;K.visible=false;sc.background=new THREE.Color(`hsl(${i*18},40%,35%)`);sc.fog=new THREE.Fog(sc.background,50,140);
+ P.position.set(g.position.x,0,g.position.z+6.5);D.position.set(g.position.x+2.5,.85,g.position.z+3);hd=0;pf=0;cam.position.set(g.position.x,8,g.position.z+17);
+ if(i==4)nurseryView();$('#exit').style.display='block';$('#act').style.display='block';$('#act').textContent=RM[i][2]+' '+AL[AC[i]];S.room=i;say(`${RM[i][0]}: ${RM[i][1]}! Walk out the front door to leave.`);tone(i)}
+function exitRoom(){if(inR<0)return;clearInterval(mgT);mg.style.display='none';if(act&&act.s)sc.remove(act.s);act=null;const i=inR,d=doors[i],L=Math.hypot(d.x,d.z),f=(L-5)/L;inR=-1;IR[i].visible=false;K.visible=true;sky('#6aa8ff','#bfe0ff','#ffe9c8');sc.fog=new THREE.Fog('#cfe3ff',70,220);noEnt=true;P.position.set(d.x*f,0,d.z*f);D.position.set(d.x*f+2,.85,d.z*f+2);hd=0;cam.position.set(d.x*f,8,d.z*f+13);$('#exit').style.display='none';$('#act').style.display='none'}
+// ---------- helpers ----------
+let ac;const tone=i=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=330+(i%12)*40;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.4);o.stop(ac.currentTime+.4)}catch(e){}};
+const say=m=>{$('#elu').textContent='🎩 Elu: '+m};
+const pop=e=>{const d=document.createElement('div');d.className='pop';d.textContent=e;d.style.marginLeft=(Math.random()*120-60)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1300)};
+function ap(){dm.color.set(S.dcol);dres.color.set(S.pcol);wm.color.set(hue(S.eq.Wings*36+10));crown.material.color.set(S.eq.Crown?hue(S.eq.Crown*25):'#ffd700');plz.color.set(S.acc);jewel.scale.setScalar(1+S.eq.Upgrade*.08);drawMasa()}
+function use(k,i){const id=k+i;if(i&&!S.own[id]){const c=cost(k,i);if(S.orbs<c){say(`${c-S.orbs} more orbs for ${cat[k][i]}. Walk around the castle or fly to grab some!`);return}S.orbs-=c;S.own[id]=1;pop('🎉')}
+ S.eq[k]=i;const n=cat[k][i];
+ if(k=='Dress')S.pcol=hue(i);if(k=='Dragon')S.dcol=hue(i+3);if(k=='Decor')S.acc=hue(i*30);
+ if(k=='Trick')doTrick(i);if(k=='Song'){tone(i);anim={t:0,k:'dance'}}
+ say(k=='Dress'?`A lovely Masa ${n} gown, Princess!`:`${n} ready for you.`);ap();save();render();if(k=='Food')care('feed')}
+const FE=['🍎','🫐','🍰','🐟','🍪','🌟','🥧','🎃','🍈','🧀'];let act=null,fx=[];
+function care(k){if(mode=='fly')return say('Land first so the princess can care for her dragon!');if(act)return;S.bond++;
+ act={k,t:0,ph:0,p:{feed:[1.3,-2.7],pet:[1.4,-2.2],hug:[1.1,-1.7],wash:[2.4,0]}[k],s:k=='hug'?null:emo({wash:'🧽',pet:'✋',feed:FE[S.eq.Food]}[k])};if(act.s){act.s.scale.setScalar(1.1);sc.add(act.s)}
+ say({wash:'Time for a bubble bath!',hug:'A big dragon hug!',pet:'Such a good dragon!',feed:`Yum, ${cat.Food[S.eq.Food]}!`}[k]);$('#panel').classList.add('hide');save();render()}
+function puff(e,x,y,z){const o=emo(e);o.position.set(x,y,z);o.scale.setScalar(.7);sc.add(o);fx.push({o,l:1.2})}
+const lw=(x,z)=>({x:D.position.x+x*Math.cos(hd)+z*Math.sin(hd),z:D.position.z-x*Math.sin(hd)+z*Math.cos(hd)});
+function lay(){if(S.bond<5)return say('Your dragon needs 5 bond hearts (wash, hug, pet, feed) first.');S.bond-=5;S.eggs++;pop('🥚');say('An egg! Keep it warm.');save();render()}
+function warm(){if(!S.eggs)return say('No egg yet.');S.warm++;pop('🔥');if(S.warm>=3){S.warm=0;S.eggs--;S.baby++;pop('🐣');say('The egg hatched! Nurse the baby dragon.')}else say('Nice and cozy.');save();render()}
+function nurse(){if(!S.baby)return say('No baby dragon yet.');S.grow++;pop('🍼');if(S.grow>=5){S.grow=0;S.baby--;S.roster.push(hue(Math.floor(Math.random()*40)));pop('🎉');say('Your baby dragon grew up and is now playable!')}else say(`Growing ${S.grow}/5.`);save();render()}
+function doAct(){if(inR<0||mg.style.display=='block')return;const t=AC[inR];if(inR==0)return danceGame();if(inR==15)return yardGame();if(inR==3)return gardenGame();if(inR==5)return spaGame();if(t=='tea')return teaGame();if(inR==4){S.baby?nurse():S.eggs?warm():lay();puff('💖',P.position.x,2.5,P.position.z);return}if(['wash','hug','pet','feed'].includes(t))care(t);
+ else if(t=='dance'){anim={t:0,k:'dance'};[0,4,7,12].forEach((n,i)=>setTimeout(()=>tone(n),i*150));say('Everybody dance!')}
+ else if(t=='trick')doTrick(rndTrick());
+ else if(t=='song'){[0,3,7,5,10].forEach((n,i)=>setTimeout(()=>tone(n),i*180));anim={t:0,k:'dance'};say('What a lovely tune!')}
+ else if(t=='gift'){pop('🎁');say('A little gift from the court!')}
+ else if(t=='nursery'){tab='Nursery';render();$('#panel').classList.remove('hide')}
+ S.orbs++;pop('✨');save();render()}
+function tp(i){if(mode=='fly')setMode('castle');if(inR>=0)exitRoom();enter(i);$('#panel').classList.add('hide')}
+// ---------- nursery view + mini-games ----------
+let NB=null;
+function nurseryView(){const g=IR[4];if(!g)return;if(NB)g.remove(NB);NB=new THREE.Group();
+ for(let i=0;i<S.eggs;i++){const e=B(M('#fff7e0',{roughness:.3}),-1.2+i*1.2,1.05,-3,.5,.65,.5);e.userData.egg=1;NB.add(e)}
+ for(let i=0;i<S.baby;i++){const b=D.clone(true),col=hue(i*7+3);b.traverse(o=>{if(o.isMesh&&o.material===dm){o.material=dm.clone();o.material.color.set(col)}});b.scale.setScalar(.4+(i==0?S.grow*.04:0));b.rotation.y=Math.PI*.9;b.position.set(-4+i*2.2,.5,.5);NB.add(b)}
+ g.add(NB)}
+const mg=$('#mg');let mgT,G=null;
+function mgOpen(h){mg.innerHTML=h;mg.style.display='block'}
+function endMG(msg,o){clearInterval(mgT);mg.style.display='none';S.orbs+=o;pop('🎉');say(`${msg} +${o} orbs!`);save();render()}
+function danceGame(){mgOpen(`<b>💃 Dance Party! Tap the arrow when a heart reaches the pink line</b><div id="ln" style="position:relative;height:300px;margin:8px 0;background:#0003;border-radius:12px;overflow:hidden"><div style="position:absolute;left:0;right:0;top:240px;height:44px;background:#ff8fc866"></div></div><div id="ms">Score 0</div><div style="display:flex;gap:6px">${['⬅️','⬆️','➡️'].map((a,i)=>`<button class="big" style="flex:1;font-size:26px" onpointerdown="hit(${i})">${a}</button>`).join('')}</div><button onclick="endMG('Maybe next time!',0)">Quit</button>`);
+ G={n:[],sc:0,f:0,sp:0};clearInterval(mgT);
+ mgT=setInterval(()=>{G.f++;if(G.f%30==0&&G.sp<16){G.sp++;const l=Math.random()*3|0,d=document.createElement('div');d.textContent='💖';d.style.cssText=`position:absolute;top:-30px;width:33.3%;left:${l*33.33}%;font-size:30px`;d.l=l;$('#ln').appendChild(d);G.n.push(d)}
+  G.n=G.n.filter(d=>{const y=parseFloat(d.style.top)+4.5;d.style.top=y+'px';if(y>300){d.remove();return false}return true});
+  if(G.sp>=16&&!G.n.length)endMG(`Dance finished: ${G.sc}/16 hearts!`,G.sc)},30)}
+function hit(l){if(!G||!G.n)return;const d=G.n.find(d=>d.l==l&&parseFloat(d.style.top)>215&&parseFloat(d.style.top)<290);
+ if(d){d.remove();G.n.splice(G.n.indexOf(d),1);G.sc++;tone(G.sc);pop('💖');anim={t:0,k:'dance'};$('#ms').textContent='Score '+G.sc}else pop('💨')}
+function teaGame(){mgOpen(`<b>🍵 Tea Party! Hold Pour, let go in the green zone</b><div style="display:flex;justify-content:center;align-items:flex-end;gap:12px;margin:10px"><div style="position:relative;width:90px;height:140px;border:4px solid #ff8fc8;border-radius:0 0 40px 40px;overflow:hidden;background:#fff3"><div id="tz" style="position:absolute;left:0;right:0;background:#4f48"></div><div id="tl" style="position:absolute;left:0;right:0;bottom:0;height:0;background:#c8742c"></div></div><div id="gs" style="font-size:60px">🐻</div></div><div id="ms"></div><button class="big" id="pour" style="padding:16px 30px;font-size:20px;touch-action:none">Hold to pour ☕</button><button onclick="endMG('Maybe next time!',0)">Quit</button>`);
+ G={r:0,ok:0,lv:0,tg:0,p:false};newTea();const pb=$('#pour');pb.onpointerdown=()=>{G.p=true};pb.onpointerup=pb.onpointerleave=pb.onpointercancel=()=>{if(G.p){G.p=false;serve()}};
+ clearInterval(mgT);mgT=setInterval(()=>{if(G.p&&G.lv<100){G.lv+=1.6;$('#tl').style.height=G.lv+'%'}},30)}
+function newTea(){G.lv=0;G.tg=45+Math.random()*40;$('#tl').style.height='0';const z=$('#tz');z.style.bottom=(G.tg-7)+'%';z.style.height='14%';$('#gs').textContent=['🐻','🐰','🦊','🐼','🐸'][G.r];$('#ms').textContent=`Guest ${G.r+1}/5`}
+function serve(){if(Math.abs(G.lv-G.tg)<=7){G.ok++;pop('☕');tone(G.ok*2)}else pop('💦');G.r++;if(G.r>=5)endMG(`Tea party: ${G.ok}/5 happy guests!`,G.ok*2);else newTea()}
+// ---------- tricks + yard game ----------
+const TM={Roll:0,Loop:1,Flip:1,Backflip:2,Spin:3,Twirl:3,Spiral:4,Swirl:4,Arc:4,Dive:5,Zigzag:6,Dash:6,Hover:7,Wave:8,Hop:9,Bounce:9,Bow:10,Zoom:11,Glide:12,Surf:12};
+const TE={Sparkle:'✨',Cosmic:'🌌',Jelly:'🫧',Rainbow:'🌈',Turbo:'💨',Fluffy:'☁️',Mystic:'🔮',Golden:'⭐',Dizzy:'💫',Royal:'👑'};
+const rndTrick=()=>{const o=cat.Trick.map((n,i)=>i).filter(i=>!i||S.own['Trick'+i]);return o[Math.random()*o.length|0]};
+function doTrick(i){const n=cat.Trick[i],w=n.split(' ');anim={t:0,k:'tr',n:TM[w[w.length-1]]??(i%13),e:TE[w[0]]||'✨'};say(n+'!');pop('🌀')}
+function trk(a){const n=anim.n,F=mode=='fly',w=Math.sin(a/1.4*Math.PI);
+ if(n==0)D.rotation.z+=a*4.5;else if(n==1)D.rotation.x+=a*4.5;else if(n==2)D.rotation.x-=a*4.5;else if(n==3)D.rotation.y+=a*4.5;
+ else if(n==4){D.rotation.z+=a*4.5;D.rotation.y+=a*2.2}
+ else if(n==5){if(!F)D.position.y+=.6*w;D.rotation.x-=w*(F?1.3:.8)}
+ else if(n==6){D.rotation.z+=Math.sin(a*10)*.6;D.rotation.y+=Math.sin(a*10)*.4}
+ else if(n==7){if(!F)D.position.y+=Math.sin(a*30)*.1;D.rotation.z+=Math.sin(a*20)*.15}
+ else if(n==8){wings[0].rotation.z=Math.sin(a*25)*1.1;wings[1].rotation.z=-wings[0].rotation.z}
+ else if(n==9){if(F)D.rotation.x+=Math.sin(a*14)*.3;else D.position.y+=Math.abs(Math.sin(a*7))*.7}
+ else if(n==10)D.rotation.x+=w*.6;
+ else if(n==11){D.rotation.x-=w*.7;D.rotation.y+=Math.sin(a*6)*.2}
+ else{D.rotation.z+=Math.sin(a*4.4)*.7;D.rotation.x-=.3*w}
+ if(!F)P.position.y=Math.abs(Math.sin(a*8))*.35;
+ if(Math.random()<.25)puff(anim.e,D.position.x,D.position.y+1,D.position.z)}
+function yardGame(){mgOpen(`<b>🏹 Training Yard! Tap each target before it vanishes</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0">${[...Array(9)].map((_,i)=>`<button id="c${i}" style="height:80px;font-size:40px" onpointerdown="shoot(${i})"></button>`).join('')}</div><div id="ms">Hits 0/15</div><button onclick="endMG('Maybe next time!',0)">Quit</button>`);
+ G={sp:0,hit:0,cur:-1,f:0};clearInterval(mgT);
+ mgT=setInterval(()=>{G.f++;if(G.f%30==0){if(G.cur>=0)$('#c'+G.cur).textContent='';G.cur=-1;if(G.sp>=15)return endMG(`Training done: ${G.hit}/15 targets!`,G.hit*2);G.sp++;G.cur=Math.random()*9|0;$('#c'+G.cur).textContent='🎯'}},30)}
+function shoot(i){if(G&&G.cur==i){G.hit++;$('#c'+i).textContent='💥';G.cur=-1;tone(G.hit);pop('🎯');$('#ms').textContent=`Hits ${G.hit}/15`}}
+// ---------- garden + spa games ----------
+function gardenGame(){mgOpen(`<b>🌹 Rose Garden! Pick the flowers, but don't touch the bugs 🐛</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0">${[...Array(9)].map((_,i)=>`<button id="c${i}" style="height:80px;font-size:40px" onpointerdown="pick(${i})"></button>`).join('')}</div><div id="ms">Flowers 0</div><button onclick="endMG('Maybe next time!',0)">Quit</button>`);
+ G={sp:0,sc:0,cur:-1,bug:false,f:0};clearInterval(mgT);
+ mgT=setInterval(()=>{G.f++;if(G.f%27==0){if(G.cur>=0)$('#c'+G.cur).textContent='';G.cur=-1;if(G.sp>=18)return endMG(`Garden done: ${G.sc} flowers!`,G.sc);G.sp++;G.cur=Math.random()*9|0;G.bug=Math.random()<.25;$('#c'+G.cur).textContent=G.bug?'🐛':['🌸','🌹','🌷','🌻'][Math.random()*4|0]}},30)}
+function pick(i){if(!G||G.cur!=i)return;if(G.bug){G.sc=Math.max(0,G.sc-1);pop('🐛')}else{G.sc++;tone(G.sc);pop('💐')}$('#c'+i).textContent=G.bug?'💥':'✔️';G.cur=-1;$('#ms').textContent='Flowers '+G.sc}
+function spaGame(){mgOpen(`<b>🛁 Dragon Spa! Pop the bubbles (✨ is worth 3)</b><div id="bf" style="position:relative;height:300px;margin:8px 0;background:linear-gradient(#bfeaff,#fff);border-radius:12px;overflow:hidden"></div><div id="ms">Popped 0</div><button onclick="endMG('Maybe next time!',0)">Quit</button>`);
+ G={n:[],sc:0,f:0,sp:0};clearInterval(mgT);
+ mgT=setInterval(()=>{G.f++;if(G.f%18==0&&G.sp<24){G.sp++;const d=document.createElement('div'),gd=Math.random()<.2;d.textContent=gd?'✨':'🫧';d.pts=gd?3:1;d.style.cssText=`position:absolute;top:300px;left:${Math.random()*80}%;font-size:${gd?34:44}px`;
+   d.onpointerdown=()=>{const k=G.n.indexOf(d);if(k>=0){G.n.splice(k,1);d.remove();G.sc+=d.pts;tone(G.sc);$('#ms').textContent='Popped '+G.sc}};$('#bf').appendChild(d);G.n.push(d)}
+  G.n=G.n.filter(d=>{const y=parseFloat(d.style.top)-3.2;d.style.top=y+'px';if(y<-50){d.remove();return false}return true});
+  if(G.sp>=24&&!G.n.length){const p=G.sc;endMG(`Spa time: ${p} points!`,p);setTimeout(()=>care('wash'),600)}},30)}
+// ---------- UI ----------
+let tab='Unlocks';
+function render(){if(inR==4)nurseryView();$('#orb').textContent='✨ '+S.orbs;const T=['Unlocks','Rooms','Care','Nursery','Colors'];
+let h=`<div class="tabs">${T.map(x=>`<button class="${x==tab?'on':''}" onclick="tab='${x}';render()">${x}</button>`).join('')}<button onclick="$('#panel').classList.add('hide')">✖</button></div><div class="body">`;
+if(tab=='Rooms')h+=`<p>Tap a room to go there.</p>`+RM.map((r,i)=>`<button onclick="tp(${i})">${r[2]} ${r[0]}</button>`).join('');
+if(tab=='Care')h+=`<p>❤ Bond: ${S.bond}</p><button onclick="care('wash')">🛁 Wash</button><button onclick="care('hug')">🤗 Hug</button><button onclick="care('pet')">💖 Pet</button><button onclick="care('feed')">🍎 Feed (${cat.Food[S.eq.Food]})</button>`;
+if(tab=='Nursery')h+=`<p>❤ Bond ${S.bond} · 🥚 Eggs ${S.eggs} · 🐣 Babies ${S.baby}</p><button onclick="lay()">🥚 Lay egg (5❤)</button><button onclick="warm()">🔥 Warm egg (3x)</button><button onclick="nurse()">🍼 Nurse baby (5x)</button><h4>Playable dragons</h4>${S.roster.map(c=>`<button style="background:${c}" onclick="S.dcol='${c}';ap();save()">🐉</button>`).join('')}`;
+if(tab=='Unlocks'){h+=`<p>You have ✨ ${S.orbs} orbs. Tap an item to buy it, tap again to wear it. Most items cost 3 orbs more than the one before. The first 6 tricks are free, the rest cost 1 orb more each.</p>`;for(const k in cat)h+=`<h4>${k}</h4>`+cat[k].map((n,i)=>{const o=!i||S.own[k+i];return `<button class="${S.eq[k]==i&&o?'on':''}" onclick="use('${k}',${i})">${o?'':'🔒'+cost(k,i)+' '}${n}</button>`}).join('')}
+if(tab=='Colors')h+=`<p>Dress (always says Masa) <input type="color" value="${S.pcol.startsWith('#')?S.pcol:'#ff8fc8'}" oninput="S.pcol=this.value;ap();save()"></p><p>Dragon <input type="color" value="${S.dcol.startsWith('#')?S.dcol:'#7be0a0'}" oninput="S.dcol=this.value;ap();save()"></p><p>Plaza <input type="color" value="${S.acc.startsWith('#')?S.acc:'#d9c8ff'}" oninput="S.acc=this.value;ap();save()"></p>`;
+$('#panel').innerHTML=h+'</div>'}
+// ---------- input ----------
+let jx=0,jy=0,jid=null;const joy=$('#joy'),kn=$('#knob'),keys={};
+function jm(e){const r=joy.getBoundingClientRect();let x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;const m=r.width/2-14,l=Math.hypot(x,y);if(l>m){x*=m/l;y*=m/l}kn.style.transform=`translate(${x}px,${y}px)`;jx=x/m;jy=y/m}
+joy.addEventListener('pointerdown',e=>{jid=e.pointerId;joy.setPointerCapture(jid);jm(e)});
+joy.addEventListener('pointermove',e=>{if(e.pointerId==jid)jm(e)});
+const ju=e=>{if(e.pointerId==jid){jid=null;jx=jy=0;kn.style.transform='translate(0,0)'}};joy.addEventListener('pointerup',ju);joy.addEventListener('pointercancel',ju);
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if(e.key==' ')doAct()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
+addEventListener('resize',rs);function rs(){R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}rs();
+// ---------- loop ----------
+let combo=0,mode='castle',t0=0,tx=0,ty=5,hd=0,pf=0,curR=-1,anim=null,lo=0,lp=0,lastE=0;const cv3=new THREE.Vector3(),tips=['Walk into a glowing ring to enter a room.','Orbs unlock dresses, dragons and more. Open the Menu!','Wash, hug and feed your dragon to earn bond hearts.','Fly to chain orbs for combo bonuses!'];
+function setMode(m){if(inR>=0){IR[inR].visible=false;inR=-1;$('#exit').style.display='none'}if(act&&act.s)sc.remove(act.s);act=null;mode=m;K.visible=m=='castle';FW.visible=m=='fly';$('#trick').style.display=m=='fly'?'block':'none';$('#act').style.display='none';curR=-1;$('#fly').textContent=m=='fly'?'🏰 Land':'🐉 Fly';orbs.concat(parts).forEach(o=>sc.remove(o));orbs=[];parts=[];anim=null;D.scale.setScalar(1);$('#panel').classList.add('hide');
+ if(m=='fly'){sky('#5a7bff','#ffb3d9','#ffe0a8');sc.fog=new THREE.Fog('#ffc9e0',60,190);D.position.set(0,5,0);D.rotation.set(0,0,0);D.add(P);P.scale.setScalar(1);P.position.set(0,.6,-.1);P.rotation.set(0,0,0);tx=0;ty=5;cam.position.set(0,8,11);say('Joystick or WASD to steer. Grab the glowing orbs!')}
+ else{sky('#6aa8ff','#bfe0ff','#ffe9c8');sc.fog=new THREE.Fog('#cfe3ff',70,220);sc.add(P);P.scale.setScalar(1.5);P.rotation.set(0,0,0);P.position.set(0,0,12);D.position.set(0,.85,6);hd=0;pf=0;cam.position.set(0,8,25);say('Walk with the joystick. Step into glowing rings to enter rooms, and grab orbs!')}}
+function loop(t){requestAnimationFrame(loop);const dt=Math.min((t-t0)/1000,.05);t0=t;const s=t/1000;
+ let ix=jx+((keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)),iy=jy+((keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0));const il=Math.hypot(ix,iy);if(il>1){ix/=il;iy/=il}
+ const fl=Math.sin(s*(mode=='fly'?9:il>.1?6:2.5))*.5;wings[0].rotation.z=fl;wings[1].rotation.z=-fl;tl.rotation.y=Math.sin(s*2)*.3;fx=fx.filter(f=>{f.l-=dt;f.o.position.y+=dt*1.2;f.o.material.opacity=Math.min(1,f.l);if(f.l<=0){sc.remove(f.o);return false}return true});
+ if(mode=='castle'){const g=inR>=0?IR[inR].position:null,ox=g?g.x:0,oz=g?g.z:0;let mv=false;D.rotation.set(0,hd,0);D.position.y=.85;
+  if(act){const tg=lw(act.p[0],act.p[1]),dx=tg.x-P.position.x,dz=tg.z-P.position.z,dd=Math.hypot(dx,dz);
+   if(act.ph==0){if(dd>.25){const v=Math.min(8*dt,dd);P.position.x+=dx/dd*v;P.position.z+=dz/dd*v;pf=Math.atan2(-dx,-dz);mv=true}else act.ph=1}
+   else{const a=act.t+=dt,k=act.k,sx=act.s;pf=Math.atan2(-(D.position.x-P.position.x),-(D.position.z-P.position.z));
+    if(k=='feed'){const m=lw(0,-2.8),u=Math.min(1,a/1.2);if(sx){sx.position.set(P.position.x+(m.x-P.position.x)*u,1.4+.3*u+Math.sin(u*3.14)*.5,P.position.z+(m.z-P.position.z)*u);if(a>1.3){sc.remove(sx);act.s=null}}if(a>1.3){D.position.y+=Math.abs(Math.sin(a*10))*.1;D.rotation.x=Math.sin(a*8)*.06;if(Math.random()<dt*3)puff('💖',m.x,3,m.z)}}
+    if(k=='pet'){const m=lw(.3*Math.sin(a*6),-2.1);sx.position.set(m.x,2.9,m.z);D.rotation.z=Math.sin(a*5)*.04;if(Math.random()<dt*3)puff('💖',m.x,3.3,m.z)}
+    if(k=='hug'){P.rotation.x=-.3;D.scale.setScalar(1+Math.sin(a*6)*.04);if(Math.random()<dt*3)puff('💖',D.position.x,3,D.position.z)}
+    if(k=='wash'){const m=lw(1.1,-1.4+1.4*Math.sin(a*4));sx.position.set(m.x,1.9,m.z);D.rotation.z=Math.sin(a*14)*.03;if(Math.random()<dt*14){const q=lw(Math.random()*2-1,Math.random()*3-1.5);puff('🫧',q.x,1+Math.random()*1.5,q.z)}}
+    if(a>2.8){if(act.s)sc.remove(act.s);P.rotation.x=0;D.scale.setScalar(1);D.rotation.x=D.rotation.z=0;act=null;render()}}}
+  else if(il>.1){P.position.x+=ix*7*dt;P.position.z+=iy*7*dt;pf=Math.atan2(-ix,-iy);mv=true}
+  if(g){P.position.x=ox+Math.max(-8,Math.min(8,P.position.x-ox));if(P.position.z<oz-8)P.position.z=oz-8;if(!act&&P.position.z>oz+8.2){exitRoom();return}}
+  else{const rr=Math.hypot(P.position.x,P.position.z);if(rr>58){P.position.x*=58/rr;P.position.z*=58/rr}}
+  let df=pf-P.rotation.y;df=Math.atan2(Math.sin(df),Math.cos(df));P.rotation.y+=df*Math.min(1,dt*10);P.position.y=mv?Math.abs(Math.sin(s*10))*.12:0;
+  const ex=P.position.x-D.position.x,ez=P.position.z-D.position.z,ed=Math.hypot(ex,ez);
+  if(!act){if(ed>4.5){const v=Math.min(8*dt,ed-4.5);D.position.x+=ex/ed*v;D.position.z+=ez/ed*v;let e=Math.atan2(-ex,-ez)-hd;hd+=Math.atan2(Math.sin(e),Math.cos(e))*Math.min(1,dt*6);D.position.y+=Math.abs(Math.sin(s*8))*.12}else if(ed<3&&ed>.01){D.position.x-=ex/ed*6*dt;D.position.z-=ez/ed*6*dt}}
+  if(g){D.position.x=ox+Math.max(-7.5,Math.min(7.5,D.position.x-ox));D.position.z=oz+Math.max(-7.5,Math.min(7.5,D.position.z-oz))}
+  const cx0=g?ox+(P.position.x-ox)*.4:P.position.x;cam.position.lerp(cv3.set(cx0,g?6.5:7,P.position.z+(g?10:13)),Math.min(1,dt*4));cam.lookAt(cx0,1.2,P.position.z-1.5);
+  if(!g){let cr=-1;doors.forEach((d,i)=>{d.r.material.opacity=.55+Math.sin(s*3+i)*.2;if(Math.hypot(P.position.x-d.x,P.position.z-d.z)<3)cr=i});if(cr<0)noEnt=false;else if(!noEnt&&!act){enter(cr);return}
+   for(let i=go.length-1;i>=0;i--){const o=go[i];o.position.y=1.4+Math.sin(s*3+i)*.3;if(Math.hypot(o.position.x-P.position.x,o.position.z-P.position.z)<2.4){S.orbs++;pop('✨');tone(S.orbs);K.remove(o);go.splice(i,1);spawnGO();render();save()}}
+   jewel.rotation.y=s;elu.rotation.y=Math.sin(s)*.5;if(Math.hypot(P.position.x-4,P.position.z-6)<4&&s-lastE>10){lastE=s;say(tips[(s|0)%4])}}
+  if(NB&&inR==4)NB.children.forEach((c,i)=>{if(c.userData.egg)c.rotation.z=Math.sin(s*6+i)*.08*(S.warm+1);else c.position.y=.5+Math.abs(Math.sin(s*3+i))*.25});
+  dl.position.set(P.position.x+25,45,P.position.z+15);dl.target.position.copy(P.position)}
+ else{tx=Math.max(-14,Math.min(14,tx+ix*dt*20));ty=Math.max(-2,Math.min(14,ty-iy*dt*14));
+  D.position.x+=(tx-D.position.x)*dt*5;D.position.y+=(ty-D.position.y)*dt*5;D.rotation.set((ty-D.position.y)*.05,0,-(tx-D.position.x)*.12);
+  cam.position.set(D.position.x*.6,D.position.y+3.5,11);cam.lookAt(D.position.x,D.position.y,-10);
+  if((lo+=dt)>1.6){lo=0;const px=(Math.random()-.5)*20,py=2+Math.random()*9,wv=Math.random()<.5;for(let i=0;i<6;i++){const o=orbCore(hue(i*2+S.orbs%5));o.position.set(px+(wv?Math.sin(i*.9)*4:(i-2.5)*1.6),py+(wv?(i-2.5)*.8:Math.cos(i)*1.5),-90-i*5);sc.add(o);orbs.push(o)}}
+  orbs=orbs.filter(o=>{o.position.z+=32*dt;o.scale.setScalar(1+Math.sin(s*8+o.position.x)*.15);
+   if(o.position.distanceTo(D.position)<2.8){combo++;S.orbs+=combo>=10?3:combo>=5?2:1;pop('✨');tone(combo);$('#cmb').textContent='🔥 x'+combo;render();save();sc.remove(o);return false}
+   if(o.position.z>10){combo=0;$('#cmb').textContent='';sc.remove(o);return false}return true});
+  if((lp+=dt)>.05){lp=0;const q=glow(hue(S.eq.Trail*40+(s*50|0)%8),1.2);q.position.set(D.position.x,D.position.y,D.position.z+2.5);sc.add(q);parts.push(q)}
+  parts=parts.filter(q=>{q.position.z+=25*dt;q.scale.multiplyScalar(1-dt*2);if(q.scale.x<.1){sc.remove(q);return false}return true});
+  isl.forEach(c=>{c.position.z+=14*dt;if(c.position.z>25)c.position.z=-150});cl.forEach(c=>{c.position.z+=20*dt;if(c.position.z>15){c.position.z=-150;c.position.x=(Math.random()-.5)*110}})}
+ if(anim){anim.t+=dt;const a=anim.t,k=anim.k;if(k=='hug')D.scale.setScalar(1+Math.sin(a*8)*.08);else if(k=='wash')D.rotation.z+=Math.sin(a*14)*.15;else if(k=='tr')trk(a);else if(k=='dance'){D.rotation.y+=a*5;if(mode=='castle'){P.rotation.y=pf+a*5;P.position.y=Math.abs(Math.sin(a*8))*.3}}else D.position.y+=Math.abs(Math.sin(a*6))*.4;if(a>(k=='tr'?1.4:1.2)){anim=null;D.scale.setScalar(1)}}
+ R.render(sc,cam)}
+ap();render();setMode('castle');for(let i=0;i<24;i++)spawnGO();say('Welcome to Crown Jewel, Princess! Walk with the joystick, or WASD.');requestAnimationFrame(loop);
+</script></body></html>
